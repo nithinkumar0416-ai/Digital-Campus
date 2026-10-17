@@ -66,15 +66,32 @@ EduPulse AI is a functional, integrated, AI-powered education intelligence platf
    cd Digital-Campus
    ```
 
-2. **Start the local server:**
+2. **Configure Google Gemini AI (Optional for Live AI):**
+   Copy `.env.example` to `.env` and insert your Gemini API key:
+   ```bash
+   cp .env.example .env
+   ```
+   Edit `.env`:
+   ```env
+   GEMINI_API_KEY=AIzaSyYourActualKeyHere
+   GEMINI_MODEL=gemini-1.5-flash
+   ```
+   *(Note: You can also configure the key inside the web UI at `pages/settings.html`)*
+
+3. **Start the local server:**
    ```bash
    node server.js
    ```
 
-3. **Open the platform:**
+4. **Open the platform:**
    Open your browser and navigate to:
    ```
    http://127.0.0.1:3000/
+   ```
+
+5. **Run AI Assistant Verification Tests:**
+   ```bash
+   node test_ai_assistant.js
    ```
 
 ---

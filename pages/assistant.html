@@ -4,8 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI Education Assistant — EduFAZE AI</title>
+  <meta name="description" content="Intelligent ChatGPT-style AI Education Assistant powered by Google Gemini for STEM, coding, problem solving, and course learning." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../css/styles.css" />
   <link rel="stylesheet" href="../css/pages.css" />
 </head>
@@ -34,6 +35,7 @@
     <div class="dropdown-header"><div class="avatar lg">AS</div><div><p class="dropdown-name" id="dropdown-user-name">Aanya Sharma</p><p class="dropdown-role">Student</p></div></div>
     <hr class="dropdown-divider" />
     <a href="dashboard-student.html" class="dropdown-item">My Dashboard</a>
+    <a href="settings.html" class="dropdown-item">AI Settings</a>
     <button class="dropdown-item danger" id="logout-btn">Sign Out</button>
   </div>
 
@@ -53,57 +55,87 @@
         <a href="lab.html" class="sidebar-link"><span class="icon">&#128300;</span> Lab Helper</a>
         <a href="accessibility.html" class="sidebar-link"><span class="icon">&#9855;</span> Accessibility</a>
       </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">System</div>
+        <a href="settings.html" class="sidebar-link"><span class="icon">&#9881;</span> AI Settings</a>
+      </div>
     </aside>
 
     <main class="page-content" style="display:flex; flex-direction:column; height:calc(100vh - var(--nav-height)); padding-bottom:0;">
-      <!-- HEADER -->
+      <!-- HEADER & STATUS BANNER -->
       <div style="padding:0 0 1rem; flex-shrink:0;">
-        <div class="alert demo" style="margin-bottom:1rem; border-radius:12px;">
-          <div class="alert-icon">&#127895;</div>
-          <div><strong>Demo Mode</strong> — AI responses are <strong>rule-based simulations</strong>. No live AI API is connected. <span class="ai-status mock" style="display:inline-flex; vertical-align:middle; margin-left:0.5rem;"><span class="dot"></span>Mock responses</span></div>
+        <!-- DYNAMIC AI STATUS BANNER -->
+        <div id="ai-status-banner" class="alert" style="margin-bottom:1rem; border-radius:12px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); transition:all 0.3s ease;">
+          <div class="alert-icon" id="ai-status-icon">&#9203;</div>
+          <div id="ai-status-text" style="flex:1;">
+            <strong>Checking AI Connection...</strong>
+            <span class="ai-status mock" id="ai-status-badge" style="display:inline-flex; vertical-align:middle; margin-left:0.5rem;"><span class="dot"></span>Connecting...</span>
+          </div>
         </div>
+
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
           <div>
-            <h1 style="font-size:1.5rem; font-weight:800;">&#129302; AI Education Assistant</h1>
-            <p style="color:var(--text-secondary); font-size:0.875rem;">Ask questions about your course content. Answers are grounded in available course materials.</p>
+            <h1 style="font-size:1.5rem; font-weight:800; display:flex; align-items:center; gap:0.5rem;">
+              <span>&#129302;</span> AI Education Assistant
+            </h1>
+            <p style="color:var(--text-secondary); font-size:0.875rem;">
+              Universal STEM &amp; course assistant. Ask math, physics, coding, exam prep, or follow-up questions.
+            </p>
           </div>
-          <div style="display:flex; gap:0.75rem; align-items:center;">
-            <select class="form-select" id="course-select" style="width:auto; padding:0.5rem 1rem;">
-              <option value="all">All Courses</option>
+          <div style="display:flex; gap:0.6rem; align-items:center; flex-wrap:wrap;">
+            <select class="form-select" id="course-select" style="width:auto; padding:0.5rem 0.85rem; font-size:0.82rem;" title="Select course for syllabus context">
+              <option value="all">All Courses / Open AI</option>
               <option value="c-001">Data Structures (CS201)</option>
               <option value="c-002">Calculus II (MA202)</option>
               <option value="c-003">Physics Mechanics (PH101)</option>
+              <option value="c-004">Introduction to AI (CS301)</option>
             </select>
-            <button class="btn btn-ghost btn-sm" id="clear-chat-btn">Clear Chat</button>
+            
+            <label style="display:inline-flex; align-items:center; gap:0.4rem; font-size:0.8rem; color:var(--text-secondary); cursor:pointer; user-select:none; background:rgba(255,255,255,0.04); padding:0.45rem 0.75rem; border-radius:8px; border:1px solid rgba(255,255,255,0.08);" title="When active, restricts answers strictly to the selected course syllabus">
+              <input type="checkbox" id="course-only-mode" style="accent-color:var(--purple-primary); cursor:pointer;" />
+              <span>Course-Only Focus</span>
+            </label>
+
+            <button class="btn btn-ghost btn-sm" id="clear-chat-btn" title="Start a fresh conversation" style="font-size:0.8rem;">
+              &#10227; New Chat
+            </button>
           </div>
         </div>
       </div>
 
       <!-- CHAT CONTAINER -->
-      <div class="card chat-container" style="flex:1; padding:0; overflow:hidden; margin-bottom:1rem;">
-        <div class="chat-messages" id="chat-messages">
+      <div class="card chat-container" style="flex:1; padding:0; overflow:hidden; margin-bottom:1rem; display:flex; flex-direction:column;">
+        <div class="chat-messages" id="chat-messages" style="flex:1; overflow-y:auto;">
           <!-- Welcome message -->
           <div class="chat-message assistant">
             <div class="chat-bubble">
-              Hello! I'm your EduFAZE AI Education Assistant. I can help you with:<br><br>
-              &#128218; Course-specific questions and explanations<br>
-              &#128203; Step-by-step problem solving<br>
-              &#127775; Practice questions and revision<br>
-              &#128279; References to course materials<br><br>
-              <strong>Note:</strong> In demo mode, responses are rule-based. For live AI, configure a Gemini API key in settings.
+              <p><strong>Hello! I'm your EduFAZE AI Education Assistant.</strong></p>
+              <p>I operate like ChatGPT for your studies and can answer any student questions:</p>
+              <ul>
+                <li>&#128221; <strong>STEM Concepts:</strong> Mathematics, calculus, physics mechanics, chemistry, and engineering</li>
+                <li>&#129518; <strong>Step-by-step Problem Solving:</strong> Clear proofs, algebraic steps, formula derivations, and worked examples</li>
+                <li>&#128187; <strong>Coding &amp; Debugging:</strong> Python, C++, Java, JavaScript, algorithms, data structures, and syntax bug fixes</li>
+                <li>&#127919; <strong>Exam Prep &amp; Revision:</strong> Custom practice questions, concept summaries, diagnostic reviews, and study guides</li>
+                <li>&#128218; <strong>Course Syllabus Grounding:</strong> Connects to your enrolled courses (CS201, MA202, PH101, CS301) or answers general topics</li>
+              </ul>
+              <p id="welcome-status-hint" style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0;">
+                Checking live Google Gemini connection status...
+              </p>
             </div>
-            <div class="chat-source">EduFAZE AI Assistant &middot; Demo Mode &middot; Mock response</div>
+            <div class="chat-source" id="welcome-chat-source">EduFAZE AI Assistant &middot; Google Gemini</div>
           </div>
 
           <!-- Suggested questions -->
           <div class="chat-message assistant" id="suggestions-msg">
-            <div class="chat-bubble" style="background:transparent; border:none; padding:0.5rem 0;">
+            <div class="chat-bubble" style="background:transparent; border:none; padding:0.25rem 0;">
               <div style="font-size:0.78rem; color:var(--text-muted); margin-bottom:0.5rem;">Try asking:</div>
               <div style="display:flex; flex-wrap:wrap; gap:0.5rem;" id="suggestion-chips">
-                <button class="btn btn-ghost btn-sm suggestion-chip">Explain sorting algorithms</button>
-                <button class="btn btn-ghost btn-sm suggestion-chip">What is integration?</button>
-                <button class="btn btn-ghost btn-sm suggestion-chip">Give me practice on graphs</button>
-                <button class="btn btn-ghost btn-sm suggestion-chip">I scored low on Calculus Quiz</button>
+                <button class="btn btn-ghost btn-sm suggestion-chip">Explain integration by parts with an example</button>
+                <button class="btn btn-ghost btn-sm suggestion-chip">Solve 2x + 5 = 15 step by step</button>
+                <button class="btn btn-ghost btn-sm suggestion-chip">Write a Python program to check whether a number is prime</button>
+                <button class="btn btn-ghost btn-sm suggestion-chip">Explain this code and find its errors</button>
+                <button class="btn btn-ghost btn-sm suggestion-chip">What is machine learning?</button>
+                <button class="btn btn-ghost btn-sm suggestion-chip">Give me five practice questions on data structures</button>
               </div>
             </div>
           </div>
@@ -114,15 +146,15 @@
           <textarea
             class="chat-input"
             id="chat-input"
-            placeholder="Ask about your course content, request explanations, or get practice questions..."
+            placeholder="Ask anything... (e.g., solve an equation, explain a concept, debug code, or practice questions)"
             rows="1"
             aria-label="Ask a question"
           ></textarea>
-          <button class="chat-send" id="chat-send-btn" aria-label="Send message">&#8594;</button>
+          <button class="chat-send" id="chat-send-btn" aria-label="Send message" title="Send (Enter)">&#8594;</button>
         </div>
-        <div class="chat-ai-label">
+        <div class="chat-ai-label" id="chat-ai-footer-label">
           <span>&#129302;</span>
-          <span>EduFAZE AI Assistant &middot; <span class="ai-status mock" style="display:inline-flex;"><span class="dot"></span>Demo — Mock responses only</span></span>
+          <span id="footer-status-text">EduFAZE AI Assistant &middot; Initializing...</span>
         </div>
       </div>
     </main>
@@ -130,141 +162,421 @@
 
   <script src="../js/app.js"></script>
   <script>
+    // Global copy code helper
+    function copyCode(btn) {
+      try {
+        const wrapper = btn.closest('.chat-code-block');
+        const codeEl = wrapper ? wrapper.querySelector('pre code') : null;
+        if (!codeEl) return;
+        const text = codeEl.innerText;
+        navigator.clipboard.writeText(text).then(() => {
+          const original = btn.innerHTML;
+          btn.innerHTML = '&#10003; Copied!';
+          btn.style.color = '#34d399';
+          setTimeout(() => {
+            btn.innerHTML = original;
+            btn.style.color = '';
+          }, 2000);
+        });
+      } catch (err) {
+        console.error('Clipboard copy error:', err);
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       const { $ } = EduFAZE;
       const messagesEl = $('chat-messages');
       const inputEl = $('chat-input');
       const sendBtn = $('chat-send-btn');
       const courseSelect = $('course-select');
+      const courseOnlyModeEl = $('course-only-mode');
+      const bannerEl = $('ai-status-banner');
+      const bannerIcon = $('ai-status-icon');
+      const bannerText = $('ai-status-text');
+      const footerStatusText = $('footer-status-text');
+      const welcomeStatusHint = $('welcome-status-hint');
 
-      // Rule-based AI knowledge base (demo)
-      const knowledgeBase = [
-        {
-          keywords: ['sorting', 'quicksort', 'mergesort', 'bubble sort', 'algorithm'],
-          response: `**Sorting Algorithms** (CS201 — Data Structures)\n\nSorting algorithms arrange elements in a specific order. Key algorithms:\n\n**1. Bubble Sort** — O(n²) time, O(1) space. Repeatedly swaps adjacent elements. Good for teaching but inefficient.\n\n**2. Merge Sort** — O(n log n) time, O(n) space. Divides array, sorts halves, then merges. Stable sort.\n\n**3. Quick Sort** — O(n log n) average, O(n²) worst. Picks a pivot and partitions around it. In-place.\n\n📚 Source: CS201 Lecture Notes — Chapter 2\n\nWould you like a step-by-step example or practice questions?`,
-          source: 'CS201 Lecture Notes, Chapter 2'
-        },
-        {
-          keywords: ['integration', 'integral', 'calculus'],
-          response: `**Integration** (MA202 — Calculus II)\n\nIntegration is the reverse of differentiation — it finds the area under a curve.\n\n**Definite Integral:** ∫ₐᵇ f(x)dx gives the net area between f(x) and the x-axis from a to b.\n\n**Indefinite Integral:** ∫f(x)dx = F(x) + C, where F'(x) = f(x)\n\n**Key Rules:**\n- Power Rule: ∫xⁿdx = xⁿ⁺¹/(n+1) + C\n- Substitution: if u = g(x), ∫f(g(x))g'(x)dx = ∫f(u)du\n\n⚠️ Your Calculus Quiz score was 38/100. Focus on Integration Techniques for improvement.\n\n📚 Source: MA202 Textbook — Chapter 3`,
-          source: 'MA202 Textbook, Chapter 3'
-        },
-        {
-          keywords: ['graph', 'traversal', 'bfs', 'dfs', 'breadth first', 'depth first'],
-          response: `**Graph Traversal** (CS201 — Data Structures)\n\nGraphs represent networks of nodes and edges. Two key traversal methods:\n\n**BFS (Breadth-First Search):**\n- Explores level by level\n- Uses a Queue\n- Good for shortest path\n- O(V + E) time\n\n**DFS (Depth-First Search):**\n- Explores as deep as possible before backtracking\n- Uses Stack (or recursion)\n- Good for topological sort, cycle detection\n- O(V + E) time\n\n📚 Source: CS201 Lecture Notes — Chapter 4`,
-          source: 'CS201 Lecture Notes, Chapter 4'
-        },
-        {
-          keywords: ['differentiation', 'derivative', 'differentiate'],
-          response: `**Differentiation** (MA202 — Calculus II)\n\nDifferentiation measures the rate of change of a function.\n\n**Key Rules:**\n- Power Rule: d/dx(xⁿ) = nxⁿ⁻¹\n- Product Rule: d/dx(uv) = u'v + uv'\n- Chain Rule: d/dx(f(g(x))) = f'(g(x))·g'(x)\n\n⚠️ Note: Differentiation is a prerequisite for Integration. Strengthening this may help your Calculus performance.\n\n📚 Source: MA202 Textbook — Chapter 2`,
-          source: 'MA202 Textbook, Chapter 2'
-        },
-        {
-          keywords: ['practice', 'question', 'quiz', 'exercise'],
-          response: `**Practice Questions**\n\nHere are some practice questions based on your current gaps:\n\n**Data Structures:**\n1. What is the worst-case time complexity of QuickSort and when does it occur?\n2. Write pseudocode for BFS traversal of a graph.\n3. What data structure would you use to detect a cycle in a linked list?\n\n**Calculus:**\n1. Find ∫(3x² + 2x - 1)dx\n2. Apply the chain rule to find d/dx(sin(x²))\n3. Evaluate ∫₀¹ xdx using the power rule.\n\n💡 Tip: Try these on paper first, then check with your textbook.\n\n📚 Source: Practice Bank — CS201 & MA202`,
-          source: 'EduFAZE Practice Question Bank'
-        },
-        {
-          keywords: ['low score', 'failed', 'struggling', 'bad result', 'scored low', 'poor'],
-          response: `I can see from your records that you've had some challenging assessments recently.\n\n**Your recent scores:**\n- DS Diagnostic Test: 42/100 — Sorting & Graph topics flagged\n- Calculus Quiz 1: 38/100 — Integration & Differentiation flagged\n\n**Recommended next steps:**\n1. &#128269; Review your identified learning gaps (2 open)\n2. &#127919; Start the Sorting Algorithms Revision Module (~45 min)\n3. &#127919; Complete Integration Fundamentals Practice Set (~30 min)\n4. &#129302; Ask me to explain any specific concept\n\nRemember: low scores are information, not failure. They show us exactly where to focus. &#128200;`,
-          source: 'Your Assessment Records (Demo Data)'
-        }
-      ];
+      // Conversation history state for multi-turn chat
+      let conversationHistory = [];
+      let isProcessing = false;
+      let lastFailedQuery = null;
 
-      function findResponse(query) {
-        const q = query.toLowerCase();
-        for (const item of knowledgeBase) {
-          if (item.keywords.some(k => q.includes(k))) {
-            return item;
+      // Read active session key if configured in Settings
+      function getActiveKey() {
+        return (sessionStorage.getItem('edufaze_ai_key') || '').trim();
+      }
+
+      // Check live AI backend status
+      async function checkAiStatus() {
+        try {
+          const headers = {};
+          const sessionKey = getActiveKey();
+          if (sessionKey) {
+            headers['x-gemini-key'] = sessionKey;
           }
+
+          const res = await fetch('/api/status', { headers });
+          if (!res.ok) throw new Error('Status endpoint returned HTTP ' + res.status);
+          const data = await res.json();
+
+          if (data.connected) {
+            bannerEl.style.background = 'rgba(16, 185, 129, 0.08)';
+            bannerEl.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+            bannerIcon.innerHTML = '&#9889;';
+            bannerText.innerHTML = `<strong>AI Assistant Connected</strong> &mdash; Powered by live Google Gemini (<code>${data.model}</code>). Dynamic reasoning &amp; multi-turn context enabled. <span class="ai-status live" style="display:inline-flex; vertical-align:middle; margin-left:0.5rem;"><span class="dot"></span>Live AI Active</span>`;
+            
+            footerStatusText.innerHTML = `EduFAZE AI Assistant &middot; <span class="ai-status live" style="display:inline-flex;"><span class="dot"></span>Live Gemini Connected (${data.model})</span>`;
+            if (welcomeStatusHint) {
+              welcomeStatusHint.innerHTML = `&#9989; <strong>Live AI Connected:</strong> Ready for questions on mathematics, physics, programming, and course syllabi.`;
+              welcomeStatusHint.style.color = '#34d399';
+            }
+          } else {
+            bannerEl.style.background = 'rgba(245, 158, 11, 0.08)';
+            bannerEl.style.border = '1px solid rgba(245, 158, 11, 0.3)';
+            bannerIcon.innerHTML = '&#9888;';
+            bannerText.innerHTML = `<strong>AI Not Connected</strong> &mdash; Google Gemini API key is missing. <a href="settings.html" style="color:var(--purple-light); text-decoration:underline; font-weight:600; margin-left:0.5rem;">Configure in Settings &rarr;</a> or set <code>GEMINI_API_KEY</code> in <code>.env</code>. <span class="ai-status mock" style="display:inline-flex; vertical-align:middle; margin-left:0.5rem;"><span class="dot" style="background:#f87171;"></span>AI Not Connected</span>`;
+            
+            footerStatusText.innerHTML = `EduFAZE AI Assistant &middot; <span class="ai-status mock" style="display:inline-flex;"><span class="dot" style="background:#f87171;"></span>AI Not Connected</span>`;
+            if (welcomeStatusHint) {
+              welcomeStatusHint.innerHTML = `&#9888; <strong>API Key Required:</strong> To enable dynamic AI responses, configure your Gemini API key in <a href="settings.html" style="color:var(--purple-light); text-decoration:underline;">Settings</a>.`;
+              welcomeStatusHint.style.color = '#fbbf24';
+            }
+          }
+        } catch (err) {
+          console.warn('[AI Status Check]', err.message);
+          bannerEl.style.background = 'rgba(239, 68, 68, 0.08)';
+          bannerEl.style.border = '1px solid rgba(239, 68, 68, 0.25)';
+          bannerIcon.innerHTML = '&#9888;';
+          bannerText.innerHTML = `<strong>Backend Offline or Unreachable</strong> &mdash; Could not connect to <code>/api/status</code>. Verify local server is running. <span class="ai-status offline" style="display:inline-flex; vertical-align:middle; margin-left:0.5rem;"><span class="dot"></span>Offline</span>`;
+          footerStatusText.innerHTML = `EduFAZE AI Assistant &middot; <span class="ai-status offline" style="display:inline-flex;"><span class="dot"></span>Backend Offline</span>`;
         }
-        return null;
       }
 
+      // Escape HTML entities to prevent XSS
+      function escapeHtml(str) {
+        return (str || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      // Comprehensive Markdown formatter with Code Block Copy
       function markdownToHtml(text) {
-        return text
-          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-          .replace(/\n\n/g, '</p><p>')
-          .replace(/\n/g, '<br>');
+        if (!text) return '';
+
+        // 1. Extract code blocks first to protect code contents
+        const codeBlocks = [];
+        let parsed = text.replace(/```([a-zA-Z0-9_\-+]*)\n([\s\S]*?)```/g, (match, lang, code) => {
+          const index = codeBlocks.length;
+          const cleanLang = lang.trim() || 'code';
+          const safeCode = escapeHtml(code.replace(/\r\n/g, '\n').replace(/\n$/, ''));
+          codeBlocks.push(`
+            <div class="chat-code-block">
+              <div class="chat-code-header">
+                <span>${cleanLang}</span>
+                <button type="button" class="chat-code-copy-btn" onclick="copyCode(this)">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  Copy
+                </button>
+              </div>
+              <pre><code class="language-${cleanLang}">${safeCode}</code></pre>
+            </div>
+          `);
+          return `__CODE_BLOCK_${index}__`;
+        });
+
+        // 2. Inline code
+        parsed = parsed.replace(/`([^`]+)`/g, (m, code) => `<code class="inline-code">${escapeHtml(code)}</code>`);
+
+        // 3. Headers
+        parsed = parsed.replace(/^### (.*$)/gim, '<h4>$1</h4>');
+        parsed = parsed.replace(/^## (.*$)/gim, '<h3>$1</h3>');
+        parsed = parsed.replace(/^# (.*$)/gim, '<h2>$1</h2>');
+
+        // 4. Bold and Italic
+        parsed = parsed.replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>');
+        parsed = parsed.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        parsed = parsed.replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+        // 5. Blockquotes
+        parsed = parsed.replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>');
+
+        // 6. Lists (unordered)
+        parsed = parsed.replace(/^\s*[-*]\s+(.*)$/gim, '<li>$1</li>');
+        parsed = parsed.replace(/(<li>.*<\/li>)/gims, (m) => {
+          if (!m.startsWith('<ul>')) return `<ul>${m}</ul>`;
+          return m;
+        });
+
+        // 7. Lists (ordered)
+        parsed = parsed.replace(/^\s*(\d+)\.\s+(.*)$/gim, '<li value="$1">$2</li>');
+
+        // 8. Paragraphs & line breaks
+        const paragraphs = parsed.split(/\n\n+/);
+        parsed = paragraphs.map(p => {
+          p = p.trim();
+          if (!p) return '';
+          if (p.startsWith('__CODE_BLOCK_') || p.startsWith('<h') || p.startsWith('<ul>') || p.startsWith('<blockquote>')) {
+            return p;
+          }
+          return `<p>${p.replace(/\n/g, '<br>')}</p>`;
+        }).join('');
+
+        // 9. Reinsert code blocks
+        codeBlocks.forEach((blockHtml, i) => {
+          parsed = parsed.replace(new RegExp(`__CODE_BLOCK_${i}__`, 'g'), blockHtml);
+        });
+
+        return parsed;
       }
 
-      function addMessage(role, text, source = null) {
+      // Add a message bubble to the chat
+      function addMessage(role, text, source = null, isError = false) {
         const div = document.createElement('div');
         div.className = `chat-message ${role}`;
+        
         const bubble = document.createElement('div');
         bubble.className = 'chat-bubble';
-        bubble.innerHTML = `<p>${markdownToHtml(text)}</p>`;
+
+        if (role === 'user') {
+          bubble.textContent = text;
+        } else {
+          bubble.innerHTML = markdownToHtml(text);
+        }
         div.appendChild(bubble);
-        if (source && role === 'assistant') {
+
+        if (source && role === 'assistant' && !isError) {
           const src = document.createElement('div');
           src.className = 'chat-source';
-          src.textContent = `&#128218; Source: ${source} · Demo Mode · Mock response`;
+          src.innerHTML = source;
           div.appendChild(src);
         }
+
         messagesEl.appendChild(div);
         messagesEl.scrollTop = messagesEl.scrollHeight;
         return div;
       }
 
-      async function handleSend() {
-        const query = inputEl.value.trim();
-        if (!query) return;
+      // Add an interactive error message with Retry button
+      function addErrorMessage(errorTitle, errorDetails, setupInstructions = null) {
+        const div = document.createElement('div');
+        div.className = 'chat-message assistant';
 
-        // Hide suggestions
+        let setupHtml = '';
+        if (setupInstructions && Array.isArray(setupInstructions)) {
+          setupHtml = `
+            <div style="margin-top:0.75rem; padding:0.6rem 0.85rem; background:rgba(0,0,0,0.3); border-radius:6px; font-size:0.78rem;">
+              <strong style="color:#fde047;">How to Fix:</strong>
+              <ol style="margin:0.4rem 0 0 1.2rem; padding:0; line-height:1.5;">
+                ${setupInstructions.map(step => `<li>${escapeHtml(step)}</li>`).join('')}
+              </ol>
+            </div>
+          `;
+        }
+
+        div.innerHTML = `
+          <div class="chat-bubble" style="border:1px solid rgba(239,68,68,0.4); background:rgba(239,68,68,0.08);">
+            <div style="display:flex; align-items:center; gap:0.5rem; font-weight:700; color:#f87171; margin-bottom:0.4rem;">
+              <span>&#9888;</span> ${escapeHtml(errorTitle)}
+            </div>
+            <p style="margin:0; font-size:0.85rem; color:#fca5a5;">${escapeHtml(errorDetails)}</p>
+            ${setupHtml}
+            <div class="chat-error-actions">
+              ${lastFailedQuery ? `<button class="btn btn-purple btn-sm" id="chat-retry-btn" style="padding:0.35rem 0.85rem; font-size:0.78rem;">&#8635; Retry Question</button>` : ''}
+              <a href="settings.html" class="btn btn-ghost btn-sm" style="padding:0.35rem 0.85rem; font-size:0.78rem; text-decoration:none;">Open AI Settings &rarr;</a>
+            </div>
+          </div>
+          <div class="chat-source" style="color:#f87171;">System Error &middot; No mock simulation displayed</div>
+        `;
+
+        messagesEl.appendChild(div);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+
+        const retryBtn = div.querySelector('#chat-retry-btn');
+        if (retryBtn) {
+          retryBtn.addEventListener('click', () => {
+            div.remove();
+            if (lastFailedQuery) {
+              const q = lastFailedQuery;
+              lastFailedQuery = null;
+              executeChatRequest(q);
+            }
+          });
+        }
+      }
+
+      // Show animated typing indicator
+      function showTypingIndicator() {
+        const div = document.createElement('div');
+        div.className = 'chat-message assistant';
+        div.id = 'active-typing-indicator';
+        div.innerHTML = `
+          <div class="chat-bubble" style="display:inline-flex; gap:8px; align-items:center; padding:0.75rem 1.15rem;">
+            <div style="font-size:0.82rem; color:var(--purple-light); font-weight:600;">EduFAZE AI is thinking</div>
+            <div style="display:flex; gap:5px; align-items:center;">
+              <div style="width:6px;height:6px;border-radius:50%;background:var(--purple-light);animation:pulse-dot 1s infinite;"></div>
+              <div style="width:6px;height:6px;border-radius:50%;background:var(--purple-light);animation:pulse-dot 1s 0.2s infinite;"></div>
+              <div style="width:6px;height:6px;border-radius:50%;background:var(--purple-light);animation:pulse-dot 1s 0.4s infinite;"></div>
+            </div>
+          </div>
+        `;
+        messagesEl.appendChild(div);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+        return div;
+      }
+
+      // Core send logic
+      async function executeChatRequest(query) {
+        if (!query || isProcessing) return;
+
+        // Hide suggestions once user starts chatting
         const sugg = $('suggestions-msg');
         if (sugg) sugg.style.display = 'none';
 
+        // Add user message
         addMessage('user', query);
         inputEl.value = '';
         inputEl.style.height = 'auto';
 
-        // Show typing indicator
-        const typingDiv = document.createElement('div');
-        typingDiv.className = 'chat-message assistant';
-        typingDiv.innerHTML = '<div class="chat-bubble" style="display:flex; gap:6px; align-items:center;"><div style="width:6px;height:6px;border-radius:50%;background:var(--purple-primary);animation:pulse-dot 1s infinite;"></div><div style="width:6px;height:6px;border-radius:50%;background:var(--purple-primary);animation:pulse-dot 1s 0.2s infinite;"></div><div style="width:6px;height:6px;border-radius:50%;background:var(--purple-primary);animation:pulse-dot 1s 0.4s infinite;"></div></div>';
-        messagesEl.appendChild(typingDiv);
-        messagesEl.scrollTop = messagesEl.scrollHeight;
+        // Lock interface to prevent duplicate submissions
+        isProcessing = true;
+        inputEl.disabled = true;
+        sendBtn.disabled = true;
+        sendBtn.style.opacity = '0.5';
 
-        // Simulate processing delay
-        await new Promise(r => setTimeout(r, 800 + Math.random() * 600));
-        typingDiv.remove();
+        const typingIndicator = showTypingIndicator();
 
-        const found = findResponse(query);
-        if (found) {
-          addMessage('assistant', found.response, found.source);
-        } else {
-          addMessage('assistant',
-            `I couldn't find specific course material matching your question: "${query}"\n\nI can help with topics covered in your enrolled courses. Try asking about:\n- Sorting algorithms or data structures\n- Integration or differentiation (Calculus)\n- Graph traversal\n- Practice questions\n\nFor answers grounded in your specific course materials, configure a Gemini API key in settings to enable live AI.`,
-            null
-          );
+        const selectedCourse = courseSelect.value;
+        const isCourseOnly = courseOnlyModeEl.checked;
+        const sessionKey = getActiveKey();
+
+        const headers = { 'Content-Type': 'application/json' };
+        if (sessionKey) {
+          headers['x-gemini-key'] = sessionKey;
+        }
+
+        try {
+          const res = await fetch('/api/chat', {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify({
+              message: query,
+              history: conversationHistory,
+              course: selectedCourse,
+              courseOnlyMode: isCourseOnly
+            })
+          });
+
+          typingIndicator.remove();
+
+          const data = await res.json().catch(() => ({}));
+
+          if (!res.ok) {
+            lastFailedQuery = query;
+            const errTitle = data.error || `HTTP ${res.status} Error`;
+            const errMsg = data.message || 'The server encountered an error while contacting Google Gemini.';
+            addErrorMessage(errTitle, errMsg, data.setupInstructions);
+            return;
+          }
+
+          // Build source label
+          let sourceLabel = `EduFAZE AI Assistant &middot; ${escapeHtml(data.provider || 'Google Gemini')} (${escapeHtml(data.model || 'gemini-1.5-flash')})`;
+          if (data.isCourseMaterial && data.courseContext) {
+            sourceLabel += ` &middot; &#128218; Grounded in ${escapeHtml(data.courseContext)} syllabus`;
+          } else if (data.courseContext) {
+            sourceLabel += ` &middot; General AI Knowledge`;
+          }
+
+          // Render assistant response
+          addMessage('assistant', data.response, sourceLabel);
+
+          // Update multi-turn history
+          conversationHistory.push({ role: 'user', content: query });
+          conversationHistory.push({ role: 'assistant', content: data.response });
+
+          // Keep history bounded to recent turns
+          if (conversationHistory.length > 20) {
+            conversationHistory = conversationHistory.slice(-20);
+          }
+
+          lastFailedQuery = null;
+
+        } catch (netErr) {
+          typingIndicator.remove();
+          lastFailedQuery = query;
+          addErrorMessage('Network Connection Error', 'Unable to reach EduFAZE AI backend at /api/chat. Please check your network connection or ensure the local server is running.');
+        } finally {
+          isProcessing = false;
+          inputEl.disabled = false;
+          sendBtn.disabled = false;
+          sendBtn.style.opacity = '1';
+          inputEl.focus();
+        }
+      }
+
+      function handleSend() {
+        const query = inputEl.value.trim();
+        if (query) {
+          executeChatRequest(query);
         }
       }
 
       sendBtn.addEventListener('click', handleSend);
+
       inputEl.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          handleSend();
+        }
       });
+
       // Auto-resize textarea
       inputEl.addEventListener('input', () => {
         inputEl.style.height = 'auto';
-        inputEl.style.height = Math.min(inputEl.scrollHeight, 120) + 'px';
+        inputEl.style.height = Math.min(inputEl.scrollHeight, 140) + 'px';
       });
 
       // Suggestion chips
       document.querySelectorAll('.suggestion-chip').forEach(chip => {
         chip.addEventListener('click', () => {
-          inputEl.value = chip.textContent.trim();
-          handleSend();
+          const text = chip.textContent.trim();
+          executeChatRequest(text);
         });
       });
 
-      // Clear chat
+      // Clear / New Chat
       $('clear-chat-btn').addEventListener('click', () => {
-        if (confirm('Clear all chat messages?')) {
-          messagesEl.innerHTML = '';
-          addMessage('assistant', 'Chat cleared. Ask me anything about your course content!');
+        if (conversationHistory.length > 0) {
+          if (!confirm('Start a fresh chat? Previous conversation context will be cleared.')) {
+            return;
+          }
+        }
+        conversationHistory = [];
+        lastFailedQuery = null;
+        messagesEl.innerHTML = '';
+        addMessage(
+          'assistant',
+          '**New Chat Started.** Ask me anything across your courses, STEM subjects, coding, or exam prep!'
+        );
+        const sugg = $('suggestions-msg');
+        if (sugg) {
+          sugg.style.display = 'block';
+          messagesEl.appendChild(sugg);
         }
       });
+
+      // Course select change feedback
+      courseSelect.addEventListener('change', () => {
+        const courseName = courseSelect.options[courseSelect.selectedIndex].text;
+        if (courseSelect.value !== 'all') {
+          console.log(`[AI Assistant] Course context switched to: ${courseName}`);
+        }
+      });
+
+      // Run initial status check
+      checkAiStatus();
     });
   </script>
 </body>

@@ -141,7 +141,11 @@
           </div>
         </div>
 
-        <button class="btn btn-purple btn-sm" onclick="saveAiSettings()">Save AI Configuration</button>
+        <div style="display:flex; gap:0.75rem; align-items:center;">
+          <button class="btn btn-purple btn-sm" onclick="saveAiSettings()">Save AI Configuration</button>
+          <button class="btn btn-ghost btn-sm" onclick="testAiConnection()">Test Connection</button>
+          <span id="ai-save-feedback" style="font-size:0.78rem; font-weight:600; margin-left:0.5rem;"></span>
+        </div>
       </div>
 
       <!-- RISK THRESHOLD CONFIGURATION (PHASE 5: MODULE 3) -->
@@ -190,18 +194,91 @@
 
   <script src="../js/app.js"></script>
   <script>
-    function saveAiSettings() {
+    document.addEventListener('DOMContentLoaded', () => {
+      const savedProvider = sessionStorage.getItem('edufaze_ai_provider') || 'gemini';
+      const savedKey = sessionStorage.getItem('edufaze_ai_key') || '';
+      
+      const providerSelect = document.getElementById('ai-provider-select');
+      const keyInput = document.getElementById('ai-api-key');
+
+      if (providerSelect) providerSelect.value = savedProvider;
+      if (keyInput && savedKey) keyInput.value = savedKey;
+
+      checkActiveStatus();
+    });
+
+    async function checkActiveStatus() {
+      const statusPill = document.getElementById('ai-active-status');
+      const key = (document.getElementById('ai-api-key').value || sessionStorage.getItem('edufaze_ai_key') || '').trim();
+      
+      try {
+        const headers = key ? { 'x-gemini-key': key } : {};
+        const res = await fetch('/api/status', { headers });
+        const data = await res.json();
+        
+        if (data.connected) {
+          statusPill.className = 'ai-status live';
+          statusPill.innerHTML = `<span class="dot"></span> Live Gemini Active (${data.model})`;
+        } else {
+          statusPill.className = 'ai-status mock';
+          statusPill.innerHTML = `<span class="dot"></span> No Key Configured`;
+        }
+      } catch (e) {
+        statusPill.className = 'ai-status offline';
+        statusPill.innerHTML = `<span class="dot"></span> Offline`;
+      }
+    }
+
+    async function saveAiSettings() {
       const provider = document.getElementById('ai-provider-select').value;
-      const key = document.getElementById('ai-api-key').value;
+      const key = document.getElementById('ai-api-key').value.trim();
+      const feedback = document.getElementById('ai-save-feedback');
+
       sessionStorage.setItem('edufaze_ai_provider', provider);
-      if (key) sessionStorage.setItem('edufaze_ai_key', key);
-      alert('AI Configuration saved successfully! Active engine: ' + provider);
+      if (key) {
+        sessionStorage.setItem('edufaze_ai_key', key);
+      } else {
+        sessionStorage.removeItem('edufaze_ai_key');
+      }
+
+      feedback.style.color = '#34d399';
+      feedback.textContent = 'Configuration saved! Checking connection...';
+      
+      await checkActiveStatus();
+      
+      setTimeout(() => {
+        feedback.textContent = 'Settings saved to session!';
+      }, 1500);
+    }
+
+    async function testAiConnection() {
+      const feedback = document.getElementById('ai-save-feedback');
+      const key = document.getElementById('ai-api-key').value.trim();
+      
+      feedback.style.color = 'var(--purple-light)';
+      feedback.textContent = 'Testing connection to Google Gemini...';
+
+      try {
+        const headers = key ? { 'x-gemini-key': key } : {};
+        const res = await fetch('/api/status', { headers });
+        const data = await res.json();
+        
+        if (data.connected) {
+          feedback.style.color = '#34d399';
+          feedback.textContent = `Connected! Provider: ${data.provider} (${data.model})`;
+        } else {
+          feedback.style.color = '#f87171';
+          feedback.textContent = 'API Key is missing or invalid. Please provide a valid key.';
+        }
+      } catch (err) {
+        feedback.style.color = '#f87171';
+        feedback.textContent = 'Failed to contact /api/status. Backend offline.';
+      }
     }
 
     function resetDemoStore() {
       if (confirm('Reset demo state back to default synthetic records?')) {
         sessionStorage.clear();
-        alert('Demo state reset. Reloading application...');
         window.location.href = '../index.html';
       }
     }

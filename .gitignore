@@ -16,3 +16,8 @@ Thumbs.db
 .system_generated/
 .gemini/
 scratch/
+# Environment variables
+.env
+.env*.local
+.env.production
+.env.development

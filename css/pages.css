@@ -529,6 +529,106 @@
   border-top: 1px solid rgba(255, 255, 255, 0.04);
 }
 
+/* AI Chat Rich Formatting & Code Blocks */
+.chat-bubble p { margin: 0 0 0.75rem 0; }
+.chat-bubble p:last-child { margin-bottom: 0; }
+.chat-bubble h1, .chat-bubble h2, .chat-bubble h3, .chat-bubble h4 {
+  margin: 1rem 0 0.4rem 0;
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.chat-bubble h1:first-child, .chat-bubble h2:first-child, .chat-bubble h3:first-child, .chat-bubble h4:first-child {
+  margin-top: 0;
+}
+.chat-bubble h3 { font-size: 1.05rem; }
+.chat-bubble h4 { font-size: 0.92rem; }
+.chat-bubble ul, .chat-bubble ol {
+  margin: 0.4rem 0 0.75rem 1.35rem;
+  padding: 0;
+}
+.chat-bubble li { margin-bottom: 0.3rem; }
+.chat-bubble code.inline-code {
+  background: rgba(255, 255, 255, 0.09);
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  font-family: 'Space Grotesk', 'Fira Code', Consolas, monospace;
+  font-size: 0.85em;
+  color: #38bdf8;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+.chat-code-block {
+  margin: 0.85rem 0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #090714;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+.chat-code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0.4rem 0.85rem;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-family: monospace;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.chat-code-copy-btn {
+  background: rgba(168, 85, 247, 0.15);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  color: var(--purple-light);
+  cursor: pointer;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border-radius: 4px;
+  padding: 2px 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s;
+}
+.chat-code-copy-btn:hover {
+  background: rgba(168, 85, 247, 0.3);
+  color: #fff;
+}
+.chat-code-block pre {
+  margin: 0;
+  padding: 0.85rem 1rem;
+  overflow-x: auto;
+  font-family: 'Fira Code', Consolas, Monaco, monospace;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: #f1f5f9;
+}
+.chat-bubble blockquote {
+  border-left: 3px solid var(--purple-primary);
+  margin: 0.75rem 0;
+  padding: 0.5rem 0.85rem;
+  background: rgba(168, 85, 247, 0.08);
+  border-radius: 0 6px 6px 0;
+  color: #e2e8f0;
+}
+.chat-error-card {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 0.5rem;
+  color: #fca5a5;
+}
+.chat-error-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+
 /* ---- Resource Booking ---- */
 .resource-card {
   background: rgba(19, 14, 38, 0.7);

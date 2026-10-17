@@ -1,0 +1,17 @@
+{
+  "name": "edufaze-ai",
+  "version": "1.0.0",
+  "description": "EduFAZE AI — Smart Education Intelligence Platform with live Gemini ChatGPT-style assistant",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "node validate.js"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
