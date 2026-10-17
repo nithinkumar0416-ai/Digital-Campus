@@ -146,6 +146,186 @@ Grounding Rules:
   return prompt;
 }
 
+// Model cache to prevent repeated ListModels requests
+const modelCache = new Map();
+
+function normalizeModel(name) {
+  if (!name) return 'gemini-1.5-flash';
+  return name.trim().replace(/^models\//, '');
+}
+
+/**
+ * Discover supported models for the API key via Google's ListModels API
+ */
+async function getSupportedModelsForApiKey(apiKey) {
+  const cacheKey = apiKey.slice(-10);
+  if (modelCache.has(cacheKey)) {
+    return modelCache.get(cacheKey);
+  }
+
+  try {
+    const listRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(apiKey)}`, {
+      method: 'GET',
+      headers: { 'Accept': 'application/json' }
+    });
+    if (listRes.ok) {
+      const data = await listRes.json();
+      const models = (data.models || [])
+        .filter(m => Array.isArray(m.supportedGenerationMethods) && m.supportedGenerationMethods.includes('generateContent'))
+        .map(m => m.name.replace(/^models\//, ''));
+      if (models.length > 0) {
+        modelCache.set(cacheKey, models);
+        return models;
+      }
+    }
+  } catch (e) {
+    // List models failed (offline or restricted), fallback to default list
+  }
+  return null;
+}
+
+/**
+ * Build prioritized model candidate list
+ */
+async function getModelCandidates(apiKey, preferredModel) {
+  const cleanPreferred = normalizeModel(preferredModel || 'gemini-1.5-flash');
+  const availableList = await getSupportedModelsForApiKey(apiKey);
+
+  if (availableList && availableList.length > 0) {
+    const candidates = [];
+    if (availableList.includes(cleanPreferred)) {
+      candidates.push(cleanPreferred);
+    }
+    const priority = [
+      'gemini-1.5-flash',
+      'gemini-1.5-flash-latest',
+      'gemini-1.5-flash-001',
+      'gemini-1.5-flash-002',
+      'gemini-2.0-flash',
+      'gemini-2.0-flash-exp',
+      'gemini-1.5-pro',
+      'gemini-1.5-pro-latest',
+      'gemini-pro'
+    ];
+    for (const p of priority) {
+      if (availableList.includes(p) && !candidates.includes(p)) {
+        candidates.push(p);
+      }
+    }
+    for (const m of availableList) {
+      if (!candidates.includes(m)) {
+        candidates.push(m);
+      }
+    }
+    return candidates;
+  }
+
+  // Fallback defaults
+  const defaults = [
+    cleanPreferred,
+    'gemini-1.5-flash-latest',
+    'gemini-1.5-flash',
+    'gemini-2.0-flash',
+    'gemini-1.5-flash-001',
+    'gemini-1.5-pro',
+    'gemini-pro'
+  ];
+  return Array.from(new Set(defaults));
+}
+
+/**
+ * Execute inference for a single model candidate using SDK then REST
+ */
+async function executeInferenceWithModel(modelName, apiKey, contents, systemInstruction) {
+  const cleanName = normalizeModel(modelName);
+  const isV15Plus = cleanName.includes('gemini-1.5') || cleanName.includes('gemini-2');
+
+  // Attempt 1: Official @google/generative-ai SDK
+  try {
+    const { GoogleGenerativeAI } = require('@google/generative-ai');
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const modelOptions = { model: cleanName };
+    if (isV15Plus && systemInstruction) {
+      modelOptions.systemInstruction = systemInstruction;
+    }
+    const model = genAI.getGenerativeModel(modelOptions);
+    const response = await model.generateContent({
+      contents: contents,
+      generationConfig: {
+        temperature: 0.7,
+        topP: 0.95,
+        topK: 40,
+        maxOutputTokens: 2048,
+      }
+    });
+    const result = await response.response;
+    const text = result.text();
+    if (text) return { text, model: cleanName };
+  } catch (sdkErr) {
+    const msg = sdkErr.message || '';
+    if (msg.includes('API_KEY_INVALID') || msg.toLowerCase().includes('api key not valid')) {
+      const err = new Error(msg);
+      err.status = 403;
+      throw err;
+    }
+    if (msg.includes('429') || msg.toLowerCase().includes('quota')) {
+      const err = new Error(msg);
+      err.status = 429;
+      throw err;
+    }
+    // Continue to REST or next candidate model
+  }
+
+  // Attempt 2: Direct REST fallback (v1beta then v1)
+  const apiVersions = ['v1beta', 'v1'];
+  for (const apiVer of apiVersions) {
+    const endpoint = `https://generativelanguage.googleapis.com/${apiVer}/models/${cleanName}:generateContent?key=${encodeURIComponent(apiKey)}`;
+    const payload = {
+      contents: contents,
+      generationConfig: {
+        temperature: 0.7,
+        topP: 0.95,
+        topK: 40,
+        maxOutputTokens: 2048
+      }
+    };
+    if (isV15Plus && systemInstruction && apiVer === 'v1beta') {
+      payload.system_instruction = { parts: [{ text: systemInstruction }] };
+    }
+
+    try {
+      const restRes = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (restRes.ok) {
+        const restJson = await restRes.json();
+        const text = restJson.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        if (text) return { text, model: cleanName };
+      } else {
+        const errJson = await restRes.json().catch(() => ({}));
+        const errMessage = errJson.error?.message || `HTTP ${restRes.status}`;
+        if (restRes.status === 400 && errMessage.includes('API_KEY_INVALID')) {
+          const err = new Error('INVALID_API_KEY: ' + errMessage);
+          err.status = 403;
+          throw err;
+        }
+        if (restRes.status === 429) {
+          const err = new Error('RATE_LIMIT_EXCEEDED: ' + errMessage);
+          err.status = 429;
+          throw err;
+        }
+      }
+    } catch (restErr) {
+      if (restErr.status === 403 || restErr.status === 429) throw restErr;
+    }
+  }
+
+  throw new Error(`Model ${cleanName} failed generateContent across SDK and REST.`);
+}
+
 /**
  * Primary chat handler
  */
@@ -165,7 +345,8 @@ async function handleChat(req, res) {
   if (req.method === 'GET') {
     const apiKey = (process.env.GEMINI_API_KEY || '').trim() || (req.headers['x-gemini-key'] || '').trim();
     const isConfigured = Boolean(apiKey && apiKey !== 'your_gemini_api_key_here');
-    const model = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
+    const rawModel = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
+    const model = normalizeModel(rawModel);
 
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
@@ -269,7 +450,6 @@ async function handleChat(req, res) {
     return;
   }
 
-  const modelName = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
   const systemInstruction = buildSystemInstruction(courseId, courseOnlyMode);
 
   // Format Multi-Turn Conversation for Gemini
@@ -295,84 +475,36 @@ async function handleChat(req, res) {
     parts: [{ text: message }]
   });
 
-  // Execute Gemini Inference
+  // Execute Gemini Inference across candidate models
   try {
+    const candidateModels = await getModelCandidates(apiKey, process.env.GEMINI_MODEL);
     let generatedText = '';
+    let winningModel = candidateModels[0];
+    let lastInferenceError = null;
 
-    // First attempt: Official @google/generative-ai SDK if available
-    try {
-      const { GoogleGenerativeAI } = require('@google/generative-ai');
-      const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({
-        model: modelName,
-        systemInstruction: systemInstruction
-      });
-
-      const response = await model.generateContent({
-        contents: contents,
-        generationConfig: {
-          temperature: 0.7,
-          topP: 0.95,
-          topK: 40,
-          maxOutputTokens: 2048,
+    for (const modelCandidate of candidateModels) {
+      try {
+        const result = await executeInferenceWithModel(modelCandidate, apiKey, contents, systemInstruction);
+        if (result && result.text) {
+          generatedText = result.text;
+          winningModel = result.model;
+          break;
         }
-      });
-
-      const result = await response.response;
-      generatedText = result.text();
-    } catch (sdkErr) {
-      // Direct REST Fallback (Dependency-free fallback using native fetch)
-      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${encodeURIComponent(apiKey)}`;
-      const payload = {
-        system_instruction: {
-          parts: [{ text: systemInstruction }]
-        },
-        contents: contents,
-        generationConfig: {
-          temperature: 0.7,
-          topP: 0.95,
-          topK: 40,
-          maxOutputTokens: 2048
+      } catch (err) {
+        lastInferenceError = err;
+        const errMsg = (err.message || '').toLowerCase();
+        if (err.status === 403 || errMsg.includes('api_key_invalid') || errMsg.includes('api key not valid')) {
+          break;
         }
-      };
-
-      const restRes = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      if (!restRes.ok) {
-        const errorData = await restRes.json().catch(() => ({}));
-        const errMessage = errorData.error?.message || `Google API returned status ${restRes.status}`;
-        if (restRes.status === 400 && errMessage.includes('API_KEY_INVALID')) {
-          res.statusCode = 403;
-          res.setHeader('Content-Type', 'application/json');
-          res.end(JSON.stringify({
-            error: 'INVALID_API_KEY',
-            message: 'The provided Gemini API key is invalid. Please check your key at https://aistudio.google.com/'
-          }));
-          return;
+        if (err.status === 429 || errMsg.includes('rate_limit') || errMsg.includes('quota')) {
+          break;
         }
-        if (restRes.status === 429) {
-          res.statusCode = 429;
-          res.setHeader('Content-Type', 'application/json');
-          res.end(JSON.stringify({
-            error: 'QUOTA_EXCEEDED',
-            message: 'Gemini free quota exceeded. Please wait a minute before sending another request.'
-          }));
-          return;
-        }
-        throw new Error(errMessage);
+        console.warn(`[Gemini Model Fallback] Model '${modelCandidate}' not available for this key. Trying next candidate...`);
       }
-
-      const restJson = await restRes.json();
-      const candidate = restJson.candidates?.[0];
-      generatedText = candidate?.content?.parts?.[0]?.text || '';
     }
 
     if (!generatedText) {
-      throw new Error('No text generated by Gemini.');
+      throw lastInferenceError || new Error('No compatible Gemini model found for this API key.');
     }
 
     const isCourseRelated = Boolean(courseId && courseId !== 'all' && COURSE_CURRICULA[courseId]);
@@ -382,7 +514,7 @@ async function handleChat(req, res) {
     res.end(JSON.stringify({
       status: 'success',
       response: generatedText,
-      model: modelName,
+      model: winningModel,
       provider: 'Google Gemini',
       courseContext: isCourseRelated ? COURSE_CURRICULA[courseId].name : null,
       isCourseMaterial: isCourseRelated

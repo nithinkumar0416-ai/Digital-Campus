@@ -44,7 +44,8 @@ module.exports = async function handler(req, res) {
   const headerKey = (req.headers['x-gemini-key'] || '').trim();
   const activeKey = serverKey || headerKey;
   const isConfigured = Boolean(activeKey && activeKey !== 'your_gemini_api_key_here');
-  const model = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
+  const rawModel = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
+  const model = rawModel.trim().replace(/^models\//, '');
 
   res.statusCode = 200;
   res.setHeader('Content-Type', 'application/json');
