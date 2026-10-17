@@ -7,6 +7,11 @@
 const fs = require('fs');
 const path = require('path');
 
+function sanitizeApiKey(key) {
+  if (!key || typeof key !== 'string') return '';
+  return key.trim().replace(/^["']|["']$/g, '').replace(/[\r\n\t]/g, '').trim();
+}
+
 // Auto-load .env file if present in project root
 (function loadEnv() {
   const envPath = path.join(process.cwd(), '.env');
@@ -18,8 +23,8 @@ const path = require('path');
         if (trimmed && !trimmed.startsWith('#') && trimmed.includes('=')) {
           const idx = trimmed.indexOf('=');
           const key = trimmed.substring(0, idx).trim();
-          const val = trimmed.substring(idx + 1).trim().replace(/^["']|["']$/g, '');
-          if (!process.env[key]) {
+          const val = sanitizeApiKey(trimmed.substring(idx + 1));
+          if (!process.env[key] && val) {
             process.env[key] = val;
           }
         }
@@ -150,7 +155,7 @@ Grounding Rules:
 const modelCache = new Map();
 
 function normalizeModel(name) {
-  if (!name) return 'gemini-1.5-flash';
+  if (!name) return 'gemini-2.5-flash';
   return name.trim().replace(/^models\//, '');
 }
 
@@ -158,13 +163,14 @@ function normalizeModel(name) {
  * Discover supported models for the API key via Google's ListModels API
  */
 async function getSupportedModelsForApiKey(apiKey) {
-  const cacheKey = apiKey.slice(-10);
+  const cleanKey = sanitizeApiKey(apiKey);
+  const cacheKey = cleanKey.slice(-10);
   if (modelCache.has(cacheKey)) {
     return modelCache.get(cacheKey);
   }
 
   try {
-    const listRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(apiKey)}`, {
+    const listRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(cleanKey)}`, {
       method: 'GET',
       headers: { 'Accept': 'application/json' }
     });
@@ -188,7 +194,7 @@ async function getSupportedModelsForApiKey(apiKey) {
  * Build prioritized model candidate list
  */
 async function getModelCandidates(apiKey, preferredModel) {
-  const cleanPreferred = normalizeModel(preferredModel || 'gemini-1.5-flash');
+  const cleanPreferred = normalizeModel(preferredModel || 'gemini-2.5-flash');
   const availableList = await getSupportedModelsForApiKey(apiKey);
 
   if (availableList && availableList.length > 0) {
@@ -197,14 +203,13 @@ async function getModelCandidates(apiKey, preferredModel) {
       candidates.push(cleanPreferred);
     }
     const priority = [
-      'gemini-1.5-flash',
-      'gemini-1.5-flash-latest',
-      'gemini-1.5-flash-001',
-      'gemini-1.5-flash-002',
+      'gemini-2.5-flash',
       'gemini-2.0-flash',
+      'gemini-1.5-flash-latest',
+      'gemini-1.5-flash',
       'gemini-2.0-flash-exp',
-      'gemini-1.5-pro',
       'gemini-1.5-pro-latest',
+      'gemini-1.5-pro',
       'gemini-pro'
     ];
     for (const p of priority) {
@@ -220,14 +225,14 @@ async function getModelCandidates(apiKey, preferredModel) {
     return candidates;
   }
 
-  // Fallback defaults
+  // Fallback defaults with currently active models first
   const defaults = [
     cleanPreferred,
+    'gemini-2.5-flash',
+    'gemini-2.0-flash',
     'gemini-1.5-flash-latest',
     'gemini-1.5-flash',
-    'gemini-2.0-flash',
-    'gemini-1.5-flash-001',
-    'gemini-1.5-pro',
+    'gemini-1.5-pro-latest',
     'gemini-pro'
   ];
   return Array.from(new Set(defaults));
@@ -237,13 +242,14 @@ async function getModelCandidates(apiKey, preferredModel) {
  * Execute inference for a single model candidate using SDK then REST
  */
 async function executeInferenceWithModel(modelName, apiKey, contents, systemInstruction) {
+  const cleanKey = sanitizeApiKey(apiKey);
   const cleanName = normalizeModel(modelName);
   const isV15Plus = cleanName.includes('gemini-1.5') || cleanName.includes('gemini-2');
 
   // Attempt 1: Official @google/generative-ai SDK
   try {
     const { GoogleGenerativeAI } = require('@google/generative-ai');
-    const genAI = new GoogleGenerativeAI(apiKey);
+    const genAI = new GoogleGenerativeAI(cleanKey);
     const modelOptions = { model: cleanName };
     if (isV15Plus && systemInstruction) {
       modelOptions.systemInstruction = systemInstruction;
@@ -279,7 +285,7 @@ async function executeInferenceWithModel(modelName, apiKey, contents, systemInst
   // Attempt 2: Direct REST fallback (v1beta then v1)
   const apiVersions = ['v1beta', 'v1'];
   for (const apiVer of apiVersions) {
-    const endpoint = `https://generativelanguage.googleapis.com/${apiVer}/models/${cleanName}:generateContent?key=${encodeURIComponent(apiKey)}`;
+    const endpoint = `https://generativelanguage.googleapis.com/${apiVer}/models/${cleanName}:generateContent?key=${encodeURIComponent(cleanKey)}`;
     const payload = {
       contents: contents,
       generationConfig: {
@@ -343,9 +349,11 @@ async function handleChat(req, res) {
 
   // Handle health/status checks via GET
   if (req.method === 'GET') {
-    const apiKey = (process.env.GEMINI_API_KEY || '').trim() || (req.headers['x-gemini-key'] || '').trim();
+    const serverKey = sanitizeApiKey(process.env.GEMINI_API_KEY);
+    const headerKey = sanitizeApiKey(req.headers['x-gemini-key']);
+    const apiKey = serverKey || headerKey;
     const isConfigured = Boolean(apiKey && apiKey !== 'your_gemini_api_key_here');
-    const rawModel = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
+    const rawModel = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
     const model = normalizeModel(rawModel);
 
     res.statusCode = 200;
@@ -432,7 +440,9 @@ async function handleChat(req, res) {
   }
 
   // API Key Resolution
-  const apiKey = (process.env.GEMINI_API_KEY || '').trim() || (req.headers['x-gemini-key'] || '').trim();
+  const serverKey = sanitizeApiKey(process.env.GEMINI_API_KEY);
+  const headerKey = sanitizeApiKey(req.headers['x-gemini-key']);
+  const apiKey = serverKey || headerKey;
 
   if (!apiKey || apiKey === 'your_gemini_api_key_here') {
     res.statusCode = 401;

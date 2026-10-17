@@ -6,6 +6,16 @@
 const fs = require('fs');
 const path = require('path');
 
+function sanitizeApiKey(key) {
+  if (!key || typeof key !== 'string') return '';
+  return key.trim().replace(/^["']|["']$/g, '').replace(/[\r\n\t]/g, '').trim();
+}
+
+function normalizeModel(name) {
+  if (!name) return 'gemini-2.5-flash';
+  return name.trim().replace(/^models\//, '');
+}
+
 // Auto-load .env file if present
 (function loadEnv() {
   const envPath = path.join(process.cwd(), '.env');
@@ -17,8 +27,8 @@ const path = require('path');
         if (trimmed && !trimmed.startsWith('#') && trimmed.includes('=')) {
           const idx = trimmed.indexOf('=');
           const key = trimmed.substring(0, idx).trim();
-          const val = trimmed.substring(idx + 1).trim().replace(/^["']|["']$/g, '');
-          if (!process.env[key]) {
+          const val = sanitizeApiKey(trimmed.substring(idx + 1));
+          if (!process.env[key] && val) {
             process.env[key] = val;
           }
         }
@@ -40,12 +50,12 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  const serverKey = (process.env.GEMINI_API_KEY || '').trim();
-  const headerKey = (req.headers['x-gemini-key'] || '').trim();
+  const serverKey = sanitizeApiKey(process.env.GEMINI_API_KEY);
+  const headerKey = sanitizeApiKey(req.headers['x-gemini-key']);
   const activeKey = serverKey || headerKey;
   const isConfigured = Boolean(activeKey && activeKey !== 'your_gemini_api_key_here');
-  const rawModel = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
-  const model = rawModel.trim().replace(/^models\//, '');
+  const rawModel = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+  const model = normalizeModel(rawModel);
 
   res.statusCode = 200;
   res.setHeader('Content-Type', 'application/json');

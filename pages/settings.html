@@ -194,9 +194,14 @@
 
   <script src="../js/app.js"></script>
   <script>
+    function sanitizeKey(k) {
+      if (!k || typeof k !== 'string') return '';
+      return k.trim().replace(/^["']|["']$/g, '').replace(/[\r\n\t]/g, '').trim();
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
-      const savedProvider = sessionStorage.getItem('edufaze_ai_provider') || 'gemini';
-      const savedKey = sessionStorage.getItem('edufaze_ai_key') || '';
+      const savedProvider = localStorage.getItem('edufaze_ai_provider') || sessionStorage.getItem('edufaze_ai_provider') || 'gemini';
+      const savedKey = sanitizeKey(localStorage.getItem('edufaze_ai_key') || sessionStorage.getItem('edufaze_ai_key') || '');
       
       const providerSelect = document.getElementById('ai-provider-select');
       const keyInput = document.getElementById('ai-api-key');
@@ -209,7 +214,8 @@
 
     async function checkActiveStatus() {
       const statusPill = document.getElementById('ai-active-status');
-      const key = (document.getElementById('ai-api-key').value || sessionStorage.getItem('edufaze_ai_key') || '').trim();
+      const rawInput = document.getElementById('ai-api-key').value;
+      const key = sanitizeKey(rawInput || localStorage.getItem('edufaze_ai_key') || sessionStorage.getItem('edufaze_ai_key') || '');
       
       try {
         const headers = key ? { 'x-gemini-key': key } : {};
@@ -231,13 +237,18 @@
 
     async function saveAiSettings() {
       const provider = document.getElementById('ai-provider-select').value;
-      const key = document.getElementById('ai-api-key').value.trim();
+      const rawKey = document.getElementById('ai-api-key').value;
+      const key = sanitizeKey(rawKey);
       const feedback = document.getElementById('ai-save-feedback');
 
+      localStorage.setItem('edufaze_ai_provider', provider);
       sessionStorage.setItem('edufaze_ai_provider', provider);
       if (key) {
+        localStorage.setItem('edufaze_ai_key', key);
         sessionStorage.setItem('edufaze_ai_key', key);
+        document.getElementById('ai-api-key').value = key;
       } else {
+        localStorage.removeItem('edufaze_ai_key');
         sessionStorage.removeItem('edufaze_ai_key');
       }
 
@@ -247,38 +258,63 @@
       await checkActiveStatus();
       
       setTimeout(() => {
-        feedback.textContent = 'Settings saved to session!';
+        feedback.textContent = 'Settings saved to browser session!';
       }, 1500);
     }
 
     async function testAiConnection() {
       const feedback = document.getElementById('ai-save-feedback');
-      const key = document.getElementById('ai-api-key').value.trim();
+      const rawKey = document.getElementById('ai-api-key').value;
+      const key = sanitizeKey(rawKey);
       
+      if (!key) {
+        feedback.style.color = '#f87171';
+        feedback.textContent = 'Please enter an API key first before testing.';
+        return;
+      }
+
       feedback.style.color = 'var(--purple-light)';
-      feedback.textContent = 'Testing connection to Google Gemini...';
+      feedback.textContent = 'Testing connection with Google Gemini...';
 
       try {
-        const headers = key ? { 'x-gemini-key': key } : {};
-        const res = await fetch('/api/status', { headers });
-        const data = await res.json();
-        
-        if (data.connected) {
+        // Send a minimal probe to /api/chat to verify key authorization
+        const chatRes = await fetch('/api/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-gemini-key': key
+          },
+          body: JSON.stringify({ message: 'Hello' })
+        });
+        const chatData = await chatRes.json().catch(() => ({}));
+
+        if (chatRes.ok) {
+          localStorage.setItem('edufaze_ai_key', key);
+          sessionStorage.setItem('edufaze_ai_key', key);
           feedback.style.color = '#34d399';
-          feedback.textContent = `Connected! Provider: ${data.provider} (${data.model})`;
-        } else {
+          feedback.textContent = `Connected! Google Gemini (${chatData.model || 'gemini-2.5-flash'}) is live.`;
+          await checkActiveStatus();
+        } else if (chatRes.status === 403 || chatData.error === 'INVALID_API_KEY') {
+          // Clear invalid key
+          localStorage.removeItem('edufaze_ai_key');
+          sessionStorage.removeItem('edufaze_ai_key');
           feedback.style.color = '#f87171';
-          feedback.textContent = 'API Key is missing or invalid. Please provide a valid key.';
+          feedback.textContent = 'API Key rejected: Invalid key. Key has been cleared. Please verify your key at Google AI Studio.';
+          await checkActiveStatus();
+        } else {
+          feedback.style.color = '#fbbf24';
+          feedback.textContent = `Key status: ${chatData.message || 'Error ' + chatRes.status}`;
         }
       } catch (err) {
         feedback.style.color = '#f87171';
-        feedback.textContent = 'Failed to contact /api/status. Backend offline.';
+        feedback.textContent = 'Failed to contact backend. Ensure local server is running.';
       }
     }
 
     function resetDemoStore() {
       if (confirm('Reset demo state back to default synthetic records?')) {
         sessionStorage.clear();
+        localStorage.removeItem('edufaze_ai_key');
         window.location.href = '../index.html';
       }
     }

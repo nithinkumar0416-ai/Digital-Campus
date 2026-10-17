@@ -71,6 +71,9 @@
             <strong>Checking AI Connection...</strong>
             <span class="ai-status mock" id="ai-status-badge" style="display:inline-flex; vertical-align:middle; margin-left:0.5rem;"><span class="dot"></span>Connecting...</span>
           </div>
+          <button class="btn btn-ghost btn-sm" id="banner-key-btn" style="font-size:0.75rem; padding:0.25rem 0.65rem; border-color:rgba(255,255,255,0.2);">
+            &#128273; Configure Key
+          </button>
         </div>
 
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
@@ -96,10 +99,42 @@
               <span>Course-Only Focus</span>
             </label>
 
+            <button class="btn btn-ghost btn-sm" id="toolbar-key-btn" title="Configure or change your Gemini API key" style="font-size:0.8rem;">
+              &#128273; API Key
+            </button>
+
             <button class="btn btn-ghost btn-sm" id="clear-chat-btn" title="Start a fresh conversation" style="font-size:0.8rem;">
               &#10227; New Chat
             </button>
           </div>
+        </div>
+      </div>
+
+      <!-- INLINE API KEY MODAL / DRAWER -->
+      <div id="key-modal-overlay" class="hidden" style="position:fixed; inset:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(8px); z-index:9999; display:flex; align-items:center; justify-content:center; padding:1.25rem;">
+        <div class="card" style="max-width:480px; width:100%; border:1px solid rgba(168,85,247,0.35); box-shadow:0 15px 50px rgba(0,0,0,0.85);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+            <h3 style="margin:0; font-size:1.15rem; display:flex; align-items:center; gap:0.5rem; color:#fff;">
+              <span>&#128273;</span> Google Gemini API Configuration
+            </h3>
+            <button class="btn btn-ghost btn-sm" id="close-key-modal" style="padding:0.2rem 0.5rem; font-size:1.1rem; line-height:1;">&times;</button>
+          </div>
+          <p style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:1rem; line-height:1.5;">
+            Enter your Google Gemini API key to enable live AI responses. Keys are saved to your browser's local session and sent securely to the server endpoint.
+          </p>
+          <div style="margin-bottom:1rem;">
+            <label style="display:block; font-size:0.75rem; color:var(--text-muted); margin-bottom:4px; font-weight:600;">Gemini API Key</label>
+            <input type="password" id="modal-key-input" placeholder="AIzaSy... (Paste key here)" style="width:100%; padding:0.65rem 0.85rem; background:rgba(15,12,27,0.9); border:1px solid rgba(255,255,255,0.18); border-radius:8px; color:white; font-size:0.85rem;" />
+            <span style="font-size:0.7rem; color:var(--text-muted); display:block; margin-top:4px;">Leading/trailing spaces or quotes are automatically removed.</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-top:1.25rem;">
+            <a href="https://aistudio.google.com/app/apikey" target="_blank" style="font-size:0.75rem; color:var(--purple-light); text-decoration:underline;">Get a free API key &rarr;</a>
+            <div style="display:flex; gap:0.5rem;">
+              <button class="btn btn-ghost btn-sm" id="modal-clear-key-btn" style="color:#f87171; border-color:rgba(239,68,68,0.3);">Clear Key</button>
+              <button class="btn btn-purple btn-sm" id="modal-save-key-btn">Save &amp; Connect</button>
+            </div>
+          </div>
+          <div id="modal-key-feedback" style="margin-top:0.75rem; font-size:0.78rem; font-weight:600;"></div>
         </div>
       </div>
 
@@ -196,15 +231,102 @@
       const footerStatusText = $('footer-status-text');
       const welcomeStatusHint = $('welcome-status-hint');
 
+      // Key modal elements
+      const keyModal = $('key-modal-overlay');
+      const modalInput = $('modal-key-input');
+      const modalFeedback = $('modal-key-feedback');
+
       // Conversation history state for multi-turn chat
       let conversationHistory = [];
       let isProcessing = false;
       let lastFailedQuery = null;
 
-      // Read active session key if configured in Settings
-      function getActiveKey() {
-        return (sessionStorage.getItem('edufaze_ai_key') || '').trim();
+      // Key sanitization function
+      function sanitizeKey(k) {
+        if (!k || typeof k !== 'string') return '';
+        return k.trim().replace(/^["']|["']$/g, '').replace(/[\r\n\t]/g, '').trim();
       }
+
+      // Read active key from localStorage or sessionStorage
+      function getActiveKey() {
+        const raw = localStorage.getItem('edufaze_ai_key') || sessionStorage.getItem('edufaze_ai_key') || '';
+        return sanitizeKey(raw);
+      }
+
+      // Store key in both localStorage and sessionStorage
+      function setActiveKey(rawKey) {
+        const clean = sanitizeKey(rawKey);
+        if (clean) {
+          localStorage.setItem('edufaze_ai_key', clean);
+          sessionStorage.setItem('edufaze_ai_key', clean);
+        } else {
+          clearActiveKey();
+        }
+        return clean;
+      }
+
+      // Clear invalid key
+      function clearActiveKey() {
+        localStorage.removeItem('edufaze_ai_key');
+        sessionStorage.removeItem('edufaze_ai_key');
+      }
+
+      // Modal management
+      function openKeyModal() {
+        if (!keyModal) return;
+        keyModal.classList.remove('hidden');
+        if (modalInput) {
+          modalInput.value = getActiveKey();
+          modalInput.focus();
+        }
+        if (modalFeedback) modalFeedback.textContent = '';
+      }
+
+      function closeKeyModal() {
+        if (keyModal) keyModal.classList.add('hidden');
+      }
+
+      $('toolbar-key-btn')?.addEventListener('click', openKeyModal);
+      $('banner-key-btn')?.addEventListener('click', openKeyModal);
+      $('close-key-modal')?.addEventListener('click', closeKeyModal);
+
+      $('modal-save-key-btn')?.addEventListener('click', async () => {
+        const val = modalInput?.value || '';
+        const clean = setActiveKey(val);
+        if (!clean) {
+          if (modalFeedback) {
+            modalFeedback.style.color = '#f87171';
+            modalFeedback.textContent = 'Please enter an API key.';
+          }
+          return;
+        }
+
+        if (modalFeedback) {
+          modalFeedback.style.color = 'var(--purple-light)';
+          modalFeedback.textContent = 'Testing key connection...';
+        }
+
+        await checkAiStatus();
+
+        if (modalFeedback) {
+          modalFeedback.style.color = '#34d399';
+          modalFeedback.textContent = 'Key saved! AI is connected.';
+        }
+
+        setTimeout(() => {
+          closeKeyModal();
+        }, 1000);
+      });
+
+      $('modal-clear-key-btn')?.addEventListener('click', () => {
+        clearActiveKey();
+        if (modalInput) modalInput.value = '';
+        if (modalFeedback) {
+          modalFeedback.style.color = '#f87171';
+          modalFeedback.textContent = 'Key cleared.';
+        }
+        checkAiStatus();
+      });
 
       // Check live AI backend status
       async function checkAiStatus() {
@@ -223,9 +345,9 @@
             bannerEl.style.background = 'rgba(16, 185, 129, 0.08)';
             bannerEl.style.border = '1px solid rgba(16, 185, 129, 0.3)';
             bannerIcon.innerHTML = '&#9889;';
-            bannerText.innerHTML = `<strong>AI Assistant Connected</strong> &mdash; Powered by live Google Gemini (<code>${data.model}</code>). Dynamic reasoning &amp; multi-turn context enabled. <span class="ai-status live" style="display:inline-flex; vertical-align:middle; margin-left:0.5rem;"><span class="dot"></span>Live AI Active</span>`;
+            bannerText.innerHTML = `<strong>AI Assistant Connected</strong> &mdash; Powered by live Google Gemini (<code>${data.model || 'gemini-2.5-flash'}</code>). Dynamic reasoning &amp; multi-turn context enabled. <span class="ai-status live" style="display:inline-flex; vertical-align:middle; margin-left:0.5rem;"><span class="dot"></span>Live AI Active</span>`;
             
-            footerStatusText.innerHTML = `EduFAZE AI Assistant &middot; <span class="ai-status live" style="display:inline-flex;"><span class="dot"></span>Live Gemini Connected (${data.model})</span>`;
+            footerStatusText.innerHTML = `EduFAZE AI Assistant &middot; <span class="ai-status live" style="display:inline-flex;"><span class="dot"></span>Live Gemini Connected (${data.model || 'gemini-2.5-flash'})</span>`;
             if (welcomeStatusHint) {
               welcomeStatusHint.innerHTML = `&#9989; <strong>Live AI Connected:</strong> Ready for questions on mathematics, physics, programming, and course syllabi.`;
               welcomeStatusHint.style.color = '#34d399';
@@ -234,13 +356,15 @@
             bannerEl.style.background = 'rgba(245, 158, 11, 0.08)';
             bannerEl.style.border = '1px solid rgba(245, 158, 11, 0.3)';
             bannerIcon.innerHTML = '&#9888;';
-            bannerText.innerHTML = `<strong>AI Not Connected</strong> &mdash; Google Gemini API key is missing. <a href="settings.html" style="color:var(--purple-light); text-decoration:underline; font-weight:600; margin-left:0.5rem;">Configure in Settings &rarr;</a> or set <code>GEMINI_API_KEY</code> in <code>.env</code>. <span class="ai-status mock" style="display:inline-flex; vertical-align:middle; margin-left:0.5rem;"><span class="dot" style="background:#f87171;"></span>AI Not Connected</span>`;
+            bannerText.innerHTML = `<strong>AI Not Connected</strong> &mdash; Google Gemini API key is missing. <button id="banner-open-modal-link" style="background:none; border:none; padding:0; color:var(--purple-light); text-decoration:underline; font-weight:600; cursor:pointer; font-size:inherit;">Enter API Key &rarr;</button> or set in <a href="settings.html" style="color:var(--purple-light); text-decoration:underline;">Settings</a>. <span class="ai-status mock" style="display:inline-flex; vertical-align:middle; margin-left:0.5rem;"><span class="dot" style="background:#f87171;"></span>AI Not Connected</span>`;
             
             footerStatusText.innerHTML = `EduFAZE AI Assistant &middot; <span class="ai-status mock" style="display:inline-flex;"><span class="dot" style="background:#f87171;"></span>AI Not Connected</span>`;
             if (welcomeStatusHint) {
-              welcomeStatusHint.innerHTML = `&#9888; <strong>API Key Required:</strong> To enable dynamic AI responses, configure your Gemini API key in <a href="settings.html" style="color:var(--purple-light); text-decoration:underline;">Settings</a>.`;
+              welcomeStatusHint.innerHTML = `&#9888; <strong>API Key Required:</strong> To enable dynamic AI responses, click <strong>API Key</strong> in the toolbar or configure in <a href="settings.html" style="color:var(--purple-light); text-decoration:underline;">Settings</a>.`;
               welcomeStatusHint.style.color = '#fbbf24';
             }
+
+            $('banner-open-modal-link')?.addEventListener('click', openKeyModal);
           }
         } catch (err) {
           console.warn('[AI Status Check]', err.message);
@@ -359,13 +483,33 @@
         return div;
       }
 
-      // Add an interactive error message with Retry button
+      // Add an interactive error message with key entry & Retry button
       function addErrorMessage(errorTitle, errorDetails, setupInstructions = null) {
         const div = document.createElement('div');
         div.className = 'chat-message assistant';
 
+        const isKeyIssue = errorTitle === 'INVALID_API_KEY' || errorTitle === 'GEMINI_API_KEY_NOT_CONFIGURED';
+
+        let keyEntryBox = '';
+        if (isKeyIssue) {
+          keyEntryBox = `
+            <div style="margin-top:0.75rem; background:rgba(0,0,0,0.45); padding:0.85rem; border-radius:8px; border:1px solid rgba(255,255,255,0.14);">
+              <label style="display:block; font-size:0.75rem; color:#fde047; font-weight:600; margin-bottom:6px;">
+                🔑 ${errorTitle === 'INVALID_API_KEY' ? 'API Key was rejected (Invalid Key). Paste a valid key:' : 'Enter your Google Gemini API Key:'}
+              </label>
+              <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+                <input type="password" class="chat-key-reentry-input" placeholder="AIzaSy... (Paste key here)" style="flex:1; min-width:200px; padding:0.45rem 0.65rem; background:rgba(15,12,27,0.9); border:1px solid rgba(255,255,255,0.25); border-radius:6px; color:white; font-size:0.8rem; outline:none;" />
+                <button type="button" class="btn btn-purple btn-sm chat-key-reentry-btn" style="padding:0.45rem 0.85rem; font-size:0.78rem; white-space:nowrap;">Save Key &amp; Retry</button>
+              </div>
+              <p style="margin:6px 0 0; font-size:0.7rem; color:var(--text-muted);">
+                Get a key from <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--purple-light); text-decoration:underline;">Google AI Studio</a>. Whitespace/newlines are automatically trimmed.
+              </p>
+            </div>
+          `;
+        }
+
         let setupHtml = '';
-        if (setupInstructions && Array.isArray(setupInstructions)) {
+        if (!isKeyIssue && setupInstructions && Array.isArray(setupInstructions)) {
           setupHtml = `
             <div style="margin-top:0.75rem; padding:0.6rem 0.85rem; background:rgba(0,0,0,0.3); border-radius:6px; font-size:0.78rem;">
               <strong style="color:#fde047;">How to Fix:</strong>
@@ -382,10 +526,11 @@
               <span>&#9888;</span> ${escapeHtml(errorTitle)}
             </div>
             <p style="margin:0; font-size:0.85rem; color:#fca5a5;">${escapeHtml(errorDetails)}</p>
+            ${keyEntryBox}
             ${setupHtml}
             <div class="chat-error-actions">
-              ${lastFailedQuery ? `<button class="btn btn-purple btn-sm" id="chat-retry-btn" style="padding:0.35rem 0.85rem; font-size:0.78rem;">&#8635; Retry Question</button>` : ''}
-              <a href="settings.html" class="btn btn-ghost btn-sm" style="padding:0.35rem 0.85rem; font-size:0.78rem; text-decoration:none;">Open AI Settings &rarr;</a>
+              ${lastFailedQuery && !isKeyIssue ? `<button class="btn btn-purple btn-sm" id="chat-retry-btn" style="padding:0.35rem 0.85rem; font-size:0.78rem;">&#8635; Retry Question</button>` : ''}
+              <button class="btn btn-ghost btn-sm" id="chat-open-key-modal" style="padding:0.35rem 0.85rem; font-size:0.78rem;">Configure Key Dialog &rarr;</button>
             </div>
           </div>
           <div class="chat-source" style="color:#f87171;">System Error &middot; No mock simulation displayed</div>
@@ -402,6 +547,42 @@
               const q = lastFailedQuery;
               lastFailedQuery = null;
               executeChatRequest(q);
+            }
+          });
+        }
+
+        const openKeyBtn = div.querySelector('#chat-open-key-modal');
+        if (openKeyBtn) {
+          openKeyBtn.addEventListener('click', openKeyModal);
+        }
+
+        // Handle inline key re-entry
+        const inlineKeyInput = div.querySelector('.chat-key-reentry-input');
+        const inlineKeyBtn = div.querySelector('.chat-key-reentry-btn');
+        if (inlineKeyBtn && inlineKeyInput) {
+          const submitInlineKey = async () => {
+            const rawVal = inlineKeyInput.value;
+            const cleanKey = setActiveKey(rawVal);
+            if (!cleanKey) {
+              alert('Please paste a valid Google Gemini API key.');
+              return;
+            }
+            inlineKeyBtn.disabled = true;
+            inlineKeyBtn.textContent = 'Saving...';
+            await checkAiStatus();
+            div.remove();
+            if (lastFailedQuery) {
+              const q = lastFailedQuery;
+              lastFailedQuery = null;
+              executeChatRequest(q);
+            }
+          };
+
+          inlineKeyBtn.addEventListener('click', submitInlineKey);
+          inlineKeyInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              submitInlineKey();
             }
           });
         }
@@ -450,11 +631,11 @@
 
         const selectedCourse = courseSelect.value;
         const isCourseOnly = courseOnlyModeEl.checked;
-        const sessionKey = getActiveKey();
+        const activeKey = getActiveKey();
 
         const headers = { 'Content-Type': 'application/json' };
-        if (sessionKey) {
-          headers['x-gemini-key'] = sessionKey;
+        if (activeKey) {
+          headers['x-gemini-key'] = activeKey;
         }
 
         try {
@@ -477,12 +658,19 @@
             lastFailedQuery = query;
             const errTitle = data.error || `HTTP ${res.status} Error`;
             const errMsg = data.message || 'The server encountered an error while contacting Google Gemini.';
+
+            // If key failed authorization, clear the invalid cached key so user isn't stuck
+            if (errTitle === 'INVALID_API_KEY' || res.status === 403 || errTitle === 'GEMINI_API_KEY_NOT_CONFIGURED') {
+              clearActiveKey();
+              checkAiStatus();
+            }
+
             addErrorMessage(errTitle, errMsg, data.setupInstructions);
             return;
           }
 
           // Build source label
-          let sourceLabel = `EduFAZE AI Assistant &middot; ${escapeHtml(data.provider || 'Google Gemini')} (${escapeHtml(data.model || 'gemini-1.5-flash')})`;
+          let sourceLabel = `EduFAZE AI Assistant &middot; ${escapeHtml(data.provider || 'Google Gemini')} (${escapeHtml(data.model || 'gemini-2.5-flash')})`;
           if (data.isCourseMaterial && data.courseContext) {
             sourceLabel += ` &middot; &#128218; Grounded in ${escapeHtml(data.courseContext)} syllabus`;
           } else if (data.courseContext) {
