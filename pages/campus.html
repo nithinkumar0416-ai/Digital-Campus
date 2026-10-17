@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Campus Resource Intelligence — EduFAZE AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
+  <style>
+    .booking-form { background:var(--bg-card); border:1px solid rgba(255,255,255,0.07); border-radius:var(--radius-lg); padding:1.75rem; }
+    .booking-form h3 { font-size:1rem; font-weight:700; margin-bottom:1.25rem; }
+    .resources-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:1.25rem; }
+    .conflict-warning { display:none; background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.2); border-radius:var(--radius-sm); padding:0.75rem 1rem; font-size:0.8rem; color:#f87171; margin-top:0.5rem; }
+    .conflict-warning.show { display:block; }
+    .booking-success { display:none; background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.2); border-radius:var(--radius-sm); padding:0.75rem 1rem; font-size:0.8rem; color:#34d399; margin-top:0.75rem; }
+    .booking-success.show { display:block; }
+    .utilisation-bar { height:8px; background:rgba(255,255,255,0.06); border-radius:4px; overflow:hidden; margin-top:0.4rem; }
+    .utilisation-fill { height:100%; border-radius:4px; background:var(--gradient-btn); transition:width 0.8s ease; }
+  </style>
+</head>
+<body>
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="nav-logo"><span class="logo-edu">Edu</span><span class="logo-faze">FAZE</span><span class="logo-ai"> AI</span></a>
+      <div class="nav-links" id="nav-links">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="campus.html" class="nav-link active">Campus</a>
+        <a href="reports.html" class="nav-link">Reports</a>
+      </div>
+      <div class="nav-right">
+        <div class="status-indicator" id="online-status"><span class="status-dot online"></span><span class="status-text">Online</span></div>
+        <div class="nav-icons">
+          <button class="icon-btn" id="notifications-btn" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+          <div class="avatar-wrapper" id="user-avatar-btn" role="button" tabindex="0"><div class="avatar" id="user-avatar">NK</div></div>
+        </div>
+        <button class="hamburger" id="hamburger-btn" aria-label="Toggle"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+  <div class="notifications-panel hidden" id="notifications-panel" role="dialog"><div class="panel-header"><h3>Notifications</h3><button class="panel-close" id="notif-close">x</button></div><div class="notif-list" id="notif-list"></div></div>
+  <div class="user-dropdown hidden" id="user-dropdown" role="menu">
+    <div class="dropdown-header"><div class="avatar lg">NK</div><div><p class="dropdown-name" id="dropdown-user-name">Nithin Kumar</p><p class="dropdown-role">Admin</p></div></div>
+    <hr class="dropdown-divider" />
+    <a href="dashboard-admin.html" class="dropdown-item">Admin Dashboard</a>
+    <button class="dropdown-item danger" id="logout-btn">Sign Out</button>
+  </div>
+
+  <div class="page-layout">
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Campus Resources</div>
+        <a href="campus.html" class="sidebar-link active"><span class="icon">&#127963;</span> Resource Overview</a>
+        <a href="reports.html" class="sidebar-link"><span class="icon">&#128209;</span> Utilisation Reports</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Management</div>
+        <a href="dashboard-admin.html" class="sidebar-link"><span class="icon">&#127979;</span> Institution Admin</a>
+        <a href="warnings.html" class="sidebar-link"><span class="icon">&#9888;</span> Student Warnings</a>
+      </div>
+    </aside>
+
+    <main class="page-content">
+      <div class="alert demo" style="margin-bottom:1.5rem; border-radius:12px;">
+        <div class="alert-icon">&#127895;</div>
+        <div><strong>Demo Mode</strong> — Campus resources shown are synthetic. Booking conflict detection uses in-memory validation, not a live database.</div>
+      </div>
+
+      <div class="page-header">
+        <div class="breadcrumb"><a href="../index.html">Home</a><span class="breadcrumb-sep">&#8250;</span><span>Campus Resource Intelligence</span></div>
+        <h1>&#127963; Campus Resource Intelligence</h1>
+        <p>View resource availability, book rooms and labs, and detect scheduling conflicts in real-time.</p>
+      </div>
+
+      <!-- STAT WIDGETS -->
+      <div class="dashboard-grid-4" style="margin-bottom:1.75rem;">
+        <div class="stat-widget"><div class="stat-widget-icon green">&#127963;</div><div><div class="stat-widget-value" id="sw-available">2</div><div class="stat-widget-label">Available Now</div></div></div>
+        <div class="stat-widget"><div class="stat-widget-icon red">&#128274;</div><div><div class="stat-widget-value" id="sw-booked">1</div><div class="stat-widget-label">Currently Booked</div></div></div>
+        <div class="stat-widget"><div class="stat-widget-icon orange">&#128295;</div><div><div class="stat-widget-value" id="sw-maintenance">1</div><div class="stat-widget-label">Under Maintenance</div></div></div>
+        <div class="stat-widget"><div class="stat-widget-icon purple">&#128202;</div><div><div class="stat-widget-value">68%</div><div class="stat-widget-label">Weekly Utilisation</div><div class="stat-widget-change">Demo Data</div></div></div>
+      </div>
+
+      <!-- FILTER -->
+      <div style="display:flex; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap; align-items:center;">
+        <div class="tabs" style="margin-bottom:0;">
+          <button class="tab-btn active" data-filter="all" id="filter-all">All</button>
+          <button class="tab-btn" data-filter="available" id="filter-available">Available</button>
+          <button class="tab-btn" data-filter="booked" id="filter-booked">Booked</button>
+          <button class="tab-btn" data-filter="maintenance" id="filter-maintenance">Maintenance</button>
+        </div>
+        <select class="form-select" id="type-filter" style="width:auto; padding:0.5rem 1rem;">
+          <option value="all">All Types</option>
+          <option value="lab">Laboratories</option>
+          <option value="classroom">Classrooms</option>
+          <option value="seminar">Seminar Rooms</option>
+        </select>
+      </div>
+
+      <!-- RESOURCES GRID -->
+      <div class="resources-grid" id="resources-grid">
+        <!-- Populated by JS -->
+      </div>
+
+      <!-- BOOKING FORM -->
+      <div class="booking-form" style="margin-top:1.75rem;" id="booking-section">
+        <h3>&#128197; Book a Resource</h3>
+        <div class="alert info" style="margin-bottom:1.25rem;">
+          <div class="alert-icon">&#8505;</div>
+          <div>Bookings are validated for conflicts. A resource already booked in the selected time slot cannot be double-booked. Changes to confirmed bookings require admin approval.</div>
+        </div>
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label" for="book-resource">Resource</label>
+            <select class="form-select" id="book-resource">
+              <!-- Populated by JS -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="book-date">Date</label>
+            <input type="date" class="form-input" id="book-date" min="" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="book-start">Start Time</label>
+            <input type="time" class="form-input" id="book-start" value="09:00" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="book-end">End Time</label>
+            <input type="time" class="form-input" id="book-end" value="11:00" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="book-purpose">Purpose / Event Name</label>
+          <input type="text" class="form-input" id="book-purpose" placeholder="e.g. CS201 Lab Session, Faculty Meeting" />
+        </div>
+        <div class="conflict-warning" id="conflict-warning">
+          &#9888; Booking conflict detected! This resource is already booked in the selected time slot. Please choose a different time or resource.
+        </div>
+        <div class="booking-success" id="booking-success">
+          &#9989; Booking confirmed successfully! The resource has been reserved for your session. (Demo — stored in memory only)
+        </div>
+        <div style="display:flex; gap:0.75rem; margin-top:1rem; flex-wrap:wrap;">
+          <button class="btn-primary" id="check-conflict-btn" style="border-radius:var(--radius-sm); padding:0.7rem 1.5rem;">Check Availability</button>
+          <button class="btn btn-purple" id="confirm-booking-btn">Confirm Booking</button>
+          <button class="btn btn-ghost" id="reset-booking-btn">Reset</button>
+        </div>
+      </div>
+
+      <!-- EXISTING BOOKINGS -->
+      <div class="card" style="margin-top:1.5rem;">
+        <div class="card-header">
+          <div class="card-title">&#128203; Confirmed Bookings (Today)</div>
+        </div>
+        <div class="table-wrapper">
+          <table id="bookings-table">
+            <thead><tr><th>Resource</th><th>Date</th><th>Time</th><th>Purpose</th><th>Status</th></tr></thead>
+            <tbody id="bookings-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const { DEMO_DATA, $ } = EduFAZE;
+      const resources = DEMO_DATA.campus_resources;
+      let bookings = [...DEMO_DATA.bookings];
+      let activeFilter = 'all';
+      let activeType = 'all';
+
+      // Set min date to today
+      const today = new Date().toISOString().split('T')[0];
+      $('book-date').min = today;
+      $('book-date').value = today;
+
+      // Populate resource select
+      const bookResource = $('book-resource');
+      resources.forEach(r => {
+        const opt = document.createElement('option');
+        opt.value = r.id;
+        opt.textContent = `${r.name} (Cap: ${r.capacity})`;
+        if (r.status !== 'available') opt.textContent += ' — Not Available';
+        bookResource.appendChild(opt);
+      });
+
+      // Render resources
+      function renderResources() {
+        const grid = $('resources-grid');
+        let filtered = resources.filter(r => {
+          const statusMatch = activeFilter === 'all' || r.status === activeFilter;
+          const typeMatch = activeType === 'all' || r.type === activeType;
+          return statusMatch && typeMatch;
+        });
+
+        if (!filtered.length) {
+          grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><div class="empty-state-icon">&#127963;</div><h3>No resources match the filter</h3></div>';
+          return;
+        }
+
+        grid.innerHTML = filtered.map(r => {
+          const statusLabel = r.status === 'available' ? 'Available' : r.status === 'booked' ? 'Booked' : 'Maintenance';
+          const typeLabel = { lab: '&#128300; Laboratory', classroom: '&#127979; Classroom', seminar: '&#128101; Seminar Room' }[r.type] || r.type;
+          const bookingForResource = bookings.filter(b => b.resource === r.id);
+          const utilPct = Math.round((bookingForResource.length / 8) * 100); // fake 8-slot day
+
+          return `
+            <div class="resource-card">
+              <div class="resource-card-header">
+                <div>
+                  <div class="resource-name">${r.name}</div>
+                  <div class="resource-type">${typeLabel}</div>
+                </div>
+                <span class="resource-avail ${r.status}">${statusLabel}</span>
+              </div>
+              <div class="resource-details">
+                <span class="resource-detail-item">&#128101; Cap: ${r.capacity}</span>
+                <span class="resource-detail-item">&#127970; ${r.building}, F${r.floor}</span>
+              </div>
+              <div style="font-size:0.72rem; color:var(--text-muted);">
+                ${r.equipment.slice(0,3).join(' · ')}
+              </div>
+              <div style="margin-top:0.75rem;">
+                <div style="display:flex; justify-content:space-between; font-size:0.72rem; color:var(--text-muted); margin-bottom:4px;">
+                  <span>Today's utilisation</span><span>${utilPct}%</span>
+                </div>
+                <div class="utilisation-bar"><div class="utilisation-fill" style="width:${utilPct}%"></div></div>
+              </div>
+              <div style="margin-top:0.875rem;">
+                ${r.status === 'available'
+                  ? `<button class="btn btn-purple btn-sm" onclick="document.getElementById('book-resource').value='${r.id}'; document.getElementById('booking-section').scrollIntoView({behavior:'smooth'});">Book Now</button>`
+                  : `<span class="tag-badge ${r.status === 'maintenance' ? 'amber' : 'red'}">${r.status === 'maintenance' ? 'Under Maintenance' : 'Currently Booked'}</span>`
+                }
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      renderResources();
+
+      // Update stats
+      $('sw-available').textContent = resources.filter(r => r.status === 'available').length;
+      $('sw-booked').textContent = resources.filter(r => r.status === 'booked').length;
+      $('sw-maintenance').textContent = resources.filter(r => r.status === 'maintenance').length;
+
+      // Filter tabs
+      document.querySelectorAll('[data-filter]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          activeFilter = btn.dataset.filter;
+          renderResources();
+        });
+      });
+      $('type-filter').addEventListener('change', (e) => { activeType = e.target.value; renderResources(); });
+
+      // Conflict detection
+      function checkConflict() {
+        const rid = $('book-resource').value;
+        const date = $('book-date').value;
+        const start = $('book-start').value;
+        const end = $('book-end').value;
+
+        if (!date || !start || !end) return false;
+        if (start >= end) {
+          $('conflict-warning').textContent = '⚠ End time must be after start time.';
+          $('conflict-warning').classList.add('show');
+          return true;
+        }
+
+        const conflict = bookings.find(b =>
+          b.resource === rid &&
+          b.date === date &&
+          b.status === 'confirmed' &&
+          b.start < end &&
+          b.end > start
+        );
+        const resource = resources.find(r => r.id === rid);
+        if (resource && resource.status === 'maintenance') {
+          $('conflict-warning').textContent = '⚠ This resource is under maintenance and cannot be booked.';
+          $('conflict-warning').classList.add('show');
+          return true;
+        }
+        if (conflict) {
+          $('conflict-warning').textContent = `⚠ Booking conflict! This resource is already booked from ${conflict.start}–${conflict.end} for "${conflict.purpose}". Choose a different time or resource.`;
+          $('conflict-warning').classList.add('show');
+          return true;
+        }
+        $('conflict-warning').classList.remove('show');
+        return false;
+      }
+
+      $('check-conflict-btn').addEventListener('click', () => {
+        const hasConflict = checkConflict();
+        if (!hasConflict) {
+          $('conflict-warning').textContent = '&#9989; No conflicts found — this time slot is available!';
+          $('conflict-warning').style.background = 'rgba(16,185,129,0.08)';
+          $('conflict-warning').style.borderColor = 'rgba(16,185,129,0.2)';
+          $('conflict-warning').style.color = '#34d399';
+          $('conflict-warning').classList.add('show');
+          setTimeout(() => {
+            $('conflict-warning').classList.remove('show');
+            $('conflict-warning').style.background = '';
+            $('conflict-warning').style.borderColor = '';
+            $('conflict-warning').style.color = '';
+          }, 3000);
+        }
+      });
+
+      $('confirm-booking-btn').addEventListener('click', () => {
+        const rid = $('book-resource').value;
+        const date = $('book-date').value;
+        const start = $('book-start').value;
+        const end = $('book-end').value;
+        const purpose = $('book-purpose').value.trim();
+
+        if (!date || !start || !end || !purpose) {
+          alert('Please fill in all booking fields.'); return;
+        }
+        if (checkConflict()) return;
+
+        const newBooking = {
+          id: 'b-' + Date.now(),
+          resource: rid,
+          user: EduFAZE.Auth.currentUser()?.id || 'u-admin-1',
+          date, start, end, purpose,
+          status: 'confirmed'
+        };
+        bookings.push(newBooking);
+
+        $('booking-success').textContent = `✅ Booking confirmed for ${purpose} on ${EduFAZE.formatDate(date)} from ${start}–${end}. (Demo — stored in memory)`;
+        $('booking-success').classList.add('show');
+        $('book-purpose').value = '';
+        renderBookings();
+        renderResources();
+
+        setTimeout(() => $('booking-success').classList.remove('show'), 5000);
+      });
+
+      $('reset-booking-btn').addEventListener('click', () => {
+        $('book-resource').value = resources[0]?.id || '';
+        $('book-date').value = today;
+        $('book-start').value = '09:00';
+        $('book-end').value = '11:00';
+        $('book-purpose').value = '';
+        $('conflict-warning').classList.remove('show');
+        $('booking-success').classList.remove('show');
+      });
+
+      function renderBookings() {
+        const tbody = $('bookings-tbody');
+        const resource_map = {};
+        resources.forEach(r => resource_map[r.id] = r.name);
+        if (!bookings.length) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:2rem;">No bookings today.</td></tr>';
+          return;
+        }
+        tbody.innerHTML = bookings.map(b => `
+          <tr>
+            <td>${resource_map[b.resource] || b.resource}</td>
+            <td>${EduFAZE.formatDate(b.date)}</td>
+            <td>${b.start} – ${b.end}</td>
+            <td>${b.purpose}</td>
+            <td><span class="tag-badge green">${b.status}</span></td>
+          </tr>
+        `).join('');
+      }
+      renderBookings();
+    });
+  </script>
+</body>
+</html>

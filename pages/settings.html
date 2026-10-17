@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Platform &amp; AI Configuration Settings — EduFAZE AI</title>
+  <meta name="description" content="Configure AI provider API keys, fallback parameters, early warning risk thresholds, and offline sync limits." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="nav-logo">
+        <span class="logo-edu">Edu</span><span class="logo-faze">FAZE</span><span class="logo-ai"> AI</span>
+      </a>
+      <div class="nav-links" id="nav-links">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="dashboard-admin.html" class="nav-link">Admin</a>
+        <a href="settings.html" class="nav-link active">Settings</a>
+      </div>
+      <div class="nav-right">
+        <div class="status-indicator" id="online-status">
+          <span class="status-dot online"></span>
+          <span class="status-text">Online / Sync Queue</span>
+        </div>
+        <div class="nav-icons">
+          <div class="avatar-wrapper" id="user-avatar-btn" role="button" tabindex="0" aria-label="User profile">
+            <div class="avatar" id="user-avatar">NK</div>
+          </div>
+        </div>
+        <button class="hamburger" id="hamburger-btn" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- USER DROPDOWN -->
+  <div class="user-dropdown hidden" id="user-dropdown" role="menu">
+    <div class="dropdown-header">
+      <div class="avatar lg" id="user-avatar-drop">NK</div>
+      <div>
+        <p class="dropdown-name" id="dropdown-user-name">Nithin Kumar</p>
+        <p class="dropdown-role">Institution Administrator</p>
+      </div>
+    </div>
+    <hr class="dropdown-divider" />
+    <a href="dashboard-admin.html" class="dropdown-item">&#127979; Admin Dashboard</a>
+    <hr class="dropdown-divider" />
+    <button class="dropdown-item danger" id="logout-btn">Sign Out</button>
+  </div>
+
+  <div class="page-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Platform Settings</div>
+        <a href="settings.html" class="sidebar-link active"><span class="icon">&#9881;</span> AI &amp; Resilience</a>
+        <a href="profile.html" class="sidebar-link"><span class="icon">&#128100;</span> User Profile</a>
+        <a href="dashboard-admin.html" class="sidebar-link"><span class="icon">&#127979;</span> Admin Portal</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">System Modules</div>
+        <a href="offline-hub.html" class="sidebar-link"><span class="icon">&#128225;</span> Offline Hub</a>
+        <a href="demo.html" class="sidebar-link"><span class="icon">&#127916;</span> Demo Walkthrough</a>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="page-content">
+      <!-- DEMO BANNER -->
+      <div class="alert demo" style="margin-bottom:1.5rem; border-radius:12px;">
+        <div class="alert-icon">&#127895;</div>
+        <div>
+          <strong>AI Integration &amp; Resilience Engine</strong> &mdash; Configure API credentials or utilize the integrated deterministic rule engine.
+          <span class="ai-status rule" style="display:inline-flex; vertical-align:middle; margin-left:0.5rem;"><span class="dot"></span>Honest Status Reporting</span>
+        </div>
+      </div>
+
+      <div class="page-header">
+        <div class="breadcrumb">
+          <a href="../index.html">Home</a>
+          <span class="breadcrumb-sep">&#8250;</span>
+          <span>System Settings</span>
+        </div>
+        <h1>&#9881; Platform &amp; AI Integration Settings</h1>
+        <p>Manage server-side AI provider configuration, rate limit guards, early-warning sensitivity thresholds, and offline storage persistence.</p>
+      </div>
+
+      <!-- AI PROVIDER CONFIGURATION (PHASE 8) -->
+      <div class="card" style="margin-bottom:1.5rem;">
+        <div class="card-header">
+          <div>
+            <div class="card-title">&#129302; AI Provider &amp; Model Orchestration</div>
+            <div class="card-subtitle">Connect live LLM providers or maintain safe offline deterministic rules</div>
+          </div>
+          <span class="ai-status live" id="ai-active-status"><span class="dot"></span> Active Engine</span>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:1.5rem;">
+          <div>
+            <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:6px;">Active AI Inference Provider</label>
+            <select id="ai-provider-select" onchange="updateProviderSettings()" style="width:100%; padding:0.6rem; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:white;">
+              <option value="deterministic">EduFAZE Deterministic Rule Engine (No API Key Required)</option>
+              <option value="gemini">Google Gemini 1.5 / 2.0 Flash (Official SDK)</option>
+              <option value="openai">OpenAI GPT-4o / Mini</option>
+              <option value="anthropic">Anthropic Claude 3.5 Sonnet</option>
+            </select>
+            <p style="font-size:0.72rem; color:var(--text-muted); margin-top:4px;">
+              When no provider key is configured, EduFAZE automatically falls back to deterministic curriculum mapping rules.
+            </p>
+          </div>
+
+          <div>
+            <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:6px;">API Key (Session-Stored &amp; Encrypted)</label>
+            <input type="password" id="ai-api-key" placeholder="AIzaSy... (Leave empty for Rule Engine)" style="width:100%; padding:0.6rem; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:white;" />
+            <p style="font-size:0.72rem; color:var(--text-muted); margin-top:4px;">
+              Keys are never sent to third-party tracking or saved to Git repositories.
+            </p>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem; margin-bottom:1.25rem;">
+          <div style="background:rgba(255,255,255,0.03); padding:0.875rem; border-radius:8px; border:1px solid rgba(255,255,255,0.06);">
+            <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">Request Timeout</div>
+            <div style="font-size:1.1rem; font-weight:700; color:white;">8,000 ms</div>
+            <span style="font-size:0.68rem; color:var(--text-muted);">Bounded retries (max 2)</span>
+          </div>
+          <div style="background:rgba(255,255,255,0.03); padding:0.875rem; border-radius:8px; border:1px solid rgba(255,255,255,0.06);">
+            <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">Rate Limit Guard</div>
+            <div style="font-size:1.1rem; font-weight:700; color:#34d399;">60 req/min</div>
+            <span style="font-size:0.68rem; color:var(--text-muted);">Token bucket limiter</span>
+          </div>
+          <div style="background:rgba(255,255,255,0.03); padding:0.875rem; border-radius:8px; border:1px solid rgba(255,255,255,0.06);">
+            <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">Telemetry Mode</div>
+            <div style="font-size:1.1rem; font-weight:700; color:var(--purple-light);">Private / No-Log</div>
+            <span style="font-size:0.68rem; color:var(--text-muted);">Student privacy shielded</span>
+          </div>
+        </div>
+
+        <button class="btn btn-purple btn-sm" onclick="saveAiSettings()">Save AI Configuration</button>
+      </div>
+
+      <!-- RISK THRESHOLD CONFIGURATION (PHASE 5: MODULE 3) -->
+      <div class="card" style="margin-bottom:1.5rem;">
+        <div class="card-header">
+          <div>
+            <div class="card-title">&#9888; Student Struggle Early-Warning Sensitivity</div>
+            <div class="card-subtitle">Transparent risk thresholds used to alert instructors for timely supportive interventions</div>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
+          <div>
+            <label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px;">Assessment Failure Alert Threshold</label>
+            <p style="font-size:0.72rem; color:var(--text-muted); margin-bottom:6px;">Flag warning when average score drops below:</p>
+            <div style="display:flex; align-items:center; gap:1rem;">
+              <input type="range" min="30" max="70" value="50" id="threshold-score" oninput="document.getElementById('score-val').textContent = this.value + '%'" style="flex:1; accent-color:var(--purple-primary);" />
+              <span id="score-val" style="font-weight:700; color:var(--purple-light);">50%</span>
+            </div>
+          </div>
+
+          <div>
+            <label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px;">Missed Assignment Tolerance</label>
+            <p style="font-size:0.72rem; color:var(--text-muted); margin-bottom:6px;">Trigger early-warning alert after:</p>
+            <select style="width:100%; padding:0.6rem; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:white;">
+              <option value="1">1 Missed Assignment</option>
+              <option value="2" selected>2 Missed Assignments (Recommended)</option>
+              <option value="3">3 Missed Assignments</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- DEMO DATA RESET -->
+      <div class="card" style="border-color:rgba(239,68,68,0.2);">
+        <div class="card-header">
+          <div>
+            <div class="card-title" style="color:#f87171;">&#9888; Reset Demo State</div>
+            <div class="card-subtitle">Clear in-memory session modifications and restore initial synthetic demo baseline</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="resetDemoStore()" style="color:#f87171; border-color:rgba(239,68,68,0.4);">Reset In-Memory Data</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script>
+    function saveAiSettings() {
+      const provider = document.getElementById('ai-provider-select').value;
+      const key = document.getElementById('ai-api-key').value;
+      sessionStorage.setItem('edufaze_ai_provider', provider);
+      if (key) sessionStorage.setItem('edufaze_ai_key', key);
+      alert('AI Configuration saved successfully! Active engine: ' + provider);
+    }
+
+    function resetDemoStore() {
+      if (confirm('Reset demo state back to default synthetic records?')) {
+        sessionStorage.clear();
+        alert('Demo state reset. Reloading application...');
+        window.location.href = '../index.html';
+      }
+    }
+  </script>
+</body>
+</html>

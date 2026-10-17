@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login — EduFAZE AI</title>
+  <meta name="description" content="Sign in to EduFAZE AI — your unified AI-powered smart education intelligence platform." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
+</head>
+<body>
+  <div class="login-page" id="login-page">
+    <!-- LEFT VISUAL -->
+    <div class="login-visual">
+      <div class="login-fluid" id="login-fluid"></div>
+      <div class="login-brand">
+        <div class="logo nav-logo"><span class="logo-edu">Edu</span><span class="logo-faze">FAZE</span><span class="logo-ai"> AI</span></div>
+        <p>Unified AI-Powered Smart Education Intelligence Platform</p>
+        <div style="margin-top:2rem; display:flex; flex-direction:column; gap:0.75rem; text-align:left; max-width:300px;">
+          <div class="alert demo" style="margin:0; border-radius:12px;">
+            <div class="alert-icon">&#128521;</div>
+            <div><strong>Demo Mode</strong><br><small>Use any demo account below. All data is synthetic.</small></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT FORM -->
+    <div class="login-form-panel">
+      <div class="login-form-box">
+        <h2>Welcome back</h2>
+        <p>Sign in to your EduFAZE AI account</p>
+
+        <!-- Demo Accounts -->
+        <div class="login-demo-accounts">
+          <h4>&#127895; Quick Demo Login</h4>
+          <div class="demo-account" data-email="student@demo.edufaze.ai" data-pw="demo1234" id="demo-student">
+            <div>
+              <div>Aanya Sharma</div>
+              <div class="demo-account-role">Student</div>
+            </div>
+            <span class="demo-account-fill">Fill &#8594;</span>
+          </div>
+          <div class="demo-account" data-email="teacher@demo.edufaze.ai" data-pw="demo1234" id="demo-teacher">
+            <div>
+              <div>Dr. Dev Kumar</div>
+              <div class="demo-account-role">Teacher</div>
+            </div>
+            <span class="demo-account-fill">Fill &#8594;</span>
+          </div>
+          <div class="demo-account" data-email="admin@demo.edufaze.ai" data-pw="demo1234" id="demo-admin">
+            <div>
+              <div>Nithin Kumar</div>
+              <div class="demo-account-role">Institution Admin</div>
+            </div>
+            <span class="demo-account-fill">Fill &#8594;</span>
+          </div>
+          <div class="demo-account" data-email="campus@demo.edufaze.ai" data-pw="demo1234" id="demo-campus">
+            <div>
+              <div>Meera Pillai</div>
+              <div class="demo-account-role">Campus Resource Admin</div>
+            </div>
+            <span class="demo-account-fill">Fill &#8594;</span>
+          </div>
+        </div>
+
+        <div class="login-divider">or sign in manually</div>
+
+        <!-- Login Error -->
+        <div class="login-error" id="login-error" role="alert"></div>
+
+        <!-- Login Form -->
+        <form id="login-form" novalidate>
+          <div class="form-group">
+            <label class="form-label" for="login-email">Email Address</label>
+            <input
+              type="email"
+              id="login-email"
+              name="email"
+              class="form-input"
+              placeholder="you@demo.edufaze.ai"
+              autocomplete="email"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="login-password">
+              Password
+              <a href="#" class="forgot-link" id="forgot-link">Forgot password?</a>
+            </label>
+            <input
+              type="password"
+              id="login-password"
+              name="password"
+              class="form-input"
+              placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"
+              autocomplete="current-password"
+              required
+            />
+          </div>
+          <button type="submit" class="btn-primary" id="login-submit" style="width:100%; justify-content:center; margin-top:0.5rem;">
+            <span id="login-btn-text">Sign In</span>
+            <span class="spinner" id="login-spinner" style="display:none;"></span>
+          </button>
+        </form>
+
+        <p style="margin-top:1.5rem; font-size:0.78rem; color:var(--text-muted); text-align:center;">
+          Demo mode only. This is a prototype — not connected to a live server.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // If already logged in, redirect
+      const session = EduFAZE.Auth.currentUser();
+      if (session) {
+        redirectByRole(session.role);
+        return;
+      }
+
+      // Fill demo account credentials
+      document.querySelectorAll('.demo-account').forEach(btn => {
+        btn.addEventListener('click', () => {
+          EduFAZE.$('login-email').value = btn.dataset.email;
+          EduFAZE.$('login-password').value = btn.dataset.pw;
+          EduFAZE.$('login-error').classList.remove('show');
+        });
+      });
+
+      // Forgot password (demo note)
+      EduFAZE.$('forgot-link').addEventListener('click', (e) => {
+        e.preventDefault();
+        showError('Password recovery is not available in demo mode. Use a quick demo login above.');
+      });
+
+      // Form submit
+      EduFAZE.$('login-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = EduFAZE.$('login-email').value.trim();
+        const password = EduFAZE.$('login-password').value;
+        const submitBtn = EduFAZE.$('login-submit');
+        const spinner = EduFAZE.$('login-spinner');
+        const btnText = EduFAZE.$('login-btn-text');
+
+        if (!email || !password) {
+          showError('Please enter your email and password.');
+          return;
+        }
+
+        // Show loading
+        submitBtn.disabled = true;
+        spinner.style.display = 'inline-block';
+        btnText.textContent = 'Signing in...';
+        EduFAZE.$('login-error').classList.remove('show');
+
+        // Simulate async (would be real API call in production)
+        await new Promise(r => setTimeout(r, 800));
+
+        const result = EduFAZE.Auth.login(email, password);
+
+        submitBtn.disabled = false;
+        spinner.style.display = 'none';
+        btnText.textContent = 'Sign In';
+
+        if (result.success) {
+          redirectByRole(result.user.role);
+        } else {
+          showError(result.error);
+        }
+      });
+
+      function showError(msg) {
+        const el = EduFAZE.$('login-error');
+        el.textContent = msg;
+        el.classList.add('show');
+      }
+
+      function redirectByRole(role) {
+        const root = EduFAZE.getRelativeRoot();
+        const map = {
+          student: 'dashboard-student.html',
+          teacher: 'dashboard-teacher.html',
+          admin:   'dashboard-admin.html',
+          campus:  'campus.html'
+        };
+        // Check for redirect param
+        const params = new URLSearchParams(window.location.search);
+        const redirect = params.get('redirect');
+        if (redirect && redirect.startsWith(location.origin)) {
+          window.location.href = redirect;
+        } else {
+          window.location.href = (map[role] || 'dashboard-student.html');
+        }
+      }
+    });
+  </script>
+</body>
+</html>

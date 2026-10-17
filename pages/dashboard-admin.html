@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Institution Admin Dashboard — EduFAZE AI</title>
+  <meta name="description" content="Manage institution settings, academic years, departments, faculty, and academic analytics." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="nav-logo">
+        <span class="logo-edu">Edu</span><span class="logo-faze">FAZE</span><span class="logo-ai"> AI</span>
+      </a>
+      <div class="nav-links" id="nav-links">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="dashboard-admin.html" class="nav-link active">Admin Portal</a>
+        <a href="reports.html" class="nav-link">Reports</a>
+        <a href="campus.html" class="nav-link">Campus</a>
+        <a href="settings.html" class="nav-link">Settings</a>
+      </div>
+      <div class="nav-right">
+        <div class="status-indicator" id="online-status">
+          <span class="status-dot online"></span>
+          <span class="status-text">Online / Sync Queue</span>
+        </div>
+        <div class="nav-icons">
+          <button class="icon-btn" id="notifications-btn" aria-label="Notifications">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <span class="badge">4</span>
+          </button>
+          <div class="avatar-wrapper" id="user-avatar-btn" role="button" tabindex="0" aria-label="User menu">
+            <div class="avatar" id="user-avatar">NK</div>
+          </div>
+        </div>
+        <button class="hamburger" id="hamburger-btn" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- NOTIFICATIONS -->
+  <div class="notifications-panel hidden" id="notifications-panel" role="dialog" aria-label="Notifications">
+    <div class="panel-header"><h3>Notifications</h3><button class="panel-close" id="notif-close">x</button></div>
+    <div class="notif-list" id="notif-list">
+      <div class="notif-item unread">
+        <div class="notif-icon warning">!</div>
+        <div class="notif-content">
+          <p class="notif-title">Enrollment Validation Report</p>
+          <p class="notif-sub">CSV import completed: 42 records added, 2 duplicates skipped</p>
+          <span class="notif-time">10 min ago</span>
+        </div>
+      </div>
+      <div class="notif-item unread">
+        <div class="notif-icon info">i</div>
+        <div class="notif-content">
+          <p class="notif-title">Campus Conflict Resolved</p>
+          <p class="notif-sub">Room 201 schedule adjusted for CS201 Midterm</p>
+          <span class="notif-time">1 hr ago</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- USER DROPDOWN -->
+  <div class="user-dropdown hidden" id="user-dropdown" role="menu">
+    <div class="dropdown-header">
+      <div class="avatar lg" id="user-avatar-drop">NK</div>
+      <div>
+        <p class="dropdown-name" id="dropdown-user-name">Nithin Kumar</p>
+        <p class="dropdown-role">Institution Administrator</p>
+      </div>
+    </div>
+    <hr class="dropdown-divider" />
+    <a href="dashboard-admin.html" class="dropdown-item">&#127979; Admin Dashboard</a>
+    <a href="dashboard-teacher.html" class="dropdown-item">&#128105;&#8205;&#127979; Switch to Teacher View</a>
+    <a href="dashboard-student.html" class="dropdown-item">&#127891; Switch to Student View</a>
+    <a href="settings.html" class="dropdown-item">&#9881; Platform Settings</a>
+    <hr class="dropdown-divider" />
+    <button class="dropdown-item danger" id="logout-btn">Sign Out</button>
+  </div>
+
+  <div class="page-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Institutional Management</div>
+        <a href="dashboard-admin.html" class="sidebar-link active"><span class="icon">&#127979;</span> Overview</a>
+        <a href="reports.html" class="sidebar-link"><span class="icon">&#128209;</span> Academic Reports</a>
+        <a href="campus.html" class="sidebar-link"><span class="icon">&#127963;</span> Campus Facilities</a>
+        <a href="skill-mapping.html" class="sidebar-link"><span class="icon">&#128506;</span> Skill Alignment</a>
+        <a href="warnings.html" class="sidebar-link"><span class="icon">&#9888;</span> Early Warnings</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Administration</div>
+        <a href="resources.html" class="sidebar-link"><span class="icon">&#128218;</span> Resource Vault</a>
+        <a href="settings.html" class="sidebar-link"><span class="icon">&#9881;</span> System Settings</a>
+        <a href="demo.html" class="sidebar-link"><span class="icon">&#127916;</span> Demo Walkthrough</a>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="page-content">
+      <!-- DEMO BANNER -->
+      <div class="alert demo" style="margin-bottom:1.5rem; border-radius:12px;">
+        <div class="alert-icon">&#127895;</div>
+        <div>
+          <strong>Institution Admin Mode</strong> &mdash; Managing <em>EduFAZE Demo University</em> (ID: inst-001).
+          <span class="ai-status rule" style="display:inline-flex; vertical-align:middle; margin-left:0.5rem;"><span class="dot"></span>Strict Tenant Isolation Active</span>
+        </div>
+      </div>
+
+      <div class="page-header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem;">
+        <div>
+          <div class="breadcrumb">
+            <a href="../index.html">Home</a>
+            <span class="breadcrumb-sep">&#8250;</span>
+            <span>Institution Administration</span>
+          </div>
+          <h1>&#127979; Institution Intelligence Portal</h1>
+          <p>Real-time institutional oversight, faculty assignments, curriculum mapping, and student data import.</p>
+        </div>
+        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+          <button class="btn btn-purple btn-sm" id="btn-open-import" onclick="document.getElementById('import-section').scrollIntoView({behavior:'smooth'})">&#128229; Import CSV Records</button>
+          <a href="reports.html" class="btn btn-ghost btn-sm">&#128202; Full Analytics</a>
+        </div>
+      </div>
+
+      <!-- INSTITUTION KPI CARDS -->
+      <div class="dashboard-grid-4">
+        <div class="stat-card">
+          <div class="stat-num" id="admin-students-count">1,247</div>
+          <div class="stat-label">Enrolled Students</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="admin-faculty-count">48</div>
+          <div class="stat-label">Faculty Members</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="admin-courses-count">84</div>
+          <div class="stat-label">Active Courses</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" style="color:var(--accent-red);" id="admin-warnings-count">18</div>
+          <div class="stat-label">At-Risk Alerts</div>
+        </div>
+      </div>
+
+      <!-- DEPARTMENTS & ACADEMIC CALENDAR -->
+      <div class="dashboard-grid">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">&#128218; Academic Departments &amp; Health</div>
+              <div class="card-subtitle">Student mastery &amp; identified gap distribution by department</div>
+            </div>
+            <span class="tag-badge green">Autumn 2026</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:1.25rem;">
+            <div>
+              <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:4px;">
+                <span style="font-weight:600;">Computer Science &amp; Engineering</span>
+                <span style="color:var(--purple-light);">78% Concept Mastery &bull; 12 Gaps</span>
+              </div>
+              <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:78%;"></div></div>
+            </div>
+            <div>
+              <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:4px;">
+                <span style="font-weight:600;">Mathematics &amp; Statistics</span>
+                <span style="color:var(--accent-orange);">64% Concept Mastery &bull; 26 Gaps</span>
+              </div>
+              <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:64%; background:var(--accent-orange);"></div></div>
+            </div>
+            <div>
+              <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:4px;">
+                <span style="font-weight:600;">Physics &amp; Applied Sciences</span>
+                <span style="color:var(--accent-green);">82% Concept Mastery &bull; 8 Gaps</span>
+              </div>
+              <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:82%; background:var(--accent-green);"></div></div>
+            </div>
+            <div>
+              <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:4px;">
+                <span style="font-weight:600;">Electrical &amp; Systems Engineering</span>
+                <span style="color:var(--purple-light);">71% Concept Mastery &bull; 19 Gaps</span>
+              </div>
+              <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:71%;"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">&#128197; Academic Calendar &amp; Deadlines</div>
+              <div class="card-subtitle">Upcoming milestone examinations &amp; institutional deadlines</div>
+            </div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:0.75rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:0.75rem; background:rgba(255,255,255,0.03); border-radius:8px; border:1px solid rgba(255,255,255,0.06);">
+              <div>
+                <p style="font-size:0.85rem; font-weight:600;">Mid-Term Diagnostic Assessments</p>
+                <p style="font-size:0.75rem; color:var(--text-muted);">CS201, MA202, PH101 &bull; Automated gap detection active</p>
+              </div>
+              <span class="tag-badge blue">Oct 24, 2026</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:0.75rem; background:rgba(255,255,255,0.03); border-radius:8px; border:1px solid rgba(255,255,255,0.06);">
+              <div>
+                <p style="font-size:0.85rem; font-weight:600;">Syllabus-to-Skill Review Board</p>
+                <p style="font-size:0.75rem; color:var(--text-muted);">Bi-annual curriculum alignment with ACM/IEEE standards</p>
+              </div>
+              <span class="tag-badge purple">Nov 05, 2026</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:0.75rem; background:rgba(255,255,255,0.03); border-radius:8px; border:1px solid rgba(255,255,255,0.06);">
+              <div>
+                <p style="font-size:0.85rem; font-weight:600;">Final Term Examination Period</p>
+                <p style="font-size:0.75rem; color:var(--text-muted);">Campus room conflict validation engine active</p>
+              </div>
+              <span class="tag-badge amber">Dec 12, 2026</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CSV IMPORT SECTION (PHASE 9: MODE B) -->
+      <div class="card" id="import-section" style="margin-bottom:1.5rem;">
+        <div class="card-header">
+          <div>
+            <div class="card-title">&#128229; Authorised CSV Data Import Engine (Mode B)</div>
+            <div class="card-subtitle">Batch import student, faculty, and course records with server-side validation &amp; duplicate checks</div>
+          </div>
+          <span class="tag-badge green">Validation Active</span>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; align-items:start;">
+          <div>
+            <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:1rem;">
+              Upload institutional CSV. The validator checks headers, duplicate IDs, email patterns, and required fields. Invalid or duplicate records will be reported explicitly with line numbers.
+            </p>
+            <div style="margin-bottom:1rem;">
+              <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Record Type</label>
+              <select id="import-type-select" style="width:100%; padding:0.6rem; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:white;">
+                <option value="students">Students (id, name, email, department, year)</option>
+                <option value="teachers">Faculty (id, name, email, department)</option>
+                <option value="courses">Courses (id, name, code, dept, credits)</option>
+              </select>
+            </div>
+            <div style="border:2px dashed rgba(124,58,237,0.3); border-radius:12px; padding:2rem; text-align:center; background:rgba(124,58,237,0.04); cursor:pointer;" id="drop-zone" onclick="document.getElementById('csv-file-input').click()">
+              <input type="file" id="csv-file-input" accept=".csv" style="display:none;" onchange="handleFileSelect(event)" />
+              <div style="font-size:2rem; margin-bottom:0.5rem;">&#128196;</div>
+              <p style="font-size:0.85rem; font-weight:600; color:var(--purple-light);">Click to select or drop CSV file</p>
+              <p style="font-size:0.72rem; color:var(--text-muted); margin-top:4px;">Supports UTF-8 CSV up to 10MB</p>
+            </div>
+            <div style="display:flex; gap:0.5rem; margin-top:0.75rem;">
+              <button class="btn btn-ghost btn-sm" onclick="loadSampleCsv()">Load Sample Students CSV</button>
+              <button class="btn btn-purple btn-sm" id="btn-run-import" onclick="processCsvImport()">Validate &amp; Import</button>
+            </div>
+          </div>
+
+          <div>
+            <div id="import-results" style="background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:1rem; min-height:220px;">
+              <div style="font-size:0.75rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:0.75rem;">Validation Report Preview</div>
+              <div id="import-log">
+                <p style="font-size:0.78rem; color:var(--text-muted); font-style:italic;">No CSV file uploaded yet. Load sample CSV to test real client validation &amp; duplicate rejection.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AUDIT LOGS & TENANT ISOLATION (PHASE 10) -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">&#128274; Security Audit &amp; Data Governance Logs</div>
+            <div class="card-subtitle">Immutable audit trail of administrative access and role authorization checks</div>
+          </div>
+          <span class="ai-status live"><span class="dot"></span> Audit Active</span>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Operator</th>
+                <th>Role</th>
+                <th>Action</th>
+                <th>Target Scope</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>2026-10-17 11:15</td>
+                <td>Nithin Kumar</td>
+                <td><span class="tag-badge purple">Admin</span></td>
+                <td>Institution Isolation Policy Verification</td>
+                <td>Tenant: inst-001</td>
+                <td><span class="tag-badge green">Verified</span></td>
+              </tr>
+              <tr>
+                <td>2026-10-17 10:42</td>
+                <td>Dr. Dev Kumar</td>
+                <td><span class="tag-badge blue">Teacher</span></td>
+                <td>Early Warning Intervention Assigned</td>
+                <td>Student: u-student-1 (Aanya Sharma)</td>
+                <td><span class="tag-badge green">Logged</span></td>
+              </tr>
+              <tr>
+                <td>2026-10-17 09:30</td>
+                <td>Meera Pillai</td>
+                <td><span class="tag-badge amber">Campus Admin</span></td>
+                <td>Conflict Resolution: Room 201 Override</td>
+                <td>Facility: cr-002</td>
+                <td><span class="tag-badge green">Approved</span></td>
+              </tr>
+              <tr>
+                <td>2026-10-16 16:55</td>
+                <td>System Worker</td>
+                <td><span class="tag-badge purple">Automated</span></td>
+                <td>Diagnostic Gap Detection Sweep</td>
+                <td>Calculus II (c-002)</td>
+                <td><span class="tag-badge green">Complete</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script>
+    let rawCsvText = '';
+
+    function loadSampleCsv() {
+      rawCsvText = `id,name,email,department,year
+u-student-101,Maya Patel,maya.p@demo.edufaze.ai,Computer Science,2
+u-student-102,Vikram Rao,vikram.r@demo.edufaze.ai,Mathematics,1
+u-student-1,Aanya Sharma,student@demo.edufaze.ai,Computer Science,2
+u-student-103,Arjun Sen,invalid-email-format,Physics,3
+u-student-104,Kavita Nair,kavita.n@demo.edufaze.ai,Computer Science,2`;
+
+      const log = document.getElementById('import-log');
+      log.innerHTML = `
+        <div style="font-size:0.75rem; color:var(--purple-light); font-weight:600; margin-bottom:0.5rem;">Sample CSV Loaded (5 rows)</div>
+        <pre style="font-size:0.72rem; color:var(--text-secondary); background:rgba(0,0,0,0.4); padding:0.5rem; border-radius:4px; max-height:120px; overflow-y:auto;">${rawCsvText}</pre>
+        <p style="font-size:0.72rem; color:var(--text-muted); margin-top:0.5rem;">Notice: Contains 1 duplicate ID (u-student-1) and 1 invalid email format for verification.</p>
+      `;
+    }
+
+    function handleFileSelect(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        rawCsvText = evt.target.result;
+        const log = document.getElementById('import-log');
+        log.innerHTML = `<p style="font-size:0.8rem; color:var(--accent-green);">File "${file.name}" loaded (${(file.size/1024).toFixed(1)} KB). Ready to validate.</p>`;
+      };
+      reader.readAsText(file);
+    }
+
+    function processCsvImport() {
+      const log = document.getElementById('import-log');
+      if (!rawCsvText) {
+        log.innerHTML = `<p style="color:var(--accent-red); font-size:0.8rem;">Please select a CSV file or click "Load Sample Students CSV" first.</p>`;
+        return;
+      }
+
+      const lines = rawCsvText.trim().split('\n');
+      if (lines.length < 2) {
+        log.innerHTML = `<p style="color:var(--accent-red); font-size:0.8rem;">CSV file has no data rows.</p>`;
+        return;
+      }
+
+      const header = lines[0].split(',').map(h => h.trim().toLowerCase());
+      let validCount = 0;
+      let duplicateCount = 0;
+      let errorCount = 0;
+      const errors = [];
+
+      const existingIds = new Set(window.EduFAZE.DEMO_DATA.users.map(u => u.id));
+
+      for (let i = 1; i < lines.length; i++) {
+        const row = lines[i].split(',').map(c => c.trim());
+        if (row.length < header.length) continue;
+        const [id, name, email, dept, year] = row;
+
+        if (existingIds.has(id)) {
+          duplicateCount++;
+          errors.push(`Row ${i+1}: Duplicate identifier "${id}" (already exists in institution store)`);
+          continue;
+        }
+
+        if (!email.includes('@') || !email.includes('.')) {
+          errorCount++;
+          errors.push(`Row ${i+1}: Invalid email address syntax "${email}"`);
+          continue;
+        }
+
+        validCount++;
+        // Add to in-memory store
+        window.EduFAZE.DEMO_DATA.users.push({
+          id, name, email, department: dept, year: parseInt(year) || 1, role: 'student', avatar: name.split(' ').map(n=>n[0]).join('')
+        });
+        existingIds.add(id);
+      }
+
+      // Update student count
+      const countEl = document.getElementById('admin-students-count');
+      if (countEl) countEl.textContent = (1247 + validCount).toLocaleString();
+
+      log.innerHTML = `
+        <div style="margin-bottom:0.75rem;">
+          <span class="tag-badge green">${validCount} Successfully Imported</span>
+          <span class="tag-badge amber" style="margin-left:4px;">${duplicateCount} Duplicates Skipped</span>
+          <span class="tag-badge red" style="margin-left:4px;">${errorCount} Malformed Rejected</span>
+        </div>
+        <div style="font-size:0.75rem; color:var(--text-secondary); max-height:140px; overflow-y:auto;">
+          ${errors.map(err => `<p style="color:#f87171; margin-bottom:3px;">&bull; ${err}</p>`).join('')}
+          ${validCount > 0 ? `<p style="color:#34d399; margin-top:6px;">&check; ${validCount} student records successfully appended to active institutional tenant session.</p>` : ''}
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>

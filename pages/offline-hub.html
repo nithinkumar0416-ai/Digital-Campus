@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Offline Hub — EduFAZE AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" /><link rel="stylesheet" href="../css/pages.css" />
+</head>
+<body>
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="nav-logo"><span class="logo-edu">Edu</span><span class="logo-faze">FAZE</span><span class="logo-ai"> AI</span></a>
+      <div class="nav-links" id="nav-links"><a href="../index.html" class="nav-link">Home</a><a href="offline-hub.html" class="nav-link active">Offline Hub</a></div>
+      <div class="nav-right">
+        <div class="status-indicator" id="online-status"><span class="status-dot online"></span><span class="status-text">Online</span></div>
+        <div class="nav-icons"><button class="icon-btn" id="notifications-btn" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/></svg></button><div class="avatar-wrapper" id="user-avatar-btn" role="button" tabindex="0"><div class="avatar" id="user-avatar">AS</div></div></div>
+        <button class="hamburger" id="hamburger-btn" aria-label="Toggle"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+  <div class="notifications-panel hidden" id="notifications-panel" role="dialog"><div class="panel-header"><h3>Notifications</h3><button class="panel-close" id="notif-close">x</button></div><div class="notif-list" id="notif-list"></div></div>
+  <div class="user-dropdown hidden" id="user-dropdown" role="menu"><div class="dropdown-header"><div class="avatar lg">AS</div><div><p class="dropdown-name" id="dropdown-user-name">Aanya Sharma</p><p class="dropdown-role">Student</p></div></div><hr class="dropdown-divider" /><a href="dashboard-student.html" class="dropdown-item">My Dashboard</a><button class="dropdown-item danger" id="logout-btn">Sign Out</button></div>
+
+  <div class="page-layout">
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">My Learning</div>
+        <a href="dashboard-student.html" class="sidebar-link"><span class="icon">&#128202;</span> Dashboard</a>
+        <a href="offline-hub.html" class="sidebar-link active"><span class="icon">&#128225;</span> Offline Hub</a>
+      </div>
+    </aside>
+    <main class="page-content">
+      <div class="page-header"><h1>&#128225; Offline-First Smart Education</h1><p>Access cached learning materials and queue submissions when internet is unavailable.</p></div>
+
+      <!-- STATUS BAR -->
+      <div class="sync-status-bar" id="sync-bar">
+        <div class="sync-icon" id="sync-icon">&#9989;</div>
+        <div class="sync-text">
+          <strong id="sync-status-text">Connected — All data synced</strong><br>
+          <span style="font-size:0.75rem; color:var(--text-muted);" id="sync-detail">Service worker active. Cached materials available offline.</span>
+        </div>
+        <button class="btn btn-ghost btn-sm sync-btn" id="sync-btn">Sync Now</button>
+      </div>
+
+      <div class="grid-2" style="margin-bottom:1.5rem;">
+        <!-- CACHED MATERIALS -->
+        <div class="card">
+          <div class="card-header"><div class="card-title">&#128218; Cached Learning Materials</div><div class="card-subtitle">Available without internet</div></div>
+          <div id="cached-list">
+            <div class="student-list-item">
+              <div class="stat-widget-icon purple">&#128218;</div>
+              <div class="student-info">
+                <div class="student-name">Sorting Algorithms: Visual Guide</div>
+                <div class="student-meta">CS201 &middot; Cached <span class="tag-badge green" style="display:inline;">Available Offline</span></div>
+              </div>
+            </div>
+            <div class="student-list-item">
+              <div class="stat-widget-icon purple">&#128218;</div>
+              <div class="student-info">
+                <div class="student-name">Integration Techniques Step-by-Step</div>
+                <div class="student-meta">MA202 &middot; Cached <span class="tag-badge green" style="display:inline;">Available Offline</span></div>
+              </div>
+            </div>
+            <div class="student-list-item">
+              <div class="stat-widget-icon orange">&#9888;</div>
+              <div class="student-info">
+                <div class="student-name">AI Assistant</div>
+                <div class="student-meta"><span class="tag-badge red" style="display:inline;">Cloud Only</span> Not available offline</div>
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-ghost btn-sm" style="margin-top:1rem;" id="cache-all-btn">Cache All Course Materials</button>
+        </div>
+
+        <!-- PENDING QUEUE -->
+        <div class="card">
+          <div class="card-header"><div class="card-title">&#128260; Pending Sync Queue</div><div class="card-subtitle">Submissions waiting to sync</div></div>
+          <div id="pending-queue">
+            <div class="empty-state" style="padding:2rem;">
+              <div class="empty-state-icon">&#9989;</div>
+              <h3>No pending items</h3>
+              <p>All submissions are synced.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- OFFLINE PRACTICE -->
+      <div class="card" style="margin-bottom:1.5rem;">
+        <div class="card-header"><div class="card-title">&#9999; Offline Practice Questions</div><div class="card-subtitle">Pre-loaded practice — answers queued for sync</div></div>
+        <div class="alert info" style="margin-bottom:1rem;"><div class="alert-icon">&#8505;</div><div>Practice completed offline will sync automatically when you reconnect. Duplicate submission prevention is active.</div></div>
+        <div id="offline-practice">
+          <div style="padding:1rem 0; border-bottom:1px solid rgba(255,255,255,0.05);">
+            <p style="font-size:0.875rem; font-weight:600; margin-bottom:0.625rem;">Q1. What is the worst-case time complexity of QuickSort?</p>
+            <div style="display:flex; flex-direction:column; gap:0.5rem;" id="q1-options">
+              <label style="font-size:0.85rem; color:var(--text-secondary); cursor:pointer; display:flex; align-items:center; gap:0.5rem;"><input type="radio" name="q1" value="a"> O(n log n)</label>
+              <label style="font-size:0.85rem; color:var(--text-secondary); cursor:pointer; display:flex; align-items:center; gap:0.5rem;"><input type="radio" name="q1" value="b"> O(n²)</label>
+              <label style="font-size:0.85rem; color:var(--text-secondary); cursor:pointer; display:flex; align-items:center; gap:0.5rem;"><input type="radio" name="q1" value="c"> O(n)</label>
+            </div>
+            <div id="q1-feedback" style="margin-top:0.5rem; font-size:0.8rem; display:none;"></div>
+          </div>
+          <div style="padding:1rem 0;">
+            <p style="font-size:0.875rem; font-weight:600; margin-bottom:0.625rem;">Q2. Evaluate: &#8747;2x dx = ?</p>
+            <div style="display:flex; flex-direction:column; gap:0.5rem;">
+              <label style="font-size:0.85rem; color:var(--text-secondary); cursor:pointer; display:flex; align-items:center; gap:0.5rem;"><input type="radio" name="q2" value="a"> x + C</label>
+              <label style="font-size:0.85rem; color:var(--text-secondary); cursor:pointer; display:flex; align-items:center; gap:0.5rem;"><input type="radio" name="q2" value="b"> x² + C</label>
+              <label style="font-size:0.85rem; color:var(--text-secondary); cursor:pointer; display:flex; align-items:center; gap:0.5rem;"><input type="radio" name="q2" value="c"> 2 + C</label>
+            </div>
+            <div id="q2-feedback" style="margin-top:0.5rem; font-size:0.8rem; display:none;"></div>
+          </div>
+          <button class="btn btn-purple" id="submit-practice-btn">Submit Practice (Queue for Sync)</button>
+          <div class="alert success hidden" id="practice-success" style="margin-top:1rem;"><div class="alert-icon">&#9989;</div><div>Answers queued for sync. Will be submitted when you reconnect. Sync ID: <code id="sync-id"></code></div></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const { $ } = EduFAZE;
+      let pendingItems = [];
+
+      // Update online status display
+      function updateSyncBar() {
+        const online = navigator.onLine;
+        $('sync-status-text').textContent = online ? 'Connected — All data synced' : 'Offline Mode Active';
+        $('sync-detail').textContent = online
+          ? 'Service worker active. Cached materials available offline.'
+          : 'Working offline. Submissions will sync when you reconnect.';
+        $('sync-icon').textContent = online ? '✅' : '📴';
+      }
+      window.addEventListener('online', () => { updateSyncBar(); processPendingQueue(); });
+      window.addEventListener('offline', updateSyncBar);
+      updateSyncBar();
+
+      // Cache all button (demo)
+      $('cache-all-btn').addEventListener('click', () => {
+        $('cache-all-btn').textContent = '⏳ Caching...';
+        setTimeout(() => { $('cache-all-btn').textContent = '✅ Cached Successfully'; }, 1500);
+      });
+
+      // Sync button
+      $('sync-btn').addEventListener('click', () => {
+        if (!navigator.onLine) { alert('You are offline. Connect to the internet to sync.'); return; }
+        processPendingQueue();
+      });
+
+      function processPendingQueue() {
+        if (pendingItems.length === 0) return;
+        pendingItems = [];
+        renderQueue();
+        alert('✅ Sync complete! All pending items submitted. (Demo — not sent to a real server)');
+      }
+
+      function renderQueue() {
+        const container = $('pending-queue');
+        if (pendingItems.length === 0) {
+          container.innerHTML = '<div class="empty-state" style="padding:2rem;"><div class="empty-state-icon">✅</div><h3>No pending items</h3><p>All submissions are synced.</p></div>';
+        } else {
+          container.innerHTML = pendingItems.map(item => `
+            <div class="student-list-item">
+              <div class="stat-widget-icon orange">⏳</div>
+              <div class="student-info">
+                <div class="student-name">${item.name}</div>
+                <div class="student-meta">Queued ${item.time} &middot; <span class="tag-badge amber">Pending Sync</span></div>
+              </div>
+            </div>
+          `).join('');
+        }
+      }
+
+      // Submit practice
+      $('submit-practice-btn').addEventListener('click', () => {
+        const q1 = document.querySelector('input[name="q1"]:checked');
+        const q2 = document.querySelector('input[name="q2"]:checked');
+        if (!q1 || !q2) { alert('Please answer both questions.'); return; }
+
+        // Show feedback
+        const q1fb = $('q1-feedback');
+        q1fb.style.display = 'block';
+        q1fb.style.color = q1.value === 'b' ? '#34d399' : '#f87171';
+        q1fb.textContent = q1.value === 'b' ? '✅ Correct! QuickSort worst case is O(n²) — when pivot selection is poor.' : '❌ Incorrect. The worst case is O(n²).';
+
+        const q2fb = $('q2-feedback');
+        q2fb.style.display = 'block';
+        q2fb.style.color = q2.value === 'b' ? '#34d399' : '#f87171';
+        q2fb.textContent = q2.value === 'b' ? '✅ Correct! ∫2x dx = x² + C by the power rule.' : '❌ Incorrect. Apply the power rule: ∫2x dx = x² + C.';
+
+        const syncId = 'sync-' + Date.now().toString(36).toUpperCase();
+        if (!navigator.onLine) {
+          pendingItems.push({ name: 'Offline Practice Set', time: new Date().toLocaleTimeString() });
+          renderQueue();
+        }
+        $('sync-id').textContent = syncId;
+        $('practice-success').classList.remove('hidden');
+        $('submit-practice-btn').disabled = true;
+        $('submit-practice-btn').textContent = navigator.onLine ? '✅ Submitted' : '⏳ Queued for Sync';
+      });
+    });
+  </script>
+</body>
+</html>

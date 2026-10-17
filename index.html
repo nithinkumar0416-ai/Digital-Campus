@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EduFAZE AI — Unified AI-Powered Smart Education Intelligence Platform</title>
+  <meta name="description" content="EduFAZE AI is a unified AI-powered smart education intelligence platform that pinpoints learning difficulties, bridges industry skill-gaps, and empowers institutions with real-time academic intelligence." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo" id="nav-logo-link">
+        <span class="logo-edu">Edu</span><span class="logo-faze">FAZE</span><span class="logo-ai"> AI</span>
+      </a>
+      <div class="nav-links" id="nav-links">
+        <a href="index.html" class="nav-link active" id="nav-home">Dashboard</a>
+        <a href="pages/gaps.html" class="nav-link" id="nav-gaps">Gaps</a>
+        <a href="pages/skill-mapping.html" class="nav-link" id="nav-skill">Skill Mapping</a>
+        <a href="pages/resources.html" class="nav-link" id="nav-resources">Resources</a>
+        <a href="pages/offline-hub.html" class="nav-link" id="nav-offline">Offline Hub</a>
+      </div>
+      <div class="nav-right">
+        <div class="status-indicator" id="online-status">
+          <span class="status-dot online"></span>
+          <span class="status-text">Online / Sync Queue</span>
+        </div>
+        <div class="nav-icons">
+          <button class="icon-btn" id="notifications-btn" title="Notifications" aria-label="Notifications">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <span class="badge" id="notification-count">3</span>
+          </button>
+          <button class="icon-btn" id="apps-btn" title="Apps" aria-label="Apps menu">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          </button>
+          <div class="avatar-wrapper" id="user-avatar-btn" role="button" tabindex="0" aria-label="User profile">
+            <div class="avatar" id="user-avatar">NK</div>
+            <svg class="chevron-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <button class="hamburger" id="hamburger-btn" aria-label="Toggle menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- NOTIFICATIONS PANEL -->
+  <div class="notifications-panel hidden" id="notifications-panel" role="dialog" aria-label="Notifications">
+    <div class="panel-header">
+      <h3>Notifications</h3>
+      <button class="panel-close" id="notif-close" aria-label="Close notifications">x</button>
+    </div>
+    <div class="notif-list" id="notif-list">
+      <div class="notif-item unread">
+        <div class="notif-icon warning">!</div>
+        <div class="notif-content">
+          <p class="notif-title">Student Struggle Alert</p>
+          <p class="notif-sub">Aanya Sharma needs attention in Calculus</p>
+          <span class="notif-time">2 min ago</span>
+        </div>
+      </div>
+      <div class="notif-item unread">
+        <div class="notif-icon info">i</div>
+        <div class="notif-content">
+          <p class="notif-title">Assignment Due</p>
+          <p class="notif-sub">Data Structures assignment due in 3 hours</p>
+          <span class="notif-time">15 min ago</span>
+        </div>
+      </div>
+      <div class="notif-item unread">
+        <div class="notif-icon success">v</div>
+        <div class="notif-content">
+          <p class="notif-title">Assessment Graded</p>
+          <p class="notif-sub">Physics Quiz results published</p>
+          <span class="notif-time">1 hr ago</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- USER DROPDOWN -->
+  <div class="user-dropdown hidden" id="user-dropdown" role="menu">
+    <div class="dropdown-header">
+      <div class="avatar lg">NK</div>
+      <div>
+        <p class="dropdown-name" id="dropdown-user-name">Nithin Kumar</p>
+        <p class="dropdown-role" id="dropdown-user-role">Institution Admin</p>
+      </div>
+    </div>
+    <hr class="dropdown-divider" />
+    <a href="pages/profile.html" class="dropdown-item" role="menuitem">My Profile</a>
+    <a href="pages/settings.html" class="dropdown-item" role="menuitem">Settings</a>
+    <a href="pages/dashboard-student.html" class="dropdown-item" role="menuitem">Student View</a>
+    <a href="pages/dashboard-teacher.html" class="dropdown-item" role="menuitem">Teacher View</a>
+    <hr class="dropdown-divider" />
+    <button class="dropdown-item danger" id="logout-btn" role="menuitem">Sign Out</button>
+  </div>
+
+  <!-- HERO SECTION -->
+  <main>
+    <section class="hero" id="hero-section">
+      <div class="hero-content">
+        <div class="hero-text">
+          <div class="hero-badge" id="hero-badge">
+            <span class="badge-dot"></span>
+            AI-Powered Education Intelligence
+          </div>
+          <h1 class="hero-title" id="hero-title">
+            <span class="title-edu">EDUPULSE</span><span class="title-ai"> AI</span>
+          </h1>
+          <p class="hero-subtitle">UNIFIED AI-POWERED SMART EDUCATION<br>INTELLIGENCE PLATFORM</p>
+          <p class="hero-description">
+            Pinpoint learning difficulties, bridge industry skill-gaps,<br>
+            and empower institutions with real-time academic intelligence.
+          </p>
+          <div class="hero-actions">
+            <a href="pages/login.html" class="btn-primary" id="launch-btn">LAUNCH PLATFORM</a>
+            <a href="pages/demo.html" class="btn-circle" id="demo-play-btn" title="Launch Interactive Demo" aria-label="Launch Interactive Demo">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </a>
+          </div>
+          <div class="hero-social">
+            <a href="#" class="social-link" id="social-fb" aria-label="Facebook">f</a>
+            <a href="#" class="social-link" id="social-ig" aria-label="Instagram">in</a>
+            <a href="#" class="social-link" id="social-x" aria-label="X Twitter">x</a>
+          </div>
+        </div>
+        <div class="hero-visual" id="hero-visual">
+          <div class="fluid-shape-container">
+            <img src="assets/hero-fluid-1.jpg" alt="EduFAZE Neural Ribbon" class="fluid-real-img" id="hero-fluid-img" />
+            <div class="fluid-shape-canvas" id="fluid-canvas"></div>
+            <div class="glow-orb orb1"></div>
+            <div class="glow-orb orb2"></div>
+          </div>
+          <div class="hero-nav-arrows">
+            <button class="arrow-btn" id="arrow-prev" aria-label="Previous">&#8592;</button>
+            <button class="arrow-btn" id="arrow-next" aria-label="Next">&#8594;</button>
+          </div>
+          <div class="vertical-scroll-tick">
+            <div class="tick-line active"></div>
+            <div class="tick-line"></div>
+            <div class="tick-line"></div>
+          </div>
+        </div>
+      </div>
+      <div class="scroll-indicator" id="scroll-indicator" onclick="document.getElementById('features-section').scrollIntoView({behavior:'smooth'})" role="button" tabindex="0">
+        <div class="circular-stamp">
+          <svg viewBox="0 0 100 100" class="rotating-text-svg">
+            <path id="circlePath" d="M 50, 50 m -37, 0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0" fill="none" />
+            <text font-size="8.5" fill="rgba(255,255,255,0.6)" letter-spacing="2">
+              <textPath href="#circlePath" startOffset="0%">• EDUFAZE AI • SMART EDUCATION •</textPath>
+            </text>
+          </svg>
+          <div class="stamp-center-arrow">&#8595;</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES SHOWCASE SECTION -->
+    <section class="features-section" id="features-section">
+      <div class="features-bg-text">SMART EDUCATION<br>GAP DETECTOR</div>
+      <div class="features-container">
+        <div class="features-visual">
+          <div class="features-fluid-wrap">
+            <img src="assets/hero-fluid-2.jpg" alt="Smart Education Gap Detector Wave" class="fluid-wave-img" id="feature-fluid-img" />
+            <div class="fluid-shape-canvas fluid-canvas-2" id="fluid-canvas-2"></div>
+            
+            <!-- OVERLAPPING STUDENT PROFILE MINI CARD -->
+            <div class="floating-profile-card">
+              <div class="fp-avatar">
+                <img src="assets/icon-192.png" alt="Student avatar" class="fp-avatar-img" />
+              </div>
+              <div class="fp-details">
+                <p class="fp-name">Aanya Sharma</p>
+                <div class="fp-bar-row">
+                  <div class="fp-bar-track"><div class="fp-bar-fill purple" style="width: 80%"></div></div>
+                  <span class="fp-bar-val">12 / 15</span>
+                </div>
+                <div class="fp-bar-row">
+                  <div class="fp-bar-track"><div class="fp-bar-fill pink" style="width: 30%"></div></div>
+                  <span class="fp-bar-val">03 / 10</span>
+                </div>
+                <div class="fp-bar-row">
+                  <div class="fp-bar-track"><div class="fp-bar-fill cyan" style="width: 80%"></div></div>
+                  <span class="fp-bar-val">08 Details</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="features-list">
+          <!-- FLOATING GRAPH CARD (TOP RIGHT) -->
+          <div class="mini-graph-card" id="graph-card">
+            <div class="graph-header">
+              <span class="graph-title">Graph</span>
+              <div class="graph-legend">
+                <span class="legend-item"><span class="legend-dot purple"></span> Omnium</span>
+                <span class="legend-item"><span class="legend-dot pink"></span> Cadence</span>
+              </div>
+            </div>
+            <div class="graph-svg-wrap">
+              <svg viewBox="0 0 280 90" class="neon-wave-svg" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#7c3aed" stop-opacity="0.45" />
+                    <stop offset="100%" stop-color="#7c3aed" stop-opacity="0.0" />
+                  </linearGradient>
+                  <linearGradient id="pinkGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#ec4899" stop-opacity="0.35" />
+                    <stop offset="100%" stop-color="#ec4899" stop-opacity="0.0" />
+                  </linearGradient>
+                </defs>
+                <path d="M 0,60 Q 40,20 80,45 T 160,25 T 240,40 T 280,20 L 280,90 L 0,90 Z" fill="url(#purpleGrad)" />
+                <path d="M 0,60 Q 40,20 80,45 T 160,25 T 240,40 T 280,20" fill="none" stroke="#a78bfa" stroke-width="2.5" />
+                <path d="M 0,75 Q 50,55 100,70 T 190,45 T 280,35 L 280,90 L 0,90 Z" fill="url(#pinkGrad)" />
+                <path d="M 0,75 Q 50,55 100,70 T 190,45 T 280,35" fill="none" stroke="#f472b6" stroke-width="2" stroke-dasharray="3 3" />
+              </svg>
+            </div>
+          </div>
+
+          <!-- MODULE LIST ITEMS -->
+          <div class="feature-item" id="feat-gap" onclick="window.location='pages/gaps.html'" role="button" tabindex="0">
+            <div class="feature-header">
+              <div class="feature-title-wrap">
+                <span class="feature-pink-dash"></span>
+                <h3>AI LEARNING GAP DETECTIVE</h3>
+              </div>
+              <div class="feature-tags">
+                <span class="tag-badge green">Active</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="feature-item" id="feat-skill" onclick="window.location='pages/skill-mapping.html'" role="button" tabindex="0">
+            <div class="feature-header">
+              <div class="feature-title-wrap">
+                <span class="feature-pink-dash"></span>
+                <h3>SYLLABUS-TO-SKILL MAPPING</h3>
+              </div>
+              <div class="feature-tags">
+                <span class="tag-badge green">Active</span>
+                <span class="tag-badge amber">Monitor</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="feature-item" id="feat-warn" onclick="window.location='pages/warnings.html'" role="button" tabindex="0">
+            <div class="feature-header">
+              <div class="feature-title-wrap">
+                <span class="feature-pink-dash"></span>
+                <h3>STUDENT STRUGGLE WARNINGS</h3>
+              </div>
+              <div class="feature-tags">
+                <span class="tag-badge amber">Pending</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="feature-item" id="feat-campus" onclick="window.location='pages/campus.html'" role="button" tabindex="0">
+            <div class="feature-header">
+              <div class="feature-title-wrap">
+                <span class="feature-pink-dash"></span>
+                <h3>CAMPUS RESOURCE INTELLIGENCE</h3>
+              </div>
+              <div class="feature-tags">
+                <span class="tag-badge blue">Live</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- FLOATING PENDING TASKS CARD (BOTTOM RIGHT) -->
+          <div class="pending-tasks-card" id="pending-tasks-card">
+            <div class="pt-header">
+              <span>Pending tasks</span>
+              <span class="pt-dots">&#8226;&#8226;&#8226;</span>
+            </div>
+            <div class="pt-list">
+              <div class="pt-item">
+                <div class="pt-checkbox checked"></div>
+                <span class="pt-text">Pending task 01</span>
+                <span class="tag-badge green sm">Active</span>
+              </div>
+              <div class="pt-item">
+                <div class="pt-checkbox checked"></div>
+                <span class="pt-text">Pending task 02</span>
+                <span class="tag-badge blue sm">Executing</span>
+              </div>
+              <div class="pt-item">
+                <div class="pt-checkbox"></div>
+                <span class="pt-text">Pending task 03</span>
+                <span class="tag-badge amber sm">Pending</span>
+              </div>
+              <div class="pt-item">
+                <div class="pt-checkbox"></div>
+                <span class="pt-text">Pending task 04</span>
+                <span class="tag-badge purple sm">Running</span>
+              </div>
+            </div>
+            <div class="pt-footer">
+              <span class="sparkle-star">&#10022;</span>
+              <div class="pt-pagination">
+                <span class="active">01</span>
+                <span>&mdash;</span>
+                <span>&mdash;</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MODULES SECTION -->
+    <section class="what-we-do" id="what-we-do-section">
+      <div class="section-header">
+        <p class="section-label">WHAT WE DO</p>
+        <h2 class="section-title">14 AI Intelligence Modules</h2>
+        <p class="section-desc">A unified intelligence engine connecting every aspect of education — from student learning to institutional insights.</p>
+      </div>
+      <div class="modules-grid" id="modules-grid">
+        <a href="pages/gaps.html" class="module-card" id="mod-1">
+          <div class="module-icon-wrap"><span class="module-icon">&#128269;</span></div>
+          <h3>AI Learning Gap Detective</h3>
+          <p>Identify concepts students haven't understood and recommend targeted improvement plans.</p>
+          <span class="module-link">Explore</span>
+        </a>
+        <a href="pages/skill-mapping.html" class="module-card" id="mod-2">
+          <div class="module-icon-wrap"><span class="module-icon">&#128506;</span></div>
+          <h3>Syllabus-to-Skill Mapping</h3>
+          <p>Connect academic curriculum with real industry skill requirements.</p>
+          <span class="module-link">Explore</span>
+        </a>
+        <a href="pages/warnings.html" class="module-card" id="mod-3">
+          <div class="module-icon-wrap"><span class="module-icon">&#9888;</span></div>
+          <h3>Student Struggle Early-Warning</h3>
+          <p>Transparent risk indicators with evidence and configurable thresholds.</p>
+          <span class="module-link">Explore</span>
+        </a>
+        <a href="pages/campus.html" class="module-card featured" id="mod-4">
+          <div class="module-icon-wrap"><span class="module-icon">&#127963;</span></div>
+          <h3>Campus Resource Intelligence</h3>
+          <p>Smart booking, conflict detection, and utilisation analytics.</p>
+          <span class="module-link">Explore</span>
+        </a>
+        <a href="pages/passport.html" class="module-card" id="mod-5">
+          <div class="module-icon-wrap"><span class="module-icon">&#128210;</span></div>
+          <h3>Learning Continuity Passport</h3>
+          <p>Portable, student-controlled verified achievement records.</p>
+          <span class="module-link">Explore</span>
+        </a>
+        <a href="pages/offline-hub.html" class="module-card" id="mod-6">
+          <div class="module-icon-wrap"><span class="module-icon">&#128225;</span></div>
+          <h3>Offline-First Smart Education</h3>
+          <p>PWA with service worker, offline caching, and smart sync queue.</p>
+          <span class="module-link">Explore</span>
+        </a>
+        <a href="pages/exam-analysis.html" class="module-card" id="mod-7">
+          <div class="module-icon-wrap"><span class="module-icon">&#129504;</span></div>
+          <h3>AI Exam Mistake Intelligence</h3>
+          <p>Classify errors and track recurring mistake patterns with revision plans.</p>
+          <span class="module-link">Explore</span>
+        </a>
+        <a href="pages/integrity.html" class="module-card" id="mod-8">
+          <div class="module-icon-wrap"><span class="module-icon">&#127919;</span></div>
+          <h3>AI Academic Integrity Coach</h3>
+          <p>Follow-up viva-style questions to verify genuine understanding.</p>
+          <span class="module-link">Explore</span>
+        </a>
+        <a href="pages/accessibility.html" class="module-card" id="mod-9">
+          <div class="module-icon-wrap"><span class="module-icon">&#9855;</span></div>
+          <h3>Classroom Accessibility Adapter</h3>
+          <p>Simplify content into summaries, glossaries, and speech-ready text.</p>
+          <span class="module-link">Explore</span>
+        </a>
+        <a href="pages/lab.html" class="module-card" id="mod-10">
+          <div class="module-icon-wrap"><span class="module-icon">&#128300;</span></div>
+          <h3>AI Lab Failure Predictor</h3>
+          <p>Hypothesis-based troubleshooting with safe recommended next steps.</p>
+          <span class="module-link">Explore</span>
+        </a>
+        <a href="pages/assistant.html" class="module-card featured" id="mod-11">
+          <div class="module-icon-wrap"><span class="module-icon">&#129302;</span></div>
+          <h3>AI Education Assistant</h3>
+          <p>Course-specific Q&amp;A and step-by-step problem solving grounded in materials.</p>
+          <span class="module-link">Explore</span>
+        </a>
+        <a href="pages/recommendations.html" class="module-card" id="mod-12">
+          <div class="module-icon-wrap"><span class="module-icon">&#128202;</span></div>
+          <h3>Personal Learning Recommendations</h3>
+          <p>Prioritised, explained recommendations linking gaps, mistakes, and resources.</p>
+          <span class="module-link">Explore</span>
+        </a>
+        <a href="pages/interventions.html" class="module-card" id="mod-13">
+          <div class="module-icon-wrap"><span class="module-icon">&#128200;</span></div>
+          <h3>Progress &amp; Intervention Tracking</h3>
+          <p>Complete intervention workflow with evidence-based progress comparison.</p>
+          <span class="module-link">Explore</span>
+        </a>
+        <a href="pages/reports.html" class="module-card" id="mod-14">
+          <div class="module-icon-wrap"><span class="module-icon">&#128209;</span></div>
+          <h3>Academic Insight &amp; Reporting</h3>
+          <p>Dashboards converting education records into actionable insights.</p>
+          <span class="module-link">Explore</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- ROLE DASHBOARDS SECTION -->
+    <section class="roles-section" id="roles-section">
+      <div class="section-header">
+        <p class="section-label">ROLE-BASED ACCESS</p>
+        <h2 class="section-title">Choose Your Dashboard</h2>
+      </div>
+      <div class="roles-grid">
+        <a href="pages/dashboard-student.html" class="role-card" id="role-student">
+          <div class="role-icon-wrap">&#127891;</div>
+          <h3>Student</h3>
+          <p>My learning plan, assessments, gaps, and recommendations.</p>
+          <span class="role-arrow">&#8594;</span>
+        </a>
+        <a href="pages/dashboard-teacher.html" class="role-card" id="role-teacher">
+          <div class="role-icon-wrap">&#128105;&#8205;&#127979;</div>
+          <h3>Teacher</h3>
+          <p>Class performance, student alerts, and interventions.</p>
+          <span class="role-arrow">&#8594;</span>
+        </a>
+        <a href="pages/dashboard-admin.html" class="role-card" id="role-admin">
+          <div class="role-icon-wrap">&#127979;</div>
+          <h3>Institution Admin</h3>
+          <p>Settings, departments, courses, and analytics.</p>
+          <span class="role-arrow">&#8594;</span>
+        </a>
+        <a href="pages/campus.html" class="role-card" id="role-campus">
+          <div class="role-icon-wrap">&#127959;</div>
+          <h3>Campus Resource Admin</h3>
+          <p>Room bookings, lab availability, and utilisation reports.</p>
+          <span class="role-arrow">&#8594;</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- STATS SECTION -->
+    <section class="stats-section" id="stats-section">
+      <div class="stats-banner">Demo Data — Synthetic Records</div>
+      <div class="stats-grid">
+        <div class="stat-card" id="stat-students">
+          <div class="stat-num" id="counter-students" data-target="1247">0</div>
+          <div class="stat-label">Active Students</div>
+        </div>
+        <div class="stat-card" id="stat-courses">
+          <div class="stat-num" id="counter-courses" data-target="84">0</div>
+          <div class="stat-label">Courses Running</div>
+        </div>
+        <div class="stat-card" id="stat-gaps">
+          <div class="stat-num" id="counter-gaps" data-target="312">0</div>
+          <div class="stat-label">Gaps Detected</div>
+        </div>
+        <div class="stat-card" id="stat-interventions">
+          <div class="stat-num" id="counter-interventions" data-target="97">0</div>
+          <div class="stat-label">Interventions Active</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA SECTION -->
+    <section class="cta-section" id="cta-section">
+      <div class="cta-glow"></div>
+      <div class="cta-content">
+        <h2>Ready to Transform Education?</h2>
+        <p>Start with a demo account and experience the full EduFAZE AI intelligence engine.</p>
+        <div class="cta-actions">
+          <a href="pages/login.html" class="btn-primary large" id="cta-login-btn">Launch Platform</a>
+          <a href="pages/demo.html" class="btn-outline large" id="cta-demo-btn">View Demo</a>
+        </div>
+        <p class="demo-note">Demo mode uses clearly labelled synthetic data. No real student records are exposed.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer" id="footer">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <div class="nav-logo"><span class="logo-edu">Edu</span><span class="logo-faze">FAZE</span><span class="logo-ai"> AI</span></div>
+        <p>Unified AI-Powered Smart Education Intelligence Platform</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Platform</h4>
+          <a href="pages/gaps.html">Learning Gaps</a>
+          <a href="pages/skill-mapping.html">Skill Mapping</a>
+          <a href="pages/campus.html">Campus Resources</a>
+          <a href="pages/assistant.html">AI Assistant</a>
+        </div>
+        <div class="footer-col">
+          <h4>Dashboards</h4>
+          <a href="pages/dashboard-student.html">Student</a>
+          <a href="pages/dashboard-teacher.html">Teacher</a>
+          <a href="pages/dashboard-admin.html">Admin</a>
+          <a href="pages/reports.html">Reports</a>
+        </div>
+        <div class="footer-col">
+          <h4>System</h4>
+          <a href="pages/login.html">Login</a>
+          <a href="pages/settings.html">Settings</a>
+          <a href="pages/offline-hub.html">Offline Hub</a>
+          <a href="pages/demo.html">Demo Mode</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>2026 EduFAZE AI &middot; Demo Mode Active &middot; <span class="demo-label">Synthetic Data Only</span></p>
+    </div>
+  </footer>
+
+  <!-- DEMO BANNER -->
+  <div class="demo-banner" id="demo-banner">
+    <span>DEMO MODE - All data shown is synthetic and clearly labelled. No real student records.</span>
+    <button id="demo-banner-close" aria-label="Dismiss">x</button>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Profile &amp; Preferences — EduFAZE AI</title>
+  <meta name="description" content="Manage personal profile, course enrollments, learning preferences, and privacy consent." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="nav-logo">
+        <span class="logo-edu">Edu</span><span class="logo-faze">FAZE</span><span class="logo-ai"> AI</span>
+      </a>
+      <div class="nav-links" id="nav-links">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="dashboard-student.html" class="nav-link">Dashboard</a>
+        <a href="profile.html" class="nav-link active">Profile</a>
+        <a href="settings.html" class="nav-link">Settings</a>
+      </div>
+      <div class="nav-right">
+        <div class="status-indicator" id="online-status">
+          <span class="status-dot online"></span>
+          <span class="status-text">Online / Sync Queue</span>
+        </div>
+        <div class="nav-icons">
+          <div class="avatar-wrapper" id="user-avatar-btn" role="button" tabindex="0" aria-label="User profile">
+            <div class="avatar" id="user-avatar">AS</div>
+          </div>
+        </div>
+        <button class="hamburger" id="hamburger-btn" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- USER DROPDOWN -->
+  <div class="user-dropdown hidden" id="user-dropdown" role="menu">
+    <div class="dropdown-header">
+      <div class="avatar lg" id="user-avatar-drop">AS</div>
+      <div>
+        <p class="dropdown-name" id="dropdown-user-name">Aanya Sharma</p>
+        <p class="dropdown-role">Student</p>
+      </div>
+    </div>
+    <hr class="dropdown-divider" />
+    <a href="dashboard-student.html" class="dropdown-item">&#127891; My Dashboard</a>
+    <hr class="dropdown-divider" />
+    <button class="dropdown-item danger" id="logout-btn">Sign Out</button>
+  </div>
+
+  <div class="page-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">My Account</div>
+        <a href="profile.html" class="sidebar-link active"><span class="icon">&#128100;</span> Personal Profile</a>
+        <a href="passport.html" class="sidebar-link"><span class="icon">&#128210;</span> Learning Passport</a>
+        <a href="settings.html" class="sidebar-link"><span class="icon">&#9881;</span> System Settings</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Dashboards</div>
+        <a href="dashboard-student.html" class="sidebar-link"><span class="icon">&#127891;</span> Student View</a>
+        <a href="dashboard-teacher.html" class="sidebar-link"><span class="icon">&#128105;&#8205;&#127979;</span> Teacher View</a>
+        <a href="dashboard-admin.html" class="sidebar-link"><span class="icon">&#127979;</span> Admin View</a>
+        <a href="campus.html" class="sidebar-link"><span class="icon">&#127959;</span> Campus View</a>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="page-content">
+      <div class="page-header">
+        <div class="breadcrumb">
+          <a href="../index.html">Home</a>
+          <span class="breadcrumb-sep">&#8250;</span>
+          <span>My Profile</span>
+        </div>
+        <h1>&#128100; User Profile &amp; Preferences</h1>
+        <p>Review your academic profile, enrolled subjects, learning accessibility settings, and privacy consent.</p>
+      </div>
+
+      <!-- PROFILE CARD -->
+      <div class="card" style="margin-bottom:1.5rem;">
+        <div style="display:flex; align-items:center; gap:1.5rem; flex-wrap:wrap;">
+          <div style="width:80px; height:80px; border-radius:50%; background:var(--gradient-btn); display:flex; align-items:center; justify-content:center; font-size:1.75rem; font-weight:800; color:white; border:3px solid var(--purple-primary); box-shadow:0 0 25px rgba(124,58,237,0.4);" id="profile-avatar-display">
+            AS
+          </div>
+          <div style="flex:1;">
+            <h2 style="font-size:1.25rem; font-weight:800;" id="profile-name">Aanya Sharma</h2>
+            <p style="font-size:0.85rem; color:var(--text-secondary);" id="profile-email">student@demo.edufaze.ai</p>
+            <div style="display:flex; gap:0.5rem; margin-top:0.5rem; flex-wrap:wrap;">
+              <span class="tag-badge green" id="profile-role-badge">Student (Year 2)</span>
+              <span class="tag-badge purple">Computer Science &amp; Engineering</span>
+              <span class="tag-badge blue">ID: u-student-1</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DEMO ACCOUNT SWITCHER -->
+      <div class="card" style="margin-bottom:1.5rem; background:rgba(124,58,237,0.06); border-color:rgba(124,58,237,0.2);">
+        <div class="card-header">
+          <div>
+            <div class="card-title">&#128260; 1-Click Role Switcher (Demo Mode)</div>
+            <div class="card-subtitle">Instantly switch between student, teacher, admin, and campus manager personas</div>
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:0.75rem;">
+          <button class="btn btn-ghost btn-sm" onclick="switchUser('student@demo.edufaze.ai')" style="text-align:left; padding:0.75rem;">
+            <strong>Aanya Sharma</strong><br><span style="font-size:0.7rem; color:var(--text-muted);">Student &bull; CS Year 2</span>
+          </button>
+          <button class="btn btn-ghost btn-sm" onclick="switchUser('teacher@demo.edufaze.ai')" style="text-align:left; padding:0.75rem;">
+            <strong>Dr. Dev Kumar</strong><br><span style="font-size:0.7rem; color:var(--text-muted);">Faculty Teacher &bull; CS Dept</span>
+          </button>
+          <button class="btn btn-ghost btn-sm" onclick="switchUser('admin@demo.edufaze.ai')" style="text-align:left; padding:0.75rem;">
+            <strong>Nithin Kumar</strong><br><span style="font-size:0.7rem; color:var(--text-muted);">Institution Administrator</span>
+          </button>
+          <button class="btn btn-ghost btn-sm" onclick="switchUser('campus@demo.edufaze.ai')" style="text-align:left; padding:0.75rem;">
+            <strong>Meera Pillai</strong><br><span style="font-size:0.7rem; color:var(--text-muted);">Campus Facilities Admin</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ENROLLED COURSES -->
+      <div class="card" style="margin-bottom:1.5rem;">
+        <div class="card-header">
+          <div class="card-title">&#127891; Enrolled Academic Courses</div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Course Name</th>
+                <th>Code</th>
+                <th>Instructor</th>
+                <th>Credits</th>
+                <th>Current Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Data Structures &amp; Algorithms</td>
+                <td>CS201</td>
+                <td>Dr. Dev Kumar</td>
+                <td>4.0</td>
+                <td><span class="tag-badge amber">Remediation Active</span></td>
+              </tr>
+              <tr>
+                <td>Calculus II (Multivariable)</td>
+                <td>MA202</td>
+                <td>Dr. Dev Kumar</td>
+                <td>3.0</td>
+                <td><span class="tag-badge red">Intervention Pending</span></td>
+              </tr>
+              <tr>
+                <td>Introduction to Artificial Intelligence</td>
+                <td>CS301</td>
+                <td>Dr. Dev Kumar</td>
+                <td>4.0</td>
+                <td><span class="tag-badge green">Good Standing (88%)</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script>
+    function loadProfile() {
+      const u = window.EduFAZE.Auth.currentUser();
+      if (u) {
+        document.getElementById('profile-name').textContent = u.name;
+        document.getElementById('profile-email').textContent = u.email;
+        document.getElementById('profile-avatar-display').textContent = u.avatar || u.name.slice(0, 2).toUpperCase();
+        document.getElementById('profile-role-badge').textContent = u.role.toUpperCase() + (u.year ? ` (Year ${u.year})` : '');
+      }
+    }
+
+    function switchUser(email) {
+      const res = window.EduFAZE.Auth.login(email, 'demo1234');
+      if (res.success) {
+        alert('Switched to ' + res.user.name + ' (' + res.user.role + ')');
+        location.reload();
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadProfile();
+    });
+  </script>
+</body>
+</html>

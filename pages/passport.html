@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Learning Continuity Passport — EduFAZE AI</title>
+  <meta name="description" content="A portable, student-controlled record of verified learning progress, demonstrated competencies, and academic milestones." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="nav-logo">
+        <span class="logo-edu">Edu</span><span class="logo-faze">FAZE</span><span class="logo-ai"> AI</span>
+      </a>
+      <div class="nav-links" id="nav-links">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="dashboard-student.html" class="nav-link">Dashboard</a>
+        <a href="gaps.html" class="nav-link">Gaps</a>
+        <a href="passport.html" class="nav-link active">Passport</a>
+        <a href="skill-mapping.html" class="nav-link">Skills</a>
+      </div>
+      <div class="nav-right">
+        <div class="status-indicator" id="online-status">
+          <span class="status-dot online"></span>
+          <span class="status-text">Online / Sync Queue</span>
+        </div>
+        <div class="nav-icons">
+          <button class="icon-btn" id="notifications-btn" aria-label="Notifications">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </button>
+          <div class="avatar-wrapper" id="user-avatar-btn" role="button" tabindex="0" aria-label="User profile">
+            <div class="avatar" id="user-avatar">AS</div>
+          </div>
+        </div>
+        <button class="hamburger" id="hamburger-btn" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- USER DROPDOWN -->
+  <div class="user-dropdown hidden" id="user-dropdown" role="menu">
+    <div class="dropdown-header">
+      <div class="avatar lg" id="user-avatar-drop">AS</div>
+      <div>
+        <p class="dropdown-name" id="dropdown-user-name">Aanya Sharma</p>
+        <p class="dropdown-role">Student</p>
+      </div>
+    </div>
+    <hr class="dropdown-divider" />
+    <a href="dashboard-student.html" class="dropdown-item">&#127891; My Dashboard</a>
+    <hr class="dropdown-divider" />
+    <button class="dropdown-item danger" id="logout-btn">Sign Out</button>
+  </div>
+
+  <div class="page-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">My Learning</div>
+        <a href="dashboard-student.html" class="sidebar-link"><span class="icon">&#128202;</span> Dashboard</a>
+        <a href="gaps.html" class="sidebar-link"><span class="icon">&#128269;</span> Learning Gaps</a>
+        <a href="recommendations.html" class="sidebar-link"><span class="icon">&#127919;</span> Recommendations</a>
+        <a href="interventions.html" class="sidebar-link"><span class="icon">&#128200;</span> Interventions</a>
+        <a href="passport.html" class="sidebar-link active"><span class="icon">&#128210;</span> Learning Passport</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Tools</div>
+        <a href="skill-mapping.html" class="sidebar-link"><span class="icon">&#128506;</span> Skill Alignment</a>
+        <a href="exam-analysis.html" class="sidebar-link"><span class="icon">&#129504;</span> Exam Mistakes</a>
+        <a href="offline-hub.html" class="sidebar-link"><span class="icon">&#128225;</span> Offline Hub</a>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="page-content">
+      <!-- DEMO BANNER -->
+      <div class="alert demo" style="margin-bottom:1.5rem; border-radius:12px;">
+        <div class="alert-icon">&#127895;</div>
+        <div>
+          <strong>Student-Controlled Passport</strong> &mdash; This passport is your portable learning wallet. All demonstrated competencies are verified via assessment records.
+          <span class="ai-status rule" style="display:inline-flex; vertical-align:middle; margin-left:0.5rem;"><span class="dot"></span>Consent-Based Sharing</span>
+        </div>
+      </div>
+
+      <div class="page-header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem;">
+        <div>
+          <div class="breadcrumb">
+            <a href="dashboard-student.html">Dashboard</a>
+            <span class="breadcrumb-sep">&#8250;</span>
+            <span>Learning Continuity Passport</span>
+          </div>
+          <h1>&#128210; Learning Continuity Passport</h1>
+          <p>Your portable, privacy-preserving record of verified academic skills, coursework progress, and mastery milestones.</p>
+        </div>
+        <div style="display:flex; gap:0.5rem;">
+          <button class="btn btn-purple btn-sm" onclick="exportPassport()">&#128229; Export JSON Passport</button>
+          <button class="btn btn-ghost btn-sm" onclick="toggleShareModal()">&#128279; Share Privately</button>
+        </div>
+      </div>
+
+      <!-- PASSPORT WALLET HEADER -->
+      <div class="card" style="margin-bottom:1.5rem; background:linear-gradient(135deg, rgba(124,58,237,0.18), rgba(236,72,153,0.08)); border-color:rgba(124,58,237,0.3);">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1.5rem;">
+          <div style="display:flex; align-items:center; gap:1.25rem;">
+            <div style="width:64px; height:64px; border-radius:50%; background:var(--gradient-btn); display:flex; align-items:center; justify-content:center; font-size:1.5rem; font-weight:800; color:white; border:3px solid var(--bg-primary); box-shadow:0 0 20px rgba(124,58,237,0.5);">
+              AS
+            </div>
+            <div>
+              <h2 style="font-size:1.25rem; font-weight:800;">Aanya Sharma</h2>
+              <p style="font-size:0.8rem; color:var(--text-secondary);">Computer Science &bull; Year 2 &bull; ID: <code>u-student-1</code></p>
+              <p style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Institution: <em>EduFAZE Demo University</em> (Autumn 2026)</p>
+            </div>
+          </div>
+          <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+            <div style="background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:0.6rem 1rem; text-align:center;">
+              <div style="font-size:1.1rem; font-weight:800; color:#34d399;">3</div>
+              <div style="font-size:0.68rem; color:var(--text-muted); text-transform:uppercase;">Verified Competencies</div>
+            </div>
+            <div style="background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:0.6rem 1rem; text-align:center;">
+              <div style="font-size:1.1rem; font-weight:800; color:var(--purple-light);">2</div>
+              <div style="font-size:0.68rem; color:var(--text-muted); text-transform:uppercase;">Active Courses</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PASSPORT PRIVACY CONTROLS -->
+      <div class="card" style="margin-bottom:1.5rem;">
+        <div class="card-header">
+          <div>
+            <div class="card-title">&#128737; Student Privacy &amp; Access Controls</div>
+            <div class="card-subtitle">You control what prospective institutions and internship employers see</div>
+          </div>
+          <span class="tag-badge green">Revocable Token</span>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:1rem;">
+          <label style="display:flex; align-items:center; gap:0.75rem; background:rgba(255,255,255,0.03); padding:0.875rem 1rem; border-radius:8px; border:1px solid rgba(255,255,255,0.06); cursor:pointer;">
+            <input type="checkbox" checked style="accent-color:var(--purple-primary);" id="priv-verified-only" />
+            <div>
+              <p style="font-size:0.8rem; font-weight:600;">Share Verified Competencies</p>
+              <p style="font-size:0.72rem; color:var(--text-muted);">Include achievements validated by faculty</p>
+            </div>
+          </label>
+          <label style="display:flex; align-items:center; gap:0.75rem; background:rgba(255,255,255,0.03); padding:0.875rem 1rem; border-radius:8px; border:1px solid rgba(255,255,255,0.06); cursor:pointer;">
+            <input type="checkbox" style="accent-color:var(--purple-primary);" id="priv-hide-diagnostic" />
+            <div>
+              <p style="font-size:0.8rem; font-weight:600;">Hide Diagnostic Scores</p>
+              <p style="font-size:0.72rem; color:var(--text-muted);">Exclude interim formative practice scores</p>
+            </div>
+          </label>
+          <label style="display:flex; align-items:center; gap:0.75rem; background:rgba(255,255,255,0.03); padding:0.875rem 1rem; border-radius:8px; border:1px solid rgba(255,255,255,0.06); cursor:pointer;">
+            <input type="checkbox" checked style="accent-color:var(--purple-primary);" id="priv-share-projects" />
+            <div>
+              <p style="font-size:0.8rem; font-weight:600;">Include Project Evidence</p>
+              <p style="font-size:0.72rem; color:var(--text-muted);">Show GitHub repos and lab experiment links</p>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- COMPETENCIES & ACHIEVEMENTS TABLE -->
+      <div class="card" style="margin-bottom:1.5rem;">
+        <div class="card-header">
+          <div>
+            <div class="card-title">&#127894; Verified Competencies &amp; Demonstrations</div>
+            <div class="card-subtitle">Assessed knowledge units with tamper-evident digital verification</div>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Competency Unit</th>
+                <th>Subject &bull; Course</th>
+                <th>Validation Source</th>
+                <th>Evidence Level</th>
+                <th>Date Verified</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Linear Data Structures &amp; Pointer Operations</strong></td>
+                <td>Data Structures (CS201)</td>
+                <td><span class="tag-badge green">&check; Assessment a-001</span></td>
+                <td><span class="tag-badge green">Demonstrated (78%)</span></td>
+                <td>Oct 10, 2026</td>
+              </tr>
+              <tr>
+                <td><strong>Lomuto Partition Algorithm Implementation</strong></td>
+                <td>Data Structures (CS201)</td>
+                <td><span class="tag-badge purple">&check; Remediation Practice</span></td>
+                <td><span class="tag-badge green">Demonstrated (85%)</span></td>
+                <td>Oct 15, 2026</td>
+              </tr>
+              <tr>
+                <td><strong>Differential Calculus Fundamentals</strong></td>
+                <td>Calculus II (MA202)</td>
+                <td><span class="tag-badge amber">&bull; Prerequisite Quiz</span></td>
+                <td><span class="tag-badge amber">Needs Improvement</span></td>
+                <td>Oct 12, 2026</td>
+              </tr>
+              <tr>
+                <td><strong>Definite Integral Applications</strong></td>
+                <td>Calculus II (MA202)</td>
+                <td><span class="tag-badge blue">&bull; Self-Reported Study</span></td>
+                <td><span class="tag-badge blue">Evidence Pending</span></td>
+                <td>Oct 16, 2026</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- SHARING MODAL -->
+      <div id="share-modal" class="card" style="display:none; border-color:var(--purple-primary);">
+        <div class="card-header">
+          <div class="card-title">&#128279; Secure Sharing Link Generator</div>
+          <button class="btn btn-ghost btn-sm" onclick="toggleShareModal()">Close</button>
+        </div>
+        <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:1rem;">
+          Generate a time-limited, revocable URL allowing universities or recruiters to inspect your verified competencies without granting access to internal diagnostic notes.
+        </p>
+        <div style="display:flex; gap:0.5rem; align-items:center;">
+          <input type="text" readonly value="https://demo.edufaze.ai/passport/verify/token_9f8e7d6c5b4a" style="flex:1; padding:0.6rem 0.8rem; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.1); border-radius:6px; color:var(--purple-light); font-size:0.8rem;" id="share-link-input" />
+          <button class="btn btn-purple btn-sm" onclick="copyLink()">Copy Link</button>
+        </div>
+        <p style="font-size:0.72rem; color:var(--text-muted); margin-top:0.5rem;">Access expires automatically in 30 days unless revoked.</p>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script>
+    function toggleShareModal() {
+      const modal = document.getElementById('share-modal');
+      modal.style.display = modal.style.display === 'none' ? 'block' : 'none';
+      if (modal.style.display === 'block') modal.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function copyLink() {
+      const input = document.getElementById('share-link-input');
+      input.select();
+      navigator.clipboard?.writeText(input.value);
+      alert('Secure Passport verification link copied to clipboard!');
+    }
+
+    function exportPassport() {
+      const data = {
+        student: "Aanya Sharma",
+        student_id: "u-student-1",
+        institution: "EduFAZE Demo University",
+        export_date: new Date().toISOString(),
+        verified_competencies: [
+          { name: "Linear Data Structures", course: "CS201", status: "Demonstrated", score: 78 },
+          { name: "Quicksort Partitioning", course: "CS201", status: "Demonstrated", score: 85 }
+        ],
+        verification_disclaimer: "Unofficial demonstration record generated by EduFAZE AI. Official certification requires institution registrar validation."
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'edufaze-passport-aanya-sharma.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>

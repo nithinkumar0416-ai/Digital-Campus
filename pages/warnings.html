@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Struggle Warnings — EduFAZE AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" /><link rel="stylesheet" href="../css/pages.css" />
+</head>
+<body>
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="nav-logo"><span class="logo-edu">Edu</span><span class="logo-faze">FAZE</span><span class="logo-ai"> AI</span></a>
+      <div class="nav-links" id="nav-links"><a href="../index.html" class="nav-link">Home</a><a href="warnings.html" class="nav-link active">Warnings</a></div>
+      <div class="nav-right">
+        <div class="status-indicator" id="online-status"><span class="status-dot online"></span><span class="status-text">Online</span></div>
+        <div class="nav-icons"><button class="icon-btn" id="notifications-btn" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/></svg></button><div class="avatar-wrapper" id="user-avatar-btn" role="button" tabindex="0"><div class="avatar" id="user-avatar">DK</div></div></div>
+        <button class="hamburger" id="hamburger-btn" aria-label="Toggle"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+  <div class="notifications-panel hidden" id="notifications-panel" role="dialog"><div class="panel-header"><h3>Notifications</h3><button class="panel-close" id="notif-close">x</button></div><div class="notif-list" id="notif-list"></div></div>
+  <div class="user-dropdown hidden" id="user-dropdown" role="menu"><div class="dropdown-header"><div class="avatar lg">DK</div><div><p class="dropdown-name" id="dropdown-user-name">Dr. Dev Kumar</p><p class="dropdown-role">Teacher</p></div></div><hr class="dropdown-divider" /><a href="dashboard-teacher.html" class="dropdown-item">Teacher Dashboard</a><button class="dropdown-item danger" id="logout-btn">Sign Out</button></div>
+
+  <div class="page-layout">
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Teacher Tools</div>
+        <a href="dashboard-teacher.html" class="sidebar-link"><span class="icon">&#128202;</span> Dashboard</a>
+        <a href="warnings.html" class="sidebar-link active"><span class="icon">&#9888;</span> Warnings</a>
+        <a href="interventions.html" class="sidebar-link"><span class="icon">&#128200;</span> Interventions</a>
+        <a href="reports.html" class="sidebar-link"><span class="icon">&#128209;</span> Reports</a>
+      </div>
+    </aside>
+    <main class="page-content">
+      <div class="alert demo" style="margin-bottom:1.5rem; border-radius:12px;"><div class="alert-icon">&#127895;</div><div><strong>Demo Mode</strong> — Alerts are from synthetic data. Teacher review is required before any action.</div></div>
+      <div class="page-header"><h1>&#9888; Student Struggle Early-Warning System</h1><p>Flagged students who may need academic support. All alerts require teacher review — do not act on AI flags alone.</p></div>
+      <div class="alert warning" style="margin-bottom:1.5rem;"><div class="alert-icon">&#8505;</div><div>Alerts are indicators, not judgements. They support human review. Never label a student based solely on these signals.</div></div>
+      <div id="warnings-container"></div>
+      <div class="card" style="margin-top:1.5rem;">
+        <div class="card-header"><div class="card-title">&#9881; Alert Thresholds</div><div class="card-subtitle">Configurable per institution</div></div>
+        <div class="grid-2">
+          <div class="form-group"><label class="form-label" for="thresh-score">Low Score Threshold (%)</label><input type="number" class="form-input" id="thresh-score" value="50" min="0" max="100" /></div>
+          <div class="form-group"><label class="form-label" for="thresh-missed">Missed Assignments Trigger</label><input type="number" class="form-input" id="thresh-missed" value="2" min="1" /></div>
+        </div>
+        <button class="btn btn-purple btn-sm" onclick="alert('Threshold saved (Demo — not persisted to server)')">Save Thresholds</button>
+      </div>
+    </main>
+  </div>
+  <script src="../js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const { DEMO_DATA } = EduFAZE;
+      const container = EduFAZE.$('warnings-container');
+      container.innerHTML = DEMO_DATA.warnings.map(w => {
+        const student = DEMO_DATA.users.find(u => u.id === w.student);
+        const lc = w.level === 'high' ? 'red' : w.level === 'medium' ? 'amber' : 'blue';
+        return `<div class="alert-card">
+          <div class="alert-card-icon">&#9888;</div>
+          <div style="flex:1;">
+            <div class="alert-card-title">${student?.name || '—'} <span class="tag-badge ${lc}" style="margin-left:0.5rem;">${w.level} priority</span></div>
+            <div class="alert-card-desc">${w.message}</div>
+            <div style="display:flex; gap:0.4rem; flex-wrap:wrap; margin:0.5rem 0;">
+              ${w.signals.map(s => `<span class="tag-badge blue" style="font-size:0.65rem;">${s}</span>`).join('')}
+            </div>
+            <div class="alert-card-evidence">These are observed signals, not confirmed causes. Discuss with the student before drawing conclusions.</div>
+            <div style="margin-top:0.75rem; display:flex; gap:0.5rem;">
+              <a href="interventions.html" class="btn btn-purple btn-sm">Start Intervention</a>
+              <button class="btn btn-ghost btn-sm" onclick="this.closest('.alert-card').style.opacity='0.5'; this.textContent='Reviewed'">Mark Reviewed</button>
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+    });
+  </script>
+</body>
+</html>

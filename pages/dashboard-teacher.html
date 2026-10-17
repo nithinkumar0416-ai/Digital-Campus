@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teacher Dashboard — EduFAZE AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
+</head>
+<body>
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="nav-logo"><span class="logo-edu">Edu</span><span class="logo-faze">FAZE</span><span class="logo-ai"> AI</span></a>
+      <div class="nav-links" id="nav-links">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="dashboard-teacher.html" class="nav-link active">Dashboard</a>
+        <a href="warnings.html" class="nav-link">Warnings</a>
+        <a href="reports.html" class="nav-link">Reports</a>
+      </div>
+      <div class="nav-right">
+        <div class="status-indicator" id="online-status"><span class="status-dot online"></span><span class="status-text">Online</span></div>
+        <div class="nav-icons">
+          <button class="icon-btn" id="notifications-btn" aria-label="Notifications">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <span class="badge" id="notification-count">2</span>
+          </button>
+          <div class="avatar-wrapper" id="user-avatar-btn" role="button" tabindex="0"><div class="avatar" id="user-avatar">DK</div></div>
+        </div>
+        <button class="hamburger" id="hamburger-btn" aria-label="Toggle"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+  <div class="notifications-panel hidden" id="notifications-panel" role="dialog"><div class="panel-header"><h3>Notifications</h3><button class="panel-close" id="notif-close">x</button></div><div class="notif-list" id="notif-list"></div></div>
+  <div class="user-dropdown hidden" id="user-dropdown" role="menu">
+    <div class="dropdown-header"><div class="avatar lg">DK</div><div><p class="dropdown-name" id="dropdown-user-name">Dr. Dev Kumar</p><p class="dropdown-role">Teacher</p></div></div>
+    <hr class="dropdown-divider" />
+    <a href="dashboard-student.html" class="dropdown-item">Student View</a>
+    <button class="dropdown-item danger" id="logout-btn">Sign Out</button>
+  </div>
+
+  <div class="page-layout">
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Teacher Tools</div>
+        <a href="dashboard-teacher.html" class="sidebar-link active"><span class="icon">&#128202;</span> Dashboard</a>
+        <a href="warnings.html" class="sidebar-link"><span class="icon">&#9888;</span> Student Warnings <span class="badge-count">2</span></a>
+        <a href="interventions.html" class="sidebar-link"><span class="icon">&#128200;</span> Interventions</a>
+        <a href="reports.html" class="sidebar-link"><span class="icon">&#128209;</span> Class Reports</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Content</div>
+        <a href="resources.html" class="sidebar-link"><span class="icon">&#128218;</span> Resources</a>
+        <a href="integrity.html" class="sidebar-link"><span class="icon">&#128101;</span> Integrity Coach</a>
+      </div>
+    </aside>
+
+    <main class="page-content">
+      <div class="alert demo" style="margin-bottom:1.5rem; border-radius:12px;">
+        <div class="alert-icon">&#127895;</div>
+        <div><strong>Demo Mode</strong> — All student records are synthetic. No real student data is shown.</div>
+      </div>
+
+      <div class="page-header">
+        <h1 id="teacher-welcome">Welcome, Dr. Kumar!</h1>
+        <p>EduFAZE Demo University &middot; Autumn 2026 &middot; Computer Science Department</p>
+      </div>
+
+      <!-- STATS -->
+      <div class="dashboard-grid-4" style="margin-bottom:1.75rem;">
+        <div class="stat-widget"><div class="stat-widget-icon purple">&#128101;</div><div><div class="stat-widget-value">28</div><div class="stat-widget-label">Total Students</div></div></div>
+        <div class="stat-widget"><div class="stat-widget-icon red">&#9888;</div><div><div class="stat-widget-value">2</div><div class="stat-widget-label">At-Risk Alerts</div><div class="stat-widget-change down">Needs attention</div></div></div>
+        <div class="stat-widget"><div class="stat-widget-icon orange">&#128200;</div><div><div class="stat-widget-value">1</div><div class="stat-widget-label">Active Interventions</div></div></div>
+        <div class="stat-widget"><div class="stat-widget-icon green">&#128218;</div><div><div class="stat-widget-value">4</div><div class="stat-widget-label">Courses Assigned</div></div></div>
+      </div>
+
+      <!-- MAIN GRID -->
+      <div class="dashboard-grid">
+        <!-- STUDENT WARNINGS -->
+        <div class="card">
+          <div class="card-header">
+            <div><div class="card-title">&#9888; Student Struggle Alerts</div><div class="card-subtitle">Flagged from assessment evidence — for teacher review only</div></div>
+            <a href="warnings.html" class="btn btn-ghost btn-sm">View All</a>
+          </div>
+          <div class="alert warning" style="margin-bottom:1rem;">
+            <div class="alert-icon">&#8505;</div>
+            <div>Alerts support human review. Do not take disciplinary action based on AI flags alone.</div>
+          </div>
+          <div id="warnings-list"></div>
+        </div>
+
+        <!-- CLASS PERFORMANCE -->
+        <div class="card">
+          <div class="card-header">
+            <div><div class="card-title">&#128202; Class Performance Overview</div><div class="card-subtitle">Average scores by course (Demo Data)</div></div>
+          </div>
+          <div id="class-performance"></div>
+        </div>
+
+        <!-- ACTIVE INTERVENTIONS -->
+        <div class="card">
+          <div class="card-header">
+            <div><div class="card-title">&#128200; Active Interventions</div><div class="card-subtitle">Track student support progress</div></div>
+            <a href="interventions.html" class="btn btn-ghost btn-sm">Manage</a>
+          </div>
+          <div id="interventions-list"></div>
+        </div>
+
+        <!-- RECENT RESULTS ACROSS CLASS -->
+        <div class="card">
+          <div class="card-header">
+            <div><div class="card-title">&#128203; Recent Assessment Results</div><div class="card-subtitle">All courses &middot; Synthetic data</div></div>
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>Student</th><th>Assessment</th><th>Score</th><th>Date</th></tr></thead>
+              <tbody id="class-results-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const { DEMO_DATA, Auth, IntelligenceEngine } = EduFAZE;
+
+      // Warnings
+      const allWarnings = DEMO_DATA.warnings;
+      const warnList = EduFAZE.$('warnings-list');
+      warnList.innerHTML = allWarnings.map(w => {
+        const student = DEMO_DATA.users.find(u => u.id === w.student);
+        const levelClass = w.level === 'high' ? 'red' : w.level === 'medium' ? 'amber' : 'blue';
+        return `
+          <div class="alert-card">
+            <div class="alert-card-icon">&#9888;</div>
+            <div style="flex:1;">
+              <div class="alert-card-title">${student?.name || 'Unknown Student'}</div>
+              <div class="alert-card-desc">${w.message}</div>
+              <div style="display:flex; gap:0.4rem; flex-wrap:wrap; margin-top:0.5rem;">
+                <span class="tag-badge ${levelClass}">${w.level} priority</span>
+                ${w.signals.map(s => `<span class="tag-badge blue" style="font-size:0.65rem;">${s}</span>`).join('')}
+              </div>
+              <div style="margin-top:0.625rem; display:flex; gap:0.5rem;">
+                <a href="interventions.html" class="btn btn-purple btn-sm">Intervene</a>
+                <button class="btn btn-ghost btn-sm" onclick="this.closest('.alert-card').classList.add('resolved'); this.textContent='Reviewed'">Mark Reviewed</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Class performance
+      const perf = EduFAZE.$('class-performance');
+      const courses = DEMO_DATA.courses;
+      const avgScores = [68, 72, 81, 55]; // synthetic averages
+      perf.innerHTML = courses.map((c, i) => `
+        <div class="progress-container">
+          <div class="progress-label">
+            <span>${c.name} (${c.code})</span>
+            <span>${avgScores[i]}%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill ${avgScores[i] >= 75 ? 'green' : avgScores[i] >= 60 ? 'orange' : 'red'}" style="width:${avgScores[i]}%"></div>
+          </div>
+        </div>
+      `).join('');
+
+      // Interventions
+      const intList = EduFAZE.$('interventions-list');
+      DEMO_DATA.interventions.forEach(int => {
+        const student = DEMO_DATA.users.find(u => u.id === int.student);
+        intList.innerHTML += `
+          <div class="rec-card">
+            <div class="rec-priority medium"></div>
+            <div style="flex:1;">
+              <div class="rec-title">${student?.name} — Sorting Algorithms Gap</div>
+              <div class="rec-reason">${int.notes}</div>
+              <div class="rec-meta">
+                <span>Started: ${EduFAZE.formatDate(int.started)}</span>
+                <span>&middot;</span>
+                <span>Follow-up: ${EduFAZE.formatDate(int.follow_up_date)}</span>
+              </div>
+              <div style="margin-top:0.625rem;"><span class="tag-badge amber">In Progress</span></div>
+            </div>
+          </div>
+        `;
+      });
+
+      // Class results
+      const tbody = EduFAZE.$('class-results-tbody');
+      const assessmentMap = {};
+      DEMO_DATA.assessments.forEach(a => assessmentMap[a.id] = a);
+      tbody.innerHTML = DEMO_DATA.results.map(r => {
+        const student = DEMO_DATA.users.find(u => u.id === r.student);
+        const a = assessmentMap[r.assessment] || {};
+        const pct = Math.round((r.score / r.max) * 100);
+        const cls = pct >= 75 ? 'green' : pct >= 50 ? 'amber' : 'red';
+        return `<tr>
+          <td>${student?.name || '—'}</td>
+          <td>${a.name || '—'}</td>
+          <td><span class="tag-badge ${cls}">${pct}%</span></td>
+          <td>${EduFAZE.formatDate(r.date)}</td>
+        </tr>`;
+      }).join('');
+    });
+  </script>
+</body>
+</html>

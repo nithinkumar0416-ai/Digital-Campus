@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Dashboard — EduFAZE AI</title>
+  <meta name="description" content="Student dashboard showing learning gaps, recommendations, assessments, and progress." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="nav-logo"><span class="logo-edu">Edu</span><span class="logo-faze">FAZE</span><span class="logo-ai"> AI</span></a>
+      <div class="nav-links" id="nav-links">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="gaps.html" class="nav-link">Gaps</a>
+        <a href="skill-mapping.html" class="nav-link">Skill Mapping</a>
+        <a href="resources.html" class="nav-link">Resources</a>
+        <a href="assistant.html" class="nav-link">AI Assistant</a>
+      </div>
+      <div class="nav-right">
+        <div class="status-indicator" id="online-status"><span class="status-dot online"></span><span class="status-text">Online</span></div>
+        <div class="nav-icons">
+          <button class="icon-btn" id="notifications-btn" aria-label="Notifications">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <span class="badge" id="notification-count">2</span>
+          </button>
+          <div class="avatar-wrapper" id="user-avatar-btn" role="button" tabindex="0" aria-label="User profile">
+            <div class="avatar" id="user-avatar">AS</div>
+            <svg class="chevron-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <button class="hamburger" id="hamburger-btn" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- NOTIFICATIONS PANEL -->
+  <div class="notifications-panel hidden" id="notifications-panel" role="dialog" aria-label="Notifications">
+    <div class="panel-header"><h3>Notifications</h3><button class="panel-close" id="notif-close">x</button></div>
+    <div class="notif-list" id="notif-list">
+      <div class="notif-item unread">
+        <div class="notif-icon warning">!</div>
+        <div class="notif-content"><p class="notif-title">Learning Gap Detected</p><p class="notif-sub">Integration topic needs revision</p><span class="notif-time">2 min ago</span></div>
+      </div>
+      <div class="notif-item unread">
+        <div class="notif-icon info">i</div>
+        <div class="notif-content"><p class="notif-title">New Recommendation</p><p class="notif-sub">Sorting algorithms revision module ready</p><span class="notif-time">1 hr ago</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- USER DROPDOWN -->
+  <div class="user-dropdown hidden" id="user-dropdown" role="menu">
+    <div class="dropdown-header"><div class="avatar lg" id="user-avatar-drop">AS</div><div><p class="dropdown-name" id="dropdown-user-name">Aanya Sharma</p><p class="dropdown-role">Student</p></div></div>
+    <hr class="dropdown-divider" />
+    <a href="profile.html" class="dropdown-item">My Profile</a>
+    <a href="passport.html" class="dropdown-item">Learning Passport</a>
+    <a href="settings.html" class="dropdown-item">Settings</a>
+    <hr class="dropdown-divider" />
+    <button class="dropdown-item danger" id="logout-btn">Sign Out</button>
+  </div>
+
+  <!-- PAGE LAYOUT -->
+  <div class="page-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">My Learning</div>
+        <a href="dashboard-student.html" class="sidebar-link active"><span class="icon">&#128202;</span> Dashboard</a>
+        <a href="gaps.html" class="sidebar-link"><span class="icon">&#128269;</span> Learning Gaps <span class="badge-count" id="sb-gap-count">2</span></a>
+        <a href="recommendations.html" class="sidebar-link"><span class="icon">&#127919;</span> Recommendations</a>
+        <a href="interventions.html" class="sidebar-link"><span class="icon">&#128200;</span> My Progress</a>
+        <a href="passport.html" class="sidebar-link"><span class="icon">&#128210;</span> Learning Passport</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Courses</div>
+        <a href="resources.html" class="sidebar-link"><span class="icon">&#128218;</span> Resources</a>
+        <a href="exam-analysis.html" class="sidebar-link"><span class="icon">&#128203;</span> Exam Analysis</a>
+        <a href="integrity.html" class="sidebar-link"><span class="icon">&#128101;</span> Integrity Coach</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Tools</div>
+        <a href="assistant.html" class="sidebar-link"><span class="icon">&#129302;</span> AI Assistant</a>
+        <a href="skill-mapping.html" class="sidebar-link"><span class="icon">&#128506;</span> Skill Mapping</a>
+        <a href="accessibility.html" class="sidebar-link"><span class="icon">&#9855;</span> Accessibility</a>
+        <a href="lab.html" class="sidebar-link"><span class="icon">&#128300;</span> Lab Helper</a>
+        <a href="offline-hub.html" class="sidebar-link"><span class="icon">&#128225;</span> Offline Hub</a>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="page-content" id="page-content">
+      <!-- DEMO BADGE -->
+      <div class="alert demo" style="margin-bottom:1.5rem; border-radius:12px;">
+        <div class="alert-icon">&#127895;</div>
+        <div><strong>Demo Mode</strong> — Data shown is synthetic and clearly labelled. Not connected to a live server.</div>
+      </div>
+
+      <!-- PAGE HEADER -->
+      <div class="page-header">
+        <div class="breadcrumb">
+          <a href="../index.html">Home</a>
+          <span class="breadcrumb-sep">&#8250;</span>
+          <span>Student Dashboard</span>
+        </div>
+        <h1 id="dashboard-welcome">Good morning, Aanya!</h1>
+        <p id="dashboard-institution">EduFAZE Demo University &middot; Autumn 2026 &middot; Computer Science Year 2</p>
+      </div>
+
+      <!-- STAT WIDGETS -->
+      <div class="dashboard-grid-4" id="stats-row">
+        <div class="stat-widget">
+          <div class="stat-widget-icon purple">&#128218;</div>
+          <div>
+            <div class="stat-widget-value" id="sw-courses">4</div>
+            <div class="stat-widget-label">Enrolled Courses</div>
+          </div>
+        </div>
+        <div class="stat-widget">
+          <div class="stat-widget-icon red">&#9888;</div>
+          <div>
+            <div class="stat-widget-value" id="sw-gaps">2</div>
+            <div class="stat-widget-label">Open Learning Gaps</div>
+            <div class="stat-widget-change down">Detected this week</div>
+          </div>
+        </div>
+        <div class="stat-widget">
+          <div class="stat-widget-icon orange">&#127919;</div>
+          <div>
+            <div class="stat-widget-value" id="sw-recs">2</div>
+            <div class="stat-widget-label">Recommendations</div>
+            <div class="stat-widget-change">Pending review</div>
+          </div>
+        </div>
+        <div class="stat-widget">
+          <div class="stat-widget-icon green">&#128200;</div>
+          <div>
+            <div class="stat-widget-value" id="sw-score">52%</div>
+            <div class="stat-widget-label">Overall Avg Score</div>
+            <div class="stat-widget-change down">Needs improvement</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MAIN GRID -->
+      <div class="dashboard-grid" id="main-grid">
+
+        <!-- LEARNING GAPS CARD -->
+        <div class="card" id="gaps-card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">&#128269; Active Learning Gaps</div>
+              <div class="card-subtitle">Identified from your assessment evidence</div>
+            </div>
+            <a href="gaps.html" class="btn btn-ghost btn-sm">View All</a>
+          </div>
+          <div id="gaps-list">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- RECOMMENDATIONS CARD -->
+        <div class="card" id="recs-card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">&#127919; My Recommendations</div>
+              <div class="card-subtitle">Personalised to your gap evidence</div>
+            </div>
+            <a href="recommendations.html" class="btn btn-ghost btn-sm">View All</a>
+          </div>
+          <div id="recs-list">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- RECENT RESULTS CARD -->
+        <div class="card" id="results-card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">&#128203; Recent Assessments</div>
+              <div class="card-subtitle">Your latest scores</div>
+            </div>
+          </div>
+          <div class="table-wrapper">
+            <table id="results-table">
+              <thead>
+                <tr>
+                  <th>Assessment</th>
+                  <th>Course</th>
+                  <th>Score</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody id="results-tbody">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- SKILL STATUS CARD -->
+        <div class="card" id="skills-card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">&#128506; Industry Skill Status</div>
+              <div class="card-subtitle">Based on curriculum-to-industry mapping</div>
+            </div>
+            <a href="skill-mapping.html" class="btn btn-ghost btn-sm">Details</a>
+          </div>
+          <div class="skill-status-grid" id="skills-grid">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- PROGRESS OVERVIEW -->
+      <div class="card" style="margin-top:0;" id="progress-card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">&#128200; Learning Progress Overview</div>
+            <div class="card-subtitle">Course completion and topic coverage</div>
+          </div>
+          <span class="ai-status rule"><span class="dot"></span> Rule-based</span>
+        </div>
+        <div id="progress-courses">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- QUICK ACTIONS -->
+      <div class="card" style="margin-top:1.5rem;" id="actions-card">
+        <div class="card-header">
+          <div class="card-title">&#9889; Quick Actions</div>
+        </div>
+        <div style="display:flex; flex-wrap:wrap; gap:0.75rem;">
+          <a href="assistant.html" class="btn btn-purple btn-sm">&#129302; Ask AI Assistant</a>
+          <a href="exam-analysis.html" class="btn btn-ghost btn-sm">&#128203; View Exam Analysis</a>
+          <a href="gaps.html" class="btn btn-ghost btn-sm">&#128269; Explore My Gaps</a>
+          <a href="passport.html" class="btn btn-ghost btn-sm">&#128210; My Learning Passport</a>
+          <a href="skill-mapping.html" class="btn btn-ghost btn-sm">&#128506; Skill Gap Check</a>
+          <a href="offline-hub.html" class="btn btn-ghost btn-sm">&#128225; Offline Mode</a>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const { DEMO_DATA, Auth, IntelligenceEngine, $, formatDate } = EduFAZE;
+
+      // Auth check
+      const user = Auth.currentUser();
+      if (!user || user.role !== 'student') {
+        // Allow admin to view
+        if (!user) { window.location.href = 'login.html'; return; }
+      }
+
+      const studentId = user?.role === 'student' ? user.id : 'u-student-1';
+      const student = DEMO_DATA.users.find(u => u.id === studentId) || DEMO_DATA.users[0];
+
+      // Update header
+      const hour = new Date().getHours();
+      const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+      $('dashboard-welcome').textContent = `${greeting}, ${student.name.split(' ')[0]}!`;
+      $('user-avatar').textContent = student.avatar;
+      const avatarDrop = $('user-avatar-drop');
+      if (avatarDrop) avatarDrop.textContent = student.avatar;
+      $('dropdown-user-name').textContent = student.name;
+
+      // Stats
+      const gaps = IntelligenceEngine.getStudentGaps(studentId);
+      const recs = IntelligenceEngine.getStudentRecommendations(studentId);
+      const results = IntelligenceEngine.getStudentResults(studentId);
+      const score = IntelligenceEngine.getOverallScore(studentId);
+
+      $('sw-gaps').textContent = gaps.filter(g => g.status === 'open').length;
+      $('sw-recs').textContent = recs.length;
+      if (score !== null) $('sw-score').textContent = score + '%';
+      $('sb-gap-count').textContent = gaps.length;
+
+      // Render Gaps
+      const gapsList = $('gaps-list');
+      if (gaps.length) {
+        gapsList.innerHTML = gaps.map(g => `
+          <div class="gap-card">
+            <div class="gap-card-top">
+              <div>
+                <div class="gap-topic">${g.topic_name}</div>
+                <div class="gap-course">${g.course_name}</div>
+              </div>
+              <span class="gap-confidence ${g.confidence}-conf">${g.confidence.charAt(0).toUpperCase() + g.confidence.slice(1)} confidence</span>
+            </div>
+            <div class="gap-evidence">Evidence: ${g.evidence}</div>
+            <div class="gap-actions">
+              <a href="gaps.html" class="btn btn-purple btn-sm">View Details</a>
+              <a href="recommendations.html" class="btn btn-ghost btn-sm">Get Help</a>
+            </div>
+          </div>
+        `).join('');
+      } else {
+        gapsList.innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#127775;</div><h3>No gaps detected yet</h3><p>Complete a diagnostic assessment to identify areas for improvement.</p></div>';
+      }
+
+      // Render Recommendations
+      const recsList = $('recs-list');
+      if (recs.length) {
+        recsList.innerHTML = recs.map(r => `
+          <div class="rec-card">
+            <div class="rec-priority ${r.priority}"></div>
+            <div style="flex:1">
+              <div class="rec-title">${r.title}</div>
+              <div class="rec-reason">${r.reason}</div>
+              <div class="rec-meta">
+                <span>Priority: ${r.priority}</span>
+                <span>&middot;</span>
+                <span>~${r.estimated_mins} min</span>
+              </div>
+              <div style="margin-top:0.625rem; display:flex; gap:0.5rem;">
+                <a href="resources.html" class="btn btn-purple btn-sm">Start</a>
+                <span class="tag-badge amber">Pending</span>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      } else {
+        recsList.innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#127775;</div><h3>No recommendations yet</h3></div>';
+      }
+
+      // Render Results Table
+      const tbody = $('results-tbody');
+      if (results.length) {
+        const assessmentMap = {};
+        DEMO_DATA.assessments.forEach(a => assessmentMap[a.id] = a);
+        const courseMap = {};
+        DEMO_DATA.courses.forEach(c => courseMap[c.id] = c);
+        tbody.innerHTML = results.map(r => {
+          const a = assessmentMap[r.assessment] || {};
+          const c = courseMap[a.course] || {};
+          const pct = Math.round((r.score / r.max) * 100);
+          const cls = pct >= 75 ? 'green' : pct >= 50 ? 'amber' : 'red';
+          return `
+            <tr>
+              <td>${a.name || 'Assessment'}</td>
+              <td>${c.name || '—'}</td>
+              <td><span class="tag-badge ${cls}">${r.score}/${r.max} (${pct}%)</span></td>
+              <td>${EduFAZE.formatDate(r.date)}</td>
+            </tr>
+          `;
+        }).join('');
+      } else {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding:2rem;">No assessment results yet.</td></tr>';
+      }
+
+      // Render Skills
+      const skills = IntelligenceEngine.getStudentSkills(studentId);
+      const skillsGrid = $('skills-grid');
+      if (skills.length) {
+        skillsGrid.innerHTML = skills.map(s => `
+          <div class="skill-item">
+            <div>
+              <div class="skill-name">${s.skill}</div>
+              <div class="skill-course">${s.industry_req}</div>
+            </div>
+            <span class="skill-status ${s.status}">${s.status.replace(/-/g, ' ')}</span>
+          </div>
+        `).join('');
+      } else {
+        skillsGrid.innerHTML = '<p style="color:var(--text-muted); font-size:0.85rem; padding:1rem;">No skill mappings yet.</p>';
+      }
+
+      // Render Course Progress
+      const courseProg = $('progress-courses');
+      const enrolled = DEMO_DATA.courses.slice(0, 3);
+      const progressValues = [65, 40, 80];
+      courseProg.innerHTML = enrolled.map((c, i) => `
+        <div class="progress-container">
+          <div class="progress-label">
+            <span>${c.name} (${c.code})</span>
+            <span>${progressValues[i]}%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill purple" style="width:${progressValues[i]}%"></div>
+          </div>
+        </div>
+      `).join('');
+    });
+  </script>
+</body>
+</html>

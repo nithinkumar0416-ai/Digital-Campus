@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Academic Reports & Insights — EduFAZE AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" /><link rel="stylesheet" href="../css/pages.css" />
+</head>
+<body>
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="nav-logo"><span class="logo-edu">Edu</span><span class="logo-faze">FAZE</span><span class="logo-ai"> AI</span></a>
+      <div class="nav-links" id="nav-links"><a href="../index.html" class="nav-link">Home</a><a href="reports.html" class="nav-link active">Reports</a></div>
+      <div class="nav-right">
+        <div class="status-indicator" id="online-status"><span class="status-dot online"></span><span class="status-text">Online</span></div>
+        <div class="nav-icons"><button class="icon-btn" id="notifications-btn" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/></svg></button><div class="avatar-wrapper" id="user-avatar-btn" role="button" tabindex="0"><div class="avatar" id="user-avatar">NK</div></div></div>
+        <button class="hamburger" id="hamburger-btn" aria-label="Toggle"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+  <div class="notifications-panel hidden" id="notifications-panel" role="dialog"><div class="panel-header"><h3>Notifications</h3><button class="panel-close" id="notif-close">x</button></div><div class="notif-list" id="notif-list"></div></div>
+  <div class="user-dropdown hidden" id="user-dropdown" role="menu"><div class="dropdown-header"><div class="avatar lg">NK</div><div><p class="dropdown-name" id="dropdown-user-name">Nithin Kumar</p><p class="dropdown-role">Institution Admin</p></div></div><hr class="dropdown-divider" /><a href="dashboard-admin.html" class="dropdown-item">Admin Dashboard</a><button class="dropdown-item danger" id="logout-btn">Sign Out</button></div>
+
+  <div class="page-layout">
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Reports</div>
+        <a href="reports.html" class="sidebar-link active"><span class="icon">&#128209;</span> Academic Insights</a>
+        <a href="dashboard-admin.html" class="sidebar-link"><span class="icon">&#127979;</span> Admin Dashboard</a>
+        <a href="campus.html" class="sidebar-link"><span class="icon">&#127963;</span> Resource Reports</a>
+        <a href="interventions.html" class="sidebar-link"><span class="icon">&#128200;</span> Intervention Reports</a>
+      </div>
+    </aside>
+    <main class="page-content">
+      <div class="alert demo" style="margin-bottom:1.5rem; border-radius:12px;"><div class="alert-icon">&#127895;</div><div><strong>Demo Mode</strong> — All figures are synthetic demo data, clearly labelled. No real institutional statistics.</div></div>
+      <div class="page-header">
+        <div class="breadcrumb"><a href="dashboard-admin.html">Admin</a><span class="breadcrumb-sep">&#8250;</span><span>Academic Insight &amp; Reporting</span></div>
+        <h1>&#128209; Academic Insight &amp; Reporting Engine</h1>
+        <p>Dashboards converting education records into understandable institutional insights. All data is synthetic in demo mode.</p>
+      </div>
+
+      <!-- FILTERS -->
+      <div class="card" style="margin-bottom:1.5rem;">
+        <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:flex-end;">
+          <div class="form-group" style="margin:0; flex:1; min-width:150px;">
+            <label class="form-label" for="filter-course">Course</label>
+            <select class="form-select" id="filter-course"><option value="all">All Courses</option><option>CS201</option><option>MA202</option><option>PH101</option></select>
+          </div>
+          <div class="form-group" style="margin:0; flex:1; min-width:150px;">
+            <label class="form-label" for="filter-sem">Semester</label>
+            <select class="form-select" id="filter-sem"><option>Autumn 2026</option><option>Spring 2026</option></select>
+          </div>
+          <button class="btn btn-purple btn-sm" onclick="alert('Filter applied (Demo — client-side only)')">Apply Filters</button>
+          <button class="btn btn-ghost btn-sm" id="export-btn">Export Report</button>
+        </div>
+      </div>
+
+      <!-- OVERVIEW STATS -->
+      <div class="dashboard-grid-4" style="margin-bottom:1.75rem;">
+        <div class="stat-widget"><div class="stat-widget-icon purple">&#128101;</div><div><div class="stat-widget-value">1,247</div><div class="stat-widget-label">Total Students</div><div class="stat-widget-change">Demo Data</div></div></div>
+        <div class="stat-widget"><div class="stat-widget-icon green">&#9989;</div><div><div class="stat-widget-value">84%</div><div class="stat-widget-label">Assignment Completion</div><div class="stat-widget-change up">+3% vs last semester</div></div></div>
+        <div class="stat-widget"><div class="stat-widget-icon orange">&#128269;</div><div><div class="stat-widget-value">312</div><div class="stat-widget-label">Learning Gaps Detected</div></div></div>
+        <div class="stat-widget"><div class="stat-widget-icon red">&#9888;</div><div><div class="stat-widget-value">97</div><div class="stat-widget-label">Active Interventions</div></div></div>
+      </div>
+
+      <!-- CHARTS AREA -->
+      <div class="dashboard-grid" style="margin-bottom:1.5rem;">
+        <div class="card">
+          <div class="card-header"><div class="card-title">&#128200; Assessment Score Distribution</div><div class="card-subtitle">Demo Data — Synthetic</div></div>
+          <div style="padding:1rem 0;">
+            <div style="display:flex; align-items:flex-end; gap:8px; height:120px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:8px;">
+              <div style="display:flex; flex-direction:column; align-items:center; gap:4px; flex:1;"><div style="background:var(--gradient-btn); width:100%; border-radius:4px 4px 0 0;" id="bar-90"></div><span style="font-size:0.65rem; color:var(--text-muted);">90-100</span></div>
+              <div style="display:flex; flex-direction:column; align-items:center; gap:4px; flex:1;"><div style="background:var(--gradient-btn); width:100%; border-radius:4px 4px 0 0;" id="bar-80"></div><span style="font-size:0.65rem; color:var(--text-muted);">80-89</span></div>
+              <div style="display:flex; flex-direction:column; align-items:center; gap:4px; flex:1;"><div style="background:var(--gradient-btn); width:100%; border-radius:4px 4px 0 0;" id="bar-70"></div><span style="font-size:0.65rem; color:var(--text-muted);">70-79</span></div>
+              <div style="display:flex; flex-direction:column; align-items:center; gap:4px; flex:1;"><div style="background:linear-gradient(135deg,#f59e0b,#fbbf24); width:100%; border-radius:4px 4px 0 0;" id="bar-60"></div><span style="font-size:0.65rem; color:var(--text-muted);">60-69</span></div>
+              <div style="display:flex; flex-direction:column; align-items:center; gap:4px; flex:1;"><div style="background:linear-gradient(135deg,#ef4444,#f87171); width:100%; border-radius:4px 4px 0 0;" id="bar-50"></div><span style="font-size:0.65rem; color:var(--text-muted);">50-59</span></div>
+              <div style="display:flex; flex-direction:column; align-items:center; gap:4px; flex:1;"><div style="background:linear-gradient(135deg,#dc2626,#ef4444); width:100%; border-radius:4px 4px 0 0;" id="bar-40"></div><span style="font-size:0.65rem; color:var(--text-muted);">&lt;50</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">&#128161; Top Learning Gaps</div><div class="card-subtitle">Most common topics across all students</div></div>
+          <div>
+            <div class="progress-container"><div class="progress-label"><span>Integration (Calculus)</span><span>47 students</span></div><div class="progress-bar"><div class="progress-fill red" style="width:75%"></div></div></div>
+            <div class="progress-container"><div class="progress-label"><span>Sorting Algorithms (CS)</span><span>38 students</span></div><div class="progress-bar"><div class="progress-fill orange" style="width:60%"></div></div></div>
+            <div class="progress-container"><div class="progress-label"><span>Graph Traversal (CS)</span><span>29 students</span></div><div class="progress-bar"><div class="progress-fill orange" style="width:45%"></div></div></div>
+            <div class="progress-container"><div class="progress-label"><span>Newton's Laws (Physics)</span><span>22 students</span></div><div class="progress-bar"><div class="progress-fill purple" style="width:35%"></div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INTERVENTION OUTCOMES -->
+      <div class="card" style="margin-bottom:1.5rem;">
+        <div class="card-header"><div class="card-title">&#128260; Intervention Outcome Summary</div><div class="card-subtitle">Based on follow-up assessment evidence only</div></div>
+        <div class="alert warning" style="margin-bottom:1rem;"><div class="alert-icon">&#8505;</div><div>Outcome is only recorded when follow-up assessment evidence is available. Improvements shown here are not claimed from subjective observation.</div></div>
+        <div class="table-wrapper">
+          <table><thead><tr><th>Intervention Type</th><th>Started</th><th>Completed</th><th>Improvement (Avg)</th><th>Evidence</th></tr></thead>
+            <tbody>
+              <tr><td>Sorting Practice Module</td><td>12</td><td>8</td><td><span class="tag-badge green">+18%</span></td><td>Follow-up quiz scores</td></tr>
+              <tr><td>Integration Revision</td><td>9</td><td>4</td><td><span class="tag-badge amber">+7%</span></td><td>Follow-up quiz scores</td></tr>
+              <tr><td>Peer Study Groups</td><td>6</td><td>3</td><td><span class="tag-badge blue">Insufficient data</span></td><td>Pending follow-up</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="../js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Animate bar chart
+      const bars = [
+        { id: 'bar-90', h: 25 }, { id: 'bar-80', h: 60 }, { id: 'bar-70', h: 80 },
+        { id: 'bar-60', h: 70 }, { id: 'bar-50', h: 50 }, { id: 'bar-40', h: 35 }
+      ];
+      bars.forEach(b => {
+        const el = EduFAZE.$(b.id);
+        if (el) { el.style.height = '0%'; setTimeout(() => { el.style.height = b.h + '%'; el.style.transition = 'height 0.8s ease'; }, 300); }
+      });
+
+      EduFAZE.$('export-btn').addEventListener('click', () => {
+        alert('Export would generate a PDF/CSV report. In demo mode, no file is produced (no real data to export).');
+      });
+    });
+  </script>
+</body>
+</html>

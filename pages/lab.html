@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Lab Failure Predictor &amp; Troubleshooter — EduFAZE AI</title>
+  <meta name="description" content="Hypothesis-based experimental failure diagnosis with safe electrical and physical measurement checks." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="nav-logo">
+        <span class="logo-edu">Edu</span><span class="logo-faze">FAZE</span><span class="logo-ai"> AI</span>
+      </a>
+      <div class="nav-links" id="nav-links">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="dashboard-student.html" class="nav-link">Dashboard</a>
+        <a href="lab.html" class="nav-link active">Lab Troubleshooter</a>
+        <a href="assistant.html" class="nav-link">Assistant</a>
+      </div>
+      <div class="nav-right">
+        <div class="status-indicator" id="online-status">
+          <span class="status-dot online"></span>
+          <span class="status-text">Online / Sync Queue</span>
+        </div>
+        <div class="nav-icons">
+          <button class="icon-btn" id="notifications-btn" aria-label="Notifications">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </button>
+          <div class="avatar-wrapper" id="user-avatar-btn" role="button" tabindex="0" aria-label="User profile">
+            <div class="avatar" id="user-avatar">AS</div>
+          </div>
+        </div>
+        <button class="hamburger" id="hamburger-btn" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- USER DROPDOWN -->
+  <div class="user-dropdown hidden" id="user-dropdown" role="menu">
+    <div class="dropdown-header">
+      <div class="avatar lg" id="user-avatar-drop">AS</div>
+      <div>
+        <p class="dropdown-name" id="dropdown-user-name">Aanya Sharma</p>
+        <p class="dropdown-role">Student</p>
+      </div>
+    </div>
+    <hr class="dropdown-divider" />
+    <a href="dashboard-student.html" class="dropdown-item">&#127891; My Dashboard</a>
+    <hr class="dropdown-divider" />
+    <button class="dropdown-item danger" id="logout-btn">Sign Out</button>
+  </div>
+
+  <div class="page-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">My Learning</div>
+        <a href="dashboard-student.html" class="sidebar-link"><span class="icon">&#128202;</span> Dashboard</a>
+        <a href="gaps.html" class="sidebar-link"><span class="icon">&#128269;</span> Learning Gaps</a>
+        <a href="recommendations.html" class="sidebar-link"><span class="icon">&#127919;</span> Recommendations</a>
+        <a href="passport.html" class="sidebar-link"><span class="icon">&#128210;</span> Learning Passport</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">AI Study Tools</div>
+        <a href="lab.html" class="sidebar-link active"><span class="icon">&#128300;</span> Lab Troubleshooter</a>
+        <a href="assistant.html" class="sidebar-link"><span class="icon">&#129302;</span> AI Assistant</a>
+        <a href="exam-analysis.html" class="sidebar-link"><span class="icon">&#129504;</span> Exam Mistakes</a>
+        <a href="campus.html" class="sidebar-link"><span class="icon">&#127963;</span> Campus Labs</a>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="page-content">
+      <!-- DEMO BANNER -->
+      <div class="alert demo" style="margin-bottom:1.5rem; border-radius:12px;">
+        <div class="alert-icon">&#127895;</div>
+        <div>
+          <strong>AI Lab Failure Predictor</strong> &mdash; Diagnostic hypotheses are safety-checked suggestions, not physical sensor telemetry.
+          <span class="ai-status rule" style="display:inline-flex; vertical-align:middle; margin-left:0.5rem;"><span class="dot"></span>Safety Protocol Enforced</span>
+        </div>
+      </div>
+
+      <div class="page-header">
+        <div class="breadcrumb">
+          <a href="dashboard-student.html">Dashboard</a>
+          <span class="breadcrumb-sep">&#8250;</span>
+          <span>AI Lab Failure Predictor</span>
+        </div>
+        <h1>&#128300; AI Laboratory Failure Predictor &amp; Troubleshooter</h1>
+        <p>Experiencing unexpected lab experiment measurements? Enter your observed readings and components to receive structured hypothesis-driven troubleshooting steps.</p>
+      </div>
+
+      <!-- EXPERIMENT TROUBLESHOOTING FORM -->
+      <div class="card" style="margin-bottom:1.5rem;">
+        <div class="card-header">
+          <div>
+            <div class="card-title">&#129514; Experiment Diagnostic Input</div>
+            <div class="card-subtitle">Select an experiment preset or enter custom symptoms</div>
+          </div>
+          <div style="display:flex; gap:0.5rem;">
+            <button class="btn btn-ghost btn-sm" onclick="loadPreset('rc')">Preset: RC Circuit Flatline</button>
+            <button class="btn btn-ghost btn-sm" onclick="loadPreset('pendulum')">Preset: Pendulum Period Deviation</button>
+          </div>
+        </div>
+
+        <form id="lab-form" onsubmit="event.preventDefault(); diagnoseLab();">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+            <div>
+              <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Experiment Name</label>
+              <input type="text" id="lab-exp-name" required value="RC Circuit Transient Response & Time Constant" style="width:100%; padding:0.6rem; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:6px; color:white; font-size:0.85rem;" />
+            </div>
+            <div>
+              <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Equipment &amp; Components</label>
+              <input type="text" id="lab-equipment" required value="DSO 100MHz, Rigol Generator, 10kΩ Resistor, 100μF Electrolytic Capacitor" style="width:100%; padding:0.6rem; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:6px; color:white; font-size:0.85rem;" />
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+            <div>
+              <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Expected Outcome</label>
+              <textarea id="lab-expected" rows="3" style="width:100%; padding:0.6rem; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:6px; color:white; font-size:0.85rem;">Exponential charging curve reaching 63.2% of Vin (3.16V) in exactly tau = R*C = 1.0 second.</textarea>
+            </div>
+            <div>
+              <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Observed Outcome &amp; Measured Values</label>
+              <textarea id="lab-observed" rows="3" style="width:100%; padding:0.6rem; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:6px; color:white; font-size:0.85rem;">Oscilloscope displays constant 0.02V flatline with heavy 50Hz mains hum. Voltage across capacitor remains 0V.</textarea>
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+            <span style="font-size:0.72rem; color:#f87171;">&#9888; Safety Notice: Disconnect DC power before checking continuity or replacing components.</span>
+            <button type="submit" class="btn btn-purple btn-sm">&#128300; Generate Diagnostic Hypotheses</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- DIAGNOSTIC RESULTS CONTAINER -->
+      <div id="lab-results" style="display:none;">
+        <div class="card" style="border-left:4px solid var(--purple-primary); margin-bottom:1.5rem;">
+          <div class="card-header">
+            <div>
+              <div class="card-title">&#128161; Top Diagnostic Hypotheses</div>
+              <div class="card-subtitle">Prioritized probable root causes based on observed 0V flatline and 50Hz hum</div>
+            </div>
+            <span class="tag-badge green">Safety Verified</span>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:1rem;" id="hypotheses-list">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- SAFE NEXT STEPS CHECKLIST -->
+        <div class="card" style="background:rgba(124,58,237,0.04); border-color:rgba(124,58,237,0.2);">
+          <div class="card-header">
+            <div class="card-title">&#9989; Recommended Safe Measurement Sequence</div>
+          </div>
+          <ol style="padding-left:1.5rem; display:flex; flex-direction:column; gap:0.625rem; font-size:0.825rem; color:var(--text-secondary);">
+            <li><strong>Step 1: Power Down:</strong> Switch off DC bench supply and discharge capacitor with a 1k resistor.</li>
+            <li><strong>Step 2: Probe Ground Check:</strong> Verify oscilloscope black alligator clip is physically clipped to circuit ground rail.</li>
+            <li><strong>Step 3: Breadboard Rail Continuity:</strong> With power OFF, set DMM to continuity/resistance mode. Verify breadboard power rails are not split in the middle.</li>
+            <li><strong>Step 4: Capacitor Polarity Check:</strong> Ensure negative stripe on electrolytic capacitor is facing ground.</li>
+            <li><strong>Step 5: When to Call Lab Instructor:</strong> If component feels warm to touch or DMM reads internal power supply short circuit, immediately call <strong>Dr. Dev Kumar</strong> or the lab technician.</li>
+          </ol>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script>
+    function loadPreset(type) {
+      if (type === 'rc') {
+        document.getElementById('lab-exp-name').value = 'RC Circuit Transient Response & Time Constant';
+        document.getElementById('lab-equipment').value = 'DSO 100MHz, Rigol Generator, 10kΩ Resistor, 100μF Electrolytic Capacitor';
+        document.getElementById('lab-expected').value = 'Exponential charging curve reaching 63.2% of Vin in 1.0 second.';
+        document.getElementById('lab-observed').value = 'Oscilloscope displays constant 0.02V flatline with heavy 50Hz mains hum.';
+      } else {
+        document.getElementById('lab-exp-name').value = 'Simple Pendulum Gravitational Acceleration (g)';
+        document.getElementById('lab-equipment').value = 'Brass Bob (50g), Inextensible String (1.0m), Digital Photogate Timer';
+        document.getElementById('lab-expected').value = 'Period T = 2.006s (corresponding to g = 9.81 m/s^2).';
+        document.getElementById('lab-observed').value = 'Measured Period is 2.24s (yielding g = 7.84 m/s^2, an error of >20%).';
+      }
+      diagnoseLab();
+    }
+
+    function diagnoseLab() {
+      const expName = document.getElementById('lab-exp-name').value;
+      const observed = document.getElementById('lab-observed').value.toLowerCase();
+      const resultsDiv = document.getElementById('lab-results');
+      const list = document.getElementById('hypotheses-list');
+
+      resultsDiv.style.display = 'block';
+      resultsDiv.scrollIntoView({ behavior: 'smooth' });
+
+      let hypotheses = [];
+
+      if (observed.includes('hum') || observed.includes('flatline') || observed.includes('0v')) {
+        hypotheses = [
+          {
+            title: 'Floating Ground / Disconnected Oscilloscope Reference',
+            confidence: 'High (88%)',
+            badge: 'red',
+            evidence: 'Heavy 50Hz mains hum accompanied by near-zero DC level is classic symptom of an ungrounded oscilloscope probe acting as an antenna picking up room AC noise.',
+            action: 'Connect probe alligator ground clip securely to the circuit ground bus.'
+          },
+          {
+            title: 'Split Breadboard Power Rail Discontinuity',
+            confidence: 'Medium (72%)',
+            badge: 'amber',
+            evidence: 'Standard solderless breadboards often have a physical break in the blue/red power distribution buses halfway along their length.',
+            action: 'Use a short jumper wire to bridge the middle gap of the power bus.'
+          },
+          {
+            title: 'Reversed Electrolytic Capacitor Polarization',
+            confidence: 'Moderate (55%)',
+            badge: 'blue',
+            evidence: 'Electrolytic capacitors inserted backwards exhibit high leakage currents, collapsing effective charging voltage.',
+            action: 'Power off immediately. Inspect stripe on capacitor body to verify it points to ground.'
+          }
+        ];
+      } else {
+        hypotheses = [
+          {
+            title: 'Large-Angle Amplitude Error (Non-Linearity)',
+            confidence: 'High (85%)',
+            badge: 'red',
+            evidence: 'Small-angle approximation sin(θ) ≈ θ holds only up to ~15°. Displacing bob beyond 25° increases period due to elliptic integral expansion.',
+            action: 'Re-run experiment releasing bob from an angle strictly under 10 degrees.'
+          },
+          {
+            title: 'String Stretch or Photogate Misalignment',
+            confidence: 'Medium (68%)',
+            badge: 'amber',
+            evidence: 'Measuring length from hook instead of center of mass of the bob underestimates effective pendulum length L.',
+            action: 'Measure length L precisely from pivot point to the center of mass of the brass bob.'
+          }
+        ];
+      }
+
+      list.innerHTML = hypotheses.map((h, idx) => `
+        <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:1rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+            <strong style="font-size:0.9rem; color:white;">Hypothesis #${idx+1}: ${h.title}</strong>
+            <span class="tag-badge ${h.badge}">${h.confidence}</span>
+          </div>
+          <p style="font-size:0.78rem; color:var(--text-secondary); margin-bottom:0.5rem;"><strong style="color:var(--purple-light);">Evidence:</strong> ${h.evidence}</p>
+          <p style="font-size:0.75rem; color:#34d399;"><strong>Safe Action:</strong> ${h.action}</p>
+        </div>
+      `).join('');
+    }
+  </script>
+</body>
+</html>

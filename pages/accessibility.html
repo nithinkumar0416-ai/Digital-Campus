@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Classroom Accessibility Adapter — EduFAZE AI</title>
+  <meta name="description" content="Adaptive course content transformations: audio read-aloud, simplified step-by-step notes, dyslexia-friendly view, and interactive glossaries." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;600;700&family=OpenDyslexic&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
+  <style>
+    .dyslexia-font { font-family: 'Comic Sans MS', 'OpenDyslexic', sans-serif !important; letter-spacing: 0.05em !important; line-height: 1.8 !important; }
+    .high-contrast { background: #000 !important; color: #fff !important; }
+    .high-contrast .card { background: #111 !important; border-color: #fff !important; }
+  </style>
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="nav-logo">
+        <span class="logo-edu">Edu</span><span class="logo-faze">FAZE</span><span class="logo-ai"> AI</span>
+      </a>
+      <div class="nav-links" id="nav-links">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="dashboard-student.html" class="nav-link">Dashboard</a>
+        <a href="accessibility.html" class="nav-link active">Accessibility</a>
+        <a href="resources.html" class="nav-link">Resources</a>
+      </div>
+      <div class="nav-right">
+        <div class="status-indicator" id="online-status">
+          <span class="status-dot online"></span>
+          <span class="status-text">Online / Sync Queue</span>
+        </div>
+        <div class="nav-icons">
+          <button class="icon-btn" id="notifications-btn" aria-label="Notifications">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </button>
+          <div class="avatar-wrapper" id="user-avatar-btn" role="button" tabindex="0" aria-label="User profile">
+            <div class="avatar" id="user-avatar">AS</div>
+          </div>
+        </div>
+        <button class="hamburger" id="hamburger-btn" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- USER DROPDOWN -->
+  <div class="user-dropdown hidden" id="user-dropdown" role="menu">
+    <div class="dropdown-header">
+      <div class="avatar lg" id="user-avatar-drop">AS</div>
+      <div>
+        <p class="dropdown-name" id="dropdown-user-name">Aanya Sharma</p>
+        <p class="dropdown-role">Student</p>
+      </div>
+    </div>
+    <hr class="dropdown-divider" />
+    <a href="dashboard-student.html" class="dropdown-item">&#127891; My Dashboard</a>
+    <hr class="dropdown-divider" />
+    <button class="dropdown-item danger" id="logout-btn">Sign Out</button>
+  </div>
+
+  <div class="page-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">My Learning</div>
+        <a href="dashboard-student.html" class="sidebar-link"><span class="icon">&#128202;</span> Dashboard</a>
+        <a href="gaps.html" class="sidebar-link"><span class="icon">&#128269;</span> Learning Gaps</a>
+        <a href="recommendations.html" class="sidebar-link"><span class="icon">&#127919;</span> Recommendations</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">AI Study Tools</div>
+        <a href="accessibility.html" class="sidebar-link active"><span class="icon">&#9855;</span> Accessibility</a>
+        <a href="assistant.html" class="sidebar-link"><span class="icon">&#129302;</span> AI Assistant</a>
+        <a href="lab.html" class="sidebar-link"><span class="icon">&#128300;</span> Lab Troubleshooter</a>
+        <a href="resources.html" class="sidebar-link"><span class="icon">&#128218;</span> Resource Vault</a>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="page-content" id="accessible-main">
+      <!-- DEMO BANNER -->
+      <div class="alert demo" style="margin-bottom:1.5rem; border-radius:12px;">
+        <div class="alert-icon">&#127895;</div>
+        <div>
+          <strong>Classroom Accessibility Adapter</strong> &mdash; Transforming complex lesson materials into multi-modal formats without compromising technical rigor.
+          <span class="ai-status live" style="display:inline-flex; vertical-align:middle; margin-left:0.5rem;"><span class="dot"></span>Web Speech API Active</span>
+        </div>
+      </div>
+
+      <div class="page-header">
+        <div class="breadcrumb">
+          <a href="dashboard-student.html">Dashboard</a>
+          <span class="breadcrumb-sep">&#8250;</span>
+          <span>Classroom Accessibility Adapter</span>
+        </div>
+        <h1>&#9855; Classroom Accessibility &amp; Content Adapter</h1>
+        <p>Personalize course materials for visual, auditory, and cognitive learning preferences with instant speech narration, simplified summaries, and technical glossaries.</p>
+      </div>
+
+      <!-- ACCESSIBILITY TOOLBAR -->
+      <div class="card" style="margin-bottom:1.5rem; background:rgba(124,58,237,0.06); border-color:rgba(124,58,237,0.2);">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+          <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
+            <button class="btn btn-purple btn-sm" id="btn-tts" onclick="toggleReadAloud()">&#128266; Read Aloud (TTS)</button>
+            <button class="btn btn-ghost btn-sm" onclick="toggleDyslexia()">&#128260; Dyslexia-Friendly Font</button>
+            <button class="btn btn-ghost btn-sm" onclick="toggleHighContrast()">&#9680; High Contrast</button>
+          </div>
+          <div style="display:flex; gap:0.5rem; align-items:center;">
+            <span style="font-size:0.75rem; color:var(--text-muted);">Text Size:</span>
+            <button class="btn btn-ghost btn-sm" onclick="changeFontSize(-1)">A-</button>
+            <button class="btn btn-ghost btn-sm" onclick="changeFontSize(1)">A+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- LESSON CONTENT WITH ADAPTIVE TABS -->
+      <div class="card" style="margin-bottom:1.5rem;">
+        <div class="card-header">
+          <div>
+            <div class="card-title">&#128214; Course Note: Quicksort &amp; Partition Algorithms (CS201)</div>
+            <div class="card-subtitle">Source: Lecture 6 Study Material &bull; Verified Academic Accuracy</div>
+          </div>
+          <div class="tabs" style="margin-bottom:0;">
+            <button class="tab-btn active" id="tab-orig" onclick="showLevel('orig')">Original Note</button>
+            <button class="tab-btn" id="tab-step" onclick="showLevel('step')">Step-by-Step</button>
+            <button class="tab-btn" id="tab-simple" onclick="showLevel('simple')">ELI5 Simplified</button>
+            <button class="tab-btn" id="tab-glossary" onclick="showLevel('glossary')">Technical Glossary</button>
+          </div>
+        </div>
+
+        <!-- CONTENT VIEW -->
+        <div id="content-display-area" style="padding:1rem 0; font-size:0.95rem; line-height:1.7; color:var(--text-secondary);">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script>
+    const contentLevels = {
+      orig: `
+        <h3 style="color:white; margin-bottom:0.75rem;">Formal Algorithm Definition</h3>
+        <p>Quicksort is an efficient divide-and-conquer sorting algorithm. It selects an element as a pivot and partitions the given array around the chosen pivot. There are multiple partition schemes, most notably the Lomuto partition scheme and the Hoare partition scheme.</p>
+        <p style="margin-top:0.75rem;">In the Lomuto partition scheme, the algorithm chooses the last element as the pivot. It maintains an index <code>i</code> that tracks the boundary of elements less than or equal to the pivot. A second pointer <code>j</code> traverses the array from the beginning up to the element preceding the pivot. Whenever <code>arr[j] &le; pivot</code>, <code>i</code> is incremented and <code>arr[i]</code> is swapped with <code>arr[j]</code>. Finally, the pivot is swapped into position <code>i + 1</code>.</p>
+        <div style="background:rgba(0,0,0,0.3); border-radius:6px; padding:0.75rem; margin-top:1rem; font-family:monospace; font-size:0.85rem; color:#a78bfa;">
+          Partition(A, low, high):<br>
+          &nbsp;&nbsp;pivot = A[high]<br>
+          &nbsp;&nbsp;i = low - 1<br>
+          &nbsp;&nbsp;for j = low to high - 1:<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;if A[j] &le; pivot:<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i = i + 1<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;swap A[i] with A[j]<br>
+          &nbsp;&nbsp;swap A[i + 1] with A[high]<br>
+          &nbsp;&nbsp;return i + 1
+        </div>
+      `,
+      step: `
+        <h3 style="color:white; margin-bottom:0.75rem;">Step-by-Step Breakdown</h3>
+        <ol style="padding-left:1.5rem; display:flex; flex-direction:column; gap:0.75rem;">
+          <li><strong>Step 1: Choose Pivot:</strong> Pick the last number in the list. This is your target benchmark.</li>
+          <li><strong>Step 2: Initialize Two Pointers:</strong> Pointer <code>i</code> starts just before the list (index -1), representing the boundary of smaller numbers. Pointer <code>j</code> scans each number one by one.</li>
+          <li><strong>Step 3: Compare &amp; Swap:</strong> If the current number <code>A[j]</code> is smaller than or equal to the pivot, move pointer <code>i</code> forward by one spot and swap <code>A[i]</code> with <code>A[j]</code>.</li>
+          <li><strong>Step 4: Lock In Pivot:</strong> Once the list is scanned, place the pivot right after pointer <code>i</code>. Now all smaller numbers are strictly to its left, and all larger numbers to its right!</li>
+        </ol>
+      `,
+      simple: `
+        <h3 style="color:white; margin-bottom:0.75rem;">Simplified Explanation (Visual Analogy)</h3>
+        <p>Imagine organizing a classroom of students by height:</p>
+        <p style="margin-top:0.5rem;">1. Pick the last student in line as the <strong>Benchmark Student</strong> (the pivot).</p>
+        <p style="margin-top:0.5rem;">2. Walk down the line: anyone shorter than the benchmark gets sent to the <strong>left side of the room</strong>.</p>
+        <p style="margin-top:0.5rem;">3. Everyone taller stays on the <strong>right side of the room</strong>.</p>
+        <p style="margin-top:0.5rem;">4. Finally, place the benchmark student right in the middle between both groups. That student is now in their <strong>permanent, perfectly sorted spot</strong>!</p>
+      `,
+      glossary: `
+        <h3 style="color:white; margin-bottom:0.75rem;">Technical Glossary</h3>
+        <div style="display:flex; flex-direction:column; gap:0.75rem;">
+          <div style="background:rgba(255,255,255,0.03); padding:0.75rem; border-radius:6px; border:1px solid rgba(255,255,255,0.06);">
+            <strong style="color:var(--purple-light);">Pivot:</strong> The selected reference element against which all other elements in the sub-array are compared during a partition.
+          </div>
+          <div style="background:rgba(255,255,255,0.03); padding:0.75rem; border-radius:6px; border:1px solid rgba(255,255,255,0.06);">
+            <strong style="color:var(--purple-light);">Partition:</strong> The operation of rearranging an array such that all elements less than a chosen pivot come before it, and all greater elements come after it.
+          </div>
+          <div style="background:rgba(255,255,255,0.03); padding:0.75rem; border-radius:6px; border:1px solid rgba(255,255,255,0.06);">
+            <strong style="color:var(--purple-light);">In-Place Sorting:</strong> An algorithm that transforms input without allocating significant extra memory (O(1) auxiliary space beyond recursion stack frames).
+          </div>
+        </div>
+      `
+    };
+
+    let activeLevel = 'orig';
+    let isReading = false;
+
+    function showLevel(lvl) {
+      activeLevel = lvl;
+      document.querySelectorAll('.tabs .tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-' + lvl)?.classList.add('active');
+      document.getElementById('content-display-area').innerHTML = contentLevels[lvl];
+      if (isReading) stopReadAloud();
+    }
+
+    function toggleDyslexia() {
+      document.getElementById('content-display-area').classList.toggle('dyslexia-font');
+    }
+
+    function toggleHighContrast() {
+      document.body.classList.toggle('high-contrast');
+    }
+
+    let currentFontSize = 0.95;
+    function changeFontSize(delta) {
+      currentFontSize = Math.max(0.75, Math.min(1.4, currentFontSize + (delta * 0.1)));
+      document.getElementById('content-display-area').style.fontSize = currentFontSize + 'rem';
+    }
+
+    function toggleReadAloud() {
+      if (!('speechSynthesis' in window)) {
+        alert('Web Speech API is not supported in this browser.');
+        return;
+      }
+
+      if (isReading) {
+        stopReadAloud();
+      } else {
+        const text = document.getElementById('content-display-area').innerText;
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 0.95;
+        utterance.onend = () => stopReadAloud();
+        utterance.onerror = () => stopReadAloud();
+        window.speechSynthesis.speak(utterance);
+        isReading = true;
+        document.getElementById('btn-tts').innerHTML = '&#9209; Stop Reading';
+        document.getElementById('btn-tts').classList.remove('btn-purple');
+        document.getElementById('btn-tts').classList.add('btn-ghost');
+      }
+    }
+
+    function stopReadAloud() {
+      window.speechSynthesis.cancel();
+      isReading = false;
+      const btn = document.getElementById('btn-tts');
+      if (btn) {
+        btn.innerHTML = '&#128266; Read Aloud (TTS)';
+        btn.classList.add('btn-purple');
+        btn.classList.remove('btn-ghost');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      showLevel('orig');
+    });
+  </script>
+</body>
+</html>

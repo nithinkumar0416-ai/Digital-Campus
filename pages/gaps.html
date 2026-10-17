@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Learning Gap Detective — EduFAZE AI</title>
+  <meta name="description" content="Identify learning gaps from assessment evidence and get targeted improvement plans." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
+</head>
+<body>
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="nav-logo"><span class="logo-edu">Edu</span><span class="logo-faze">FAZE</span><span class="logo-ai"> AI</span></a>
+      <div class="nav-links" id="nav-links">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="gaps.html" class="nav-link active">Gaps</a>
+        <a href="skill-mapping.html" class="nav-link">Skill Mapping</a>
+        <a href="resources.html" class="nav-link">Resources</a>
+      </div>
+      <div class="nav-right">
+        <div class="status-indicator" id="online-status"><span class="status-dot online"></span><span class="status-text">Online</span></div>
+        <div class="nav-icons">
+          <button class="icon-btn" id="notifications-btn" aria-label="Notifications">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </button>
+          <div class="avatar-wrapper" id="user-avatar-btn" role="button" tabindex="0" aria-label="User profile">
+            <div class="avatar" id="user-avatar">AS</div>
+          </div>
+        </div>
+        <button class="hamburger" id="hamburger-btn" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+  <div class="notifications-panel hidden" id="notifications-panel" role="dialog" aria-label="Notifications">
+    <div class="panel-header"><h3>Notifications</h3><button class="panel-close" id="notif-close">x</button></div>
+    <div class="notif-list" id="notif-list"></div>
+  </div>
+  <div class="user-dropdown hidden" id="user-dropdown" role="menu">
+    <div class="dropdown-header"><div class="avatar lg" id="user-avatar-drop">AS</div><div><p class="dropdown-name" id="dropdown-user-name">Aanya Sharma</p><p class="dropdown-role">Student</p></div></div>
+    <hr class="dropdown-divider" />
+    <a href="dashboard-student.html" class="dropdown-item">&#127891; My Dashboard</a>
+    <hr class="dropdown-divider" />
+    <button class="dropdown-item danger" id="logout-btn">Sign Out</button>
+  </div>
+
+  <div class="page-layout">
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">My Learning</div>
+        <a href="dashboard-student.html" class="sidebar-link"><span class="icon">&#128202;</span> Dashboard</a>
+        <a href="gaps.html" class="sidebar-link active"><span class="icon">&#128269;</span> Learning Gaps</a>
+        <a href="recommendations.html" class="sidebar-link"><span class="icon">&#127919;</span> Recommendations</a>
+        <a href="interventions.html" class="sidebar-link"><span class="icon">&#128200;</span> My Progress</a>
+        <a href="passport.html" class="sidebar-link"><span class="icon">&#128210;</span> Learning Passport</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Tools</div>
+        <a href="assistant.html" class="sidebar-link"><span class="icon">&#129302;</span> AI Assistant</a>
+        <a href="skill-mapping.html" class="sidebar-link"><span class="icon">&#128506;</span> Skill Mapping</a>
+        <a href="exam-analysis.html" class="sidebar-link"><span class="icon">&#128203;</span> Exam Analysis</a>
+      </div>
+    </aside>
+
+    <main class="page-content">
+      <div class="alert demo" style="margin-bottom:1.5rem; border-radius:12px;">
+        <div class="alert-icon">&#127895;</div>
+        <div><strong>Demo Mode</strong> — Gaps shown are detected from synthetic assessment data. <span class="ai-status rule" style="display:inline-flex; vertical-align:middle; margin-left:0.5rem;"><span class="dot"></span>Rule-based analysis</span></div>
+      </div>
+
+      <div class="page-header">
+        <div class="breadcrumb">
+          <a href="dashboard-student.html">Dashboard</a>
+          <span class="breadcrumb-sep">&#8250;</span>
+          <span>AI Learning Gap Detective</span>
+        </div>
+        <h1>&#128269; AI Learning Gap Detective</h1>
+        <p>Gaps are identified from assessment evidence. Each gap shows the evidence supporting it and its strength. Confirm with your teacher before major study plan changes.</p>
+      </div>
+
+      <!-- HOW IT WORKS -->
+      <div class="card" style="margin-bottom:1.5rem; background: linear-gradient(135deg, rgba(124,58,237,0.08), rgba(236,72,153,0.04));">
+        <div style="display:flex; align-items:flex-start; gap:1rem; flex-wrap:wrap;">
+          <div style="flex:1; min-width:200px;">
+            <h3 style="font-size:0.875rem; margin-bottom:0.5rem;">How gaps are detected</h3>
+            <p style="font-size:0.8rem; color:var(--text-secondary);">The system analyses your assessment scores by topic, checks prerequisite concepts, and flags areas where evidence suggests a knowledge gap. A gap is an <strong>observation</strong>, not a final judgement.</p>
+          </div>
+          <div style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center;">
+            <span class="ai-status rule"><span class="dot"></span> Rule-based detection</span>
+            <span class="tag-badge amber">Demo Data</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TABS -->
+      <div class="tabs" id="gaps-tabs">
+        <button class="tab-btn active" data-tab="open" id="tab-open">Open Gaps</button>
+        <button class="tab-btn" data-tab="inprogress" id="tab-inprogress">In Progress</button>
+        <button class="tab-btn" data-tab="resolved" id="tab-resolved">Resolved</button>
+        <button class="tab-btn" data-tab="all" id="tab-all">All</button>
+      </div>
+
+      <!-- GAPS LIST -->
+      <div id="gaps-container">
+        <!-- Populated by JS -->
+      </div>
+
+      <!-- PREREQUISITE MAP -->
+      <div class="card" style="margin-top:1.5rem;" id="prereq-card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">&#128279; Prerequisite Concept Map</div>
+            <div class="card-subtitle">How your detected gaps relate to foundational concepts</div>
+          </div>
+        </div>
+        <div id="prereq-map">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- FOLLOW-UP COMPARISON -->
+      <div class="card" style="margin-top:1.5rem;" id="comparison-card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">&#128260; Before vs After Assessment</div>
+            <div class="card-subtitle">Progress shown when follow-up assessments are completed</div>
+          </div>
+        </div>
+        <div id="comparison-content">
+          <div class="empty-state">
+            <div class="empty-state-icon">&#128203;</div>
+            <h3>No follow-up assessments yet</h3>
+            <p>Complete the recommended practice and a follow-up quiz to see your progress comparison here.</p>
+            <a href="recommendations.html" class="btn btn-purple btn-sm" style="margin-top:1rem;">View Recommendations</a>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const { DEMO_DATA, Auth, IntelligenceEngine, $ } = EduFAZE;
+      const user = Auth.currentUser();
+      const studentId = user?.role === 'student' ? user.id : 'u-student-1';
+
+      const gaps = IntelligenceEngine.getStudentGaps(studentId);
+
+      // Tab logic
+      let currentTab = 'open';
+      const tabBtns = document.querySelectorAll('.tab-btn');
+      tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          tabBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentTab = btn.dataset.tab;
+          renderGaps();
+        });
+      });
+
+      function filterGaps() {
+        if (currentTab === 'all') return gaps;
+        if (currentTab === 'open') return gaps.filter(g => g.status === 'open');
+        if (currentTab === 'inprogress') return gaps.filter(g => g.status === 'in-progress');
+        if (currentTab === 'resolved') return gaps.filter(g => g.status === 'resolved');
+        return gaps;
+      }
+
+      function renderGaps() {
+        const container = $('gaps-container');
+        const filtered = filterGaps();
+        if (!filtered.length) {
+          container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">${currentTab === 'resolved' ? '&#9989;' : '&#127775;'}</div><h3>${currentTab === 'resolved' ? 'No resolved gaps yet' : currentTab === 'open' ? 'No open gaps detected' : 'No gaps in this category'}</h3><p>${currentTab === 'resolved' ? 'Resolved gaps will appear here after successful follow-up assessments.' : 'Complete more assessments to surface potential gaps.'}</p></div>`;
+          return;
+        }
+        container.innerHTML = filtered.map(g => {
+          const statusColor = g.status === 'open' ? 'red' : g.status === 'in-progress' ? 'amber' : 'green';
+          const statusLabel = g.status.replace('-', ' ');
+          const confMap = { high: 'high-conf', medium: 'med-conf', low: 'low-conf' };
+
+          // Find prerequisite info
+          const topic = DEMO_DATA.topics.find(t => t.id === g.topic);
+          const prereqs = topic ? topic.prerequisites.map(pid => {
+            const pt = DEMO_DATA.topics.find(t => t.id === pid);
+            return pt ? pt.name : pid;
+          }) : [];
+
+          return `
+            <div class="gap-card">
+              <div class="gap-card-top">
+                <div>
+                  <div class="gap-topic">${g.topic_name}</div>
+                  <div class="gap-course">${g.course_name} &middot; Detected ${EduFAZE.formatDate(g.detected)}</div>
+                </div>
+                <div style="display:flex; flex-direction:column; align-items:flex-end; gap:0.4rem;">
+                  <span class="tag-badge ${statusColor}">${statusLabel}</span>
+                  <span class="gap-confidence ${confMap[g.confidence] || 'med-conf'}">${g.confidence} confidence</span>
+                </div>
+              </div>
+              <div class="alert info" style="margin:0.5rem 0; border-radius:8px; padding:0.75rem 1rem;">
+                <div class="alert-icon">&#128161;</div>
+                <div>
+                  <strong>Evidence: </strong>${g.evidence}
+                </div>
+              </div>
+              ${prereqs.length ? `
+                <div style="margin:0.5rem 0; font-size:0.78rem; color:var(--text-muted);">
+                  <strong>Prerequisite concepts:</strong> ${prereqs.join(' &#8594; ')} &#8594; ${g.topic_name}
+                </div>
+              ` : ''}
+              <div class="gap-actions" style="margin-top:0.875rem;">
+                <a href="recommendations.html" class="btn btn-purple btn-sm">&#127919; Get Recommendations</a>
+                <a href="resources.html" class="btn btn-ghost btn-sm">&#128218; Study Resources</a>
+                <a href="assistant.html" class="btn btn-ghost btn-sm">&#129302; Ask AI</a>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      renderGaps();
+
+      // Prerequisite Map
+      const prereqMap = $('prereq-map');
+      if (gaps.length) {
+        prereqMap.innerHTML = gaps.map(g => {
+          const topic = DEMO_DATA.topics.find(t => t.id === g.topic);
+          const prereqs = topic ? topic.prerequisites.map(pid => {
+            const pt = DEMO_DATA.topics.find(t => t.id === pid);
+            return pt ? pt.name : pid;
+          }) : [];
+          return `
+            <div style="padding:1rem 0; border-bottom:1px solid rgba(255,255,255,0.05);">
+              <div style="font-size:0.8rem; font-weight:600; color:var(--text-secondary); margin-bottom:0.5rem;">Gap: <span style="color:var(--text-primary);">${g.topic_name}</span></div>
+              <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+                ${prereqs.map(p => `<span class="tag-badge amber">${p}</span><span style="color:var(--text-muted);">&#8594;</span>`).join('')}
+                <span class="tag-badge red">${g.topic_name} (Gap)</span>
+              </div>
+              <div style="font-size:0.73rem; color:var(--text-muted); margin-top:0.5rem;">Weak prerequisite understanding may contribute to this gap.</div>
+            </div>
+          `;
+        }).join('');
+      } else {
+        prereqMap.innerHTML = '<div class="empty-state"><p>No prerequisite maps to show — no gaps detected yet.</p></div>';
+      }
+    });
+  </script>
+</body>
+</html>

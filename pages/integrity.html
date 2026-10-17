@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Academic Integrity Coach — EduFAZE AI</title>
+  <meta name="description" content="Viva-style oral defense and understanding verification rather than punitive plagiarism detection." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="nav-logo">
+        <span class="logo-edu">Edu</span><span class="logo-faze">FAZE</span><span class="logo-ai"> AI</span>
+      </a>
+      <div class="nav-links" id="nav-links">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="dashboard-student.html" class="nav-link">Dashboard</a>
+        <a href="integrity.html" class="nav-link active">Integrity Coach</a>
+        <a href="assistant.html" class="nav-link">Assistant</a>
+      </div>
+      <div class="nav-right">
+        <div class="status-indicator" id="online-status">
+          <span class="status-dot online"></span>
+          <span class="status-text">Online / Sync Queue</span>
+        </div>
+        <div class="nav-icons">
+          <button class="icon-btn" id="notifications-btn" aria-label="Notifications">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </button>
+          <div class="avatar-wrapper" id="user-avatar-btn" role="button" tabindex="0" aria-label="User profile">
+            <div class="avatar" id="user-avatar">AS</div>
+          </div>
+        </div>
+        <button class="hamburger" id="hamburger-btn" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- USER DROPDOWN -->
+  <div class="user-dropdown hidden" id="user-dropdown" role="menu">
+    <div class="dropdown-header">
+      <div class="avatar lg" id="user-avatar-drop">AS</div>
+      <div>
+        <p class="dropdown-name" id="dropdown-user-name">Aanya Sharma</p>
+        <p class="dropdown-role">Student</p>
+      </div>
+    </div>
+    <hr class="dropdown-divider" />
+    <a href="dashboard-student.html" class="dropdown-item">&#127891; My Dashboard</a>
+    <hr class="dropdown-divider" />
+    <button class="dropdown-item danger" id="logout-btn">Sign Out</button>
+  </div>
+
+  <div class="page-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">My Learning</div>
+        <a href="dashboard-student.html" class="sidebar-link"><span class="icon">&#128202;</span> Dashboard</a>
+        <a href="gaps.html" class="sidebar-link"><span class="icon">&#128269;</span> Learning Gaps</a>
+        <a href="recommendations.html" class="sidebar-link"><span class="icon">&#127919;</span> Recommendations</a>
+        <a href="passport.html" class="sidebar-link"><span class="icon">&#128210;</span> Learning Passport</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">AI Study Tools</div>
+        <a href="integrity.html" class="sidebar-link active"><span class="icon">&#128737;</span> Integrity Viva</a>
+        <a href="exam-analysis.html" class="sidebar-link"><span class="icon">&#129504;</span> Exam Mistakes</a>
+        <a href="accessibility.html" class="sidebar-link"><span class="icon">&#9855;</span> Accessibility</a>
+        <a href="lab.html" class="sidebar-link"><span class="icon">&#128300;</span> Lab Troubleshooter</a>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="page-content">
+      <!-- DEMO BANNER -->
+      <div class="alert demo" style="margin-bottom:1.5rem; border-radius:12px;">
+        <div class="alert-icon">&#127895;</div>
+        <div>
+          <strong>Responsible Academic Integrity</strong> &mdash; EduFAZE rejects unreliable AI text detectors. We evaluate genuine understanding through conversational step-by-step viva questions.
+          <span class="ai-status rule" style="display:inline-flex; vertical-align:middle; margin-left:0.5rem;"><span class="dot"></span>Non-Punitive Understanding Check</span>
+        </div>
+      </div>
+
+      <div class="page-header">
+        <div class="breadcrumb">
+          <a href="dashboard-student.html">Dashboard</a>
+          <span class="breadcrumb-sep">&#8250;</span>
+          <span>Academic Integrity Coach</span>
+        </div>
+        <h1>&#128737; AI Academic Integrity &amp; Viva Coach</h1>
+        <p>Demonstrate your mastery through interactive viva questions. Defend your design decisions and demonstrate authentic comprehension without false accusations.</p>
+      </div>
+
+      <!-- ACTIVE SUBMISSION TO DEFEND -->
+      <div class="card" style="margin-bottom:1.5rem;">
+        <div class="card-header">
+          <div>
+            <div class="card-title">&#128221; Submitted Work: CS201 Assignment 2 (QuickSort vs MergeSort)</div>
+            <div class="card-subtitle">Submitted: Oct 14, 2026 &bull; Grade: 88/100 (Pending Viva Verification)</div>
+          </div>
+          <span class="tag-badge amber">Viva Defense Active</span>
+        </div>
+        <div style="background:rgba(0,0,0,0.3); border-radius:8px; padding:1rem; margin-bottom:1rem; font-size:0.8rem; color:var(--text-secondary); line-height:1.6;">
+          <strong style="color:var(--text-primary);">Excerpt from submitted code &amp; report:</strong><br />
+          <em>"Implemented Lomuto partitioning with randomized pivot selection to prevent worst-case O(n^2) degradation on partially sorted arrays. Memory auxiliary overhead is O(1) in-place."</em>
+        </div>
+
+        <div style="background:rgba(124,58,237,0.08); border:1px solid rgba(124,58,237,0.2); border-radius:8px; padding:1.25rem;">
+          <h4 style="font-size:0.9rem; color:white; margin-bottom:0.5rem;">&#129302; AI Viva Follow-up Question #1 of 2</h4>
+          <p style="font-size:0.85rem; color:var(--purple-light); font-weight:600; margin-bottom:1rem;">
+            "You stated that randomized pivot selection prevents worst-case O(n^2). Can you explain a scenario where even a randomized QuickSort could still theoretically hit O(n^2) time, and how the recursion call stack depth behaves?"
+          </p>
+
+          <textarea id="viva-answer" rows="4" placeholder="Type your step-by-step reasoning in your own words..." style="width:100%; padding:0.875rem; background:rgba(0,0,0,0.4); border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:white; font-size:0.85rem; margin-bottom:1rem; resize:vertical;"></textarea>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+            <span style="font-size:0.75rem; color:var(--text-muted);">Tip: Focus on probability of choosing extrema pivots repeatedly and stack overflow risk.</span>
+            <button class="btn btn-purple btn-sm" onclick="evaluateViva()">Submit Oral Explanation</button>
+          </div>
+
+          <div id="viva-feedback" style="margin-top:1rem; display:none;"></div>
+        </div>
+      </div>
+
+      <!-- PAST VIVA DEMONSTRATIONS -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">&#128203; Demonstrated Understanding Records</div>
+          <div class="card-subtitle">Verified by faculty review &bull; Recorded on your Learning Passport</div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Assignment</th>
+                <th>Course</th>
+                <th>Defense Mode</th>
+                <th>Demonstration Score</th>
+                <th>Teacher Review</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Binary Search Tree Balancing</td>
+                <td>Data Structures (CS201)</td>
+                <td>Interactive Viva (3 questions)</td>
+                <td><span class="tag-badge green">Strong Mastery (92%)</span></td>
+                <td><span class="tag-badge green">&check; Dr. Dev Kumar</span></td>
+              </tr>
+              <tr>
+                <td>Calculus Definite Integral Limits</td>
+                <td>Calculus II (MA202)</td>
+                <td>Step-by-step proof walkthrough</td>
+                <td><span class="tag-badge blue">Competent (78%)</span></td>
+                <td><span class="tag-badge green">&check; Dr. Dev Kumar</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script>
+    function evaluateViva() {
+      const text = document.getElementById('viva-answer').value.trim();
+      const fb = document.getElementById('viva-feedback');
+      fb.style.display = 'block';
+
+      if (text.length < 20) {
+        fb.innerHTML = `
+          <div style="background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); padding:0.875rem; border-radius:8px; color:#f87171; font-size:0.8rem;">
+            Please provide a more detailed step-by-step conceptual answer to demonstrate genuine understanding.
+          </div>
+        `;
+        return;
+      }
+
+      // Rule-based keyword evaluation of understanding
+      const lower = text.toLowerCase();
+      const hasExtrema = lower.includes('smallest') || lower.includes('largest') || lower.includes('unlucky') || lower.includes('adversary') || lower.includes('duplicate');
+      const hasStack = lower.includes('stack') || lower.includes('depth') || lower.includes('o(n)') || lower.includes('recursion');
+
+      if (hasExtrema || hasStack) {
+        fb.innerHTML = `
+          <div style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); padding:1rem; border-radius:8px; color:#34d399; font-size:0.825rem;">
+            <strong style="font-size:0.9rem;">&#10003; Viva Defense Verified &mdash; Authentic Mastery Demonstrated!</strong>
+            <p style="margin-top:0.5rem; color:var(--text-secondary); line-height:1.5;">
+              Your explanation correctly identifies that even randomized pivot selection has an extremely low non-zero probability (1/n!) of picking the worst-case extreme element at each recursion level, forcing the call stack depth to O(n).
+            </p>
+            <div style="margin-top:0.75rem; display:flex; gap:0.5rem;">
+              <span class="tag-badge green">Integrity Confidence: 95%</span>
+              <span class="tag-badge purple">Submitted to Dr. Dev Kumar</span>
+            </div>
+          </div>
+        `;
+      } else {
+        fb.innerHTML = `
+          <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); padding:1rem; border-radius:8px; color:#fbbf24; font-size:0.825rem;">
+            <strong>Partial Understanding Detected:</strong>
+            <p style="margin-top:0.5rem; color:var(--text-secondary);">
+              You addressed the time complexity, but did not explain how random selection could still hit worst-case pivots or how recursion stack frames are consumed. Consider expanding your explanation.
+            </p>
+          </div>
+        `;
+      }
+    }
+  </script>
+</body>
+</html>

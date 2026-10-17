@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Syllabus-to-Skill Mapping — EduFAZE AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
+</head>
+<body>
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="nav-logo"><span class="logo-edu">Edu</span><span class="logo-faze">FAZE</span><span class="logo-ai"> AI</span></a>
+      <div class="nav-links" id="nav-links">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="gaps.html" class="nav-link">Gaps</a>
+        <a href="skill-mapping.html" class="nav-link active">Skill Mapping</a>
+      </div>
+      <div class="nav-right">
+        <div class="status-indicator" id="online-status"><span class="status-dot online"></span><span class="status-text">Online</span></div>
+        <div class="nav-icons">
+          <button class="icon-btn" id="notifications-btn" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+          <div class="avatar-wrapper" id="user-avatar-btn" role="button" tabindex="0"><div class="avatar" id="user-avatar">AS</div></div>
+        </div>
+        <button class="hamburger" id="hamburger-btn" aria-label="Toggle"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+  <div class="notifications-panel hidden" id="notifications-panel" role="dialog"><div class="panel-header"><h3>Notifications</h3><button class="panel-close" id="notif-close">x</button></div><div class="notif-list" id="notif-list"></div></div>
+  <div class="user-dropdown hidden" id="user-dropdown" role="menu">
+    <div class="dropdown-header"><div class="avatar lg">AS</div><div><p class="dropdown-name" id="dropdown-user-name">Aanya Sharma</p><p class="dropdown-role">Student</p></div></div>
+    <hr class="dropdown-divider" />
+    <a href="dashboard-student.html" class="dropdown-item">My Dashboard</a>
+    <button class="dropdown-item danger" id="logout-btn">Sign Out</button>
+  </div>
+
+  <div class="page-layout">
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">My Learning</div>
+        <a href="dashboard-student.html" class="sidebar-link"><span class="icon">&#128202;</span> Dashboard</a>
+        <a href="gaps.html" class="sidebar-link"><span class="icon">&#128269;</span> Learning Gaps</a>
+        <a href="skill-mapping.html" class="sidebar-link active"><span class="icon">&#128506;</span> Skill Mapping</a>
+        <a href="recommendations.html" class="sidebar-link"><span class="icon">&#127919;</span> Recommendations</a>
+      </div>
+    </aside>
+
+    <main class="page-content">
+      <div class="alert demo" style="margin-bottom:1.5rem; border-radius:12px;">
+        <div class="alert-icon">&#127895;</div>
+        <div><strong>Demo Mode</strong> — Skill mappings use synthetic syllabus-to-industry matching. Mastery is <strong>not</strong> assumed from syllabus coverage alone — assessment or project evidence is required.</div>
+      </div>
+
+      <div class="page-header">
+        <div class="breadcrumb"><a href="dashboard-student.html">Dashboard</a><span class="breadcrumb-sep">&#8250;</span><span>Syllabus-to-Skill Mapping</span></div>
+        <h1>&#128506; Syllabus-to-Skill Gap Detector</h1>
+        <p>Maps your academic curriculum against real industry skill requirements. Evidence required for each status.</p>
+      </div>
+
+      <!-- STATUS LEGEND -->
+      <div class="card" style="margin-bottom:1.5rem;">
+        <div class="card-header"><div class="card-title">Status Guide</div></div>
+        <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+          <div style="display:flex; align-items:center; gap:0.5rem; font-size:0.8rem;"><span class="skill-status demonstrated">Demonstrated</span> Assessed and evidenced</div>
+          <div style="display:flex; align-items:center; gap:0.5rem; font-size:0.8rem;"><span class="skill-status needs-assessment">Needs Assessment</span> In syllabus, not yet assessed</div>
+          <div style="display:flex; align-items:center; gap:0.5rem; font-size:0.8rem;"><span class="skill-status needs-improvement">Needs Improvement</span> Assessed, score low</div>
+          <div style="display:flex; align-items:center; gap:0.5rem; font-size:0.8rem;"><span class="skill-status evidence-pending">Evidence Pending</span> Project/coursework in progress</div>
+        </div>
+      </div>
+
+      <!-- JOB ROLE FILTER -->
+      <div style="display:flex; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap; align-items:center;">
+        <label class="form-label" style="margin:0;">Target Role:</label>
+        <select class="form-select" id="role-filter" style="width:auto; padding:0.5rem 1rem;">
+          <option value="all">All Industry Roles</option>
+          <option value="software">Software Engineering</option>
+          <option value="data">Data Science / ML</option>
+          <option value="research">Research / Academia</option>
+        </select>
+      </div>
+
+      <!-- SKILL MAP -->
+      <div class="card" style="margin-bottom:1.5rem;">
+        <div class="card-header">
+          <div><div class="card-title">&#128200; Your Skill Status Map</div><div class="card-subtitle">Based on curriculum coverage and assessment evidence</div></div>
+        </div>
+        <div class="skill-status-grid" id="skill-map-grid"></div>
+      </div>
+
+      <!-- MANUAL ENTRY / UPLOAD -->
+      <div class="card" style="margin-bottom:1.5rem;">
+        <div class="card-header">
+          <div><div class="card-title">&#128196; Add Skill Evidence</div><div class="card-subtitle">Upload project evidence or record a self-assessment</div></div>
+        </div>
+        <div class="alert info" style="margin-bottom:1rem;">
+          <div class="alert-icon">&#8505;</div>
+          <div>Self-reported evidence is marked differently from teacher-verified evidence. AI extraction of uploaded documents requires API configuration.</div>
+        </div>
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label" for="skill-select">Skill</label>
+            <select class="form-select" id="skill-select">
+              <option value="Algorithm Design">Algorithm Design</option>
+              <option value="Mathematical Modelling">Mathematical Modelling</option>
+              <option value="Problem Decomposition">Problem Decomposition</option>
+              <option value="Data Analysis">Data Analysis</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="evidence-type">Evidence Type</label>
+            <select class="form-select" id="evidence-type">
+              <option value="project">Project / Coursework</option>
+              <option value="assessment">Assessment Result</option>
+              <option value="self">Self-Assessment (unverified)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="evidence-desc">Evidence Description</label>
+          <textarea class="form-textarea" id="evidence-desc" placeholder="Describe your evidence... e.g. 'Implemented QuickSort and MergeSort in the DS project with O(n log n) analysis'"></textarea>
+        </div>
+        <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
+          <button class="btn btn-purple" id="add-evidence-btn">Add Evidence</button>
+          <span style="font-size:0.78rem; color:var(--text-muted);">Evidence will be marked as self-reported until reviewed by your teacher.</span>
+        </div>
+        <div class="alert success hidden" style="margin-top:1rem;" id="evidence-success">
+          <div class="alert-icon">&#9989;</div>
+          <div>Evidence recorded (Demo — stored in memory). Your teacher will be notified to review.</div>
+        </div>
+      </div>
+
+      <!-- INDUSTRY GAP SUMMARY -->
+      <div class="card">
+        <div class="card-header">
+          <div><div class="card-title">&#128203; Industry Gap Summary</div><div class="card-subtitle">Skills required by industry but not yet demonstrated</div></div>
+        </div>
+        <div id="gap-summary"></div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const { DEMO_DATA, Auth, IntelligenceEngine, $ } = EduFAZE;
+      const user = Auth.currentUser();
+      const studentId = user?.role === 'student' ? user.id : 'u-student-1';
+
+      let skills = IntelligenceEngine.getStudentSkills(studentId);
+
+      function renderSkillMap() {
+        const grid = $('skill-map-grid');
+        if (!skills.length) {
+          grid.innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#128506;</div><h3>No skill mappings yet</h3><p>Complete assessments to generate skill mappings.</p></div>';
+          return;
+        }
+        grid.innerHTML = skills.map(s => `
+          <div class="skill-item">
+            <div>
+              <div class="skill-name">${s.skill}</div>
+              <div class="skill-course">${s.industry_req}</div>
+              <div style="font-size:0.7rem; color:var(--text-muted); margin-top:2px;">Evidence: ${s.evidence}</div>
+            </div>
+            <span class="skill-status ${s.status}">${s.status.replace(/-/g, ' ')}</span>
+          </div>
+        `).join('');
+      }
+
+      renderSkillMap();
+
+      // Gap summary
+      const gapSummary = $('gap-summary');
+      const gaps = skills.filter(s => s.status === 'needs-improvement' || s.status === 'needs-assessment');
+      if (gaps.length) {
+        gapSummary.innerHTML = gaps.map(s => `
+          <div style="padding:1rem 0; border-bottom:1px solid rgba(255,255,255,0.05);">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.5rem;">
+              <div>
+                <div style="font-size:0.875rem; font-weight:600;">${s.skill}</div>
+                <div style="font-size:0.75rem; color:var(--text-muted);">Required for: ${s.industry_req}</div>
+              </div>
+              <span class="skill-status ${s.status}">${s.status.replace(/-/g, ' ')}</span>
+            </div>
+            <div style="font-size:0.78rem; color:var(--text-secondary);">
+              <strong>Recommended action:</strong> 
+              ${s.status === 'needs-improvement' ? 'Complete targeted practice and re-assessment.' : 'Complete a relevant project or assessment to demonstrate this skill.'}
+            </div>
+          </div>
+        `).join('');
+      } else {
+        gapSummary.innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#127775;</div><h3>No critical skill gaps</h3><p>Great work — your mapped skills are either demonstrated or in progress.</p></div>';
+      }
+
+      // Add evidence
+      $('add-evidence-btn').addEventListener('click', () => {
+        const skill = $('skill-select').value;
+        const type = $('evidence-type').value;
+        const desc = $('evidence-desc').value.trim();
+        if (!desc) { alert('Please describe your evidence.'); return; }
+
+        // Add to local skills (demo)
+        const existing = skills.find(s => s.skill === skill);
+        if (existing) {
+          existing.status = type === 'self' ? 'evidence-pending' : 'demonstrated';
+          existing.evidence = desc;
+        } else {
+          skills.push({ skill, industry_req: 'General', status: type === 'self' ? 'evidence-pending' : 'demonstrated', evidence: desc });
+        }
+
+        renderSkillMap();
+        $('evidence-desc').value = '';
+        const succ = $('evidence-success');
+        succ.classList.remove('hidden');
+        setTimeout(() => succ.classList.add('hidden'), 4000);
+      });
+    });
+  </script>
+</body>
+</html>

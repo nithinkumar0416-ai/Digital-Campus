@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Progress &amp; Intervention Tracking — EduFAZE AI</title>
+  <meta name="description" content="End-to-end evidence-based intervention tracking connecting teachers and students with before-and-after progress comparison." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="nav-logo">
+        <span class="logo-edu">Edu</span><span class="logo-faze">FAZE</span><span class="logo-ai"> AI</span>
+      </a>
+      <div class="nav-links" id="nav-links">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="dashboard-student.html" class="nav-link">Dashboard</a>
+        <a href="gaps.html" class="nav-link">Gaps</a>
+        <a href="interventions.html" class="nav-link active">Interventions</a>
+        <a href="reports.html" class="nav-link">Reports</a>
+      </div>
+      <div class="nav-right">
+        <div class="status-indicator" id="online-status">
+          <span class="status-dot online"></span>
+          <span class="status-text">Online / Sync Queue</span>
+        </div>
+        <div class="nav-icons">
+          <button class="icon-btn" id="notifications-btn" aria-label="Notifications">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <span class="badge">1</span>
+          </button>
+          <div class="avatar-wrapper" id="user-avatar-btn" role="button" tabindex="0" aria-label="User profile">
+            <div class="avatar" id="user-avatar">AS</div>
+          </div>
+        </div>
+        <button class="hamburger" id="hamburger-btn" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- USER DROPDOWN -->
+  <div class="user-dropdown hidden" id="user-dropdown" role="menu">
+    <div class="dropdown-header">
+      <div class="avatar lg" id="user-avatar-drop">AS</div>
+      <div>
+        <p class="dropdown-name" id="dropdown-user-name">Aanya Sharma</p>
+        <p class="dropdown-role">Student</p>
+      </div>
+    </div>
+    <hr class="dropdown-divider" />
+    <a href="dashboard-student.html" class="dropdown-item">&#127891; My Dashboard</a>
+    <a href="passport.html" class="dropdown-item">&#128210; Learning Passport</a>
+    <hr class="dropdown-divider" />
+    <button class="dropdown-item danger" id="logout-btn">Sign Out</button>
+  </div>
+
+  <div class="page-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">My Learning</div>
+        <a href="dashboard-student.html" class="sidebar-link"><span class="icon">&#128202;</span> Dashboard</a>
+        <a href="gaps.html" class="sidebar-link"><span class="icon">&#128269;</span> Learning Gaps</a>
+        <a href="recommendations.html" class="sidebar-link"><span class="icon">&#127919;</span> Recommendations</a>
+        <a href="interventions.html" class="sidebar-link active"><span class="icon">&#128200;</span> Intervention Tracker</a>
+        <a href="passport.html" class="sidebar-link"><span class="icon">&#128210;</span> Learning Passport</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Intelligence Modules</div>
+        <a href="warnings.html" class="sidebar-link"><span class="icon">&#9888;</span> Early Warnings</a>
+        <a href="exam-analysis.html" class="sidebar-link"><span class="icon">&#129504;</span> Exam Mistakes</a>
+        <a href="integrity.html" class="sidebar-link"><span class="icon">&#128737;</span> Integrity Coach</a>
+        <a href="reports.html" class="sidebar-link"><span class="icon">&#128209;</span> Academic Reports</a>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="page-content">
+      <!-- DEMO BANNER -->
+      <div class="alert demo" style="margin-bottom:1.5rem; border-radius:12px;">
+        <div class="alert-icon">&#127895;</div>
+        <div>
+          <strong>Shared Intervention Engine</strong> &mdash; Tracking academic interventions with before/after diagnostic evidence.
+          <span class="ai-status rule" style="display:inline-flex; vertical-align:middle; margin-left:0.5rem;"><span class="dot"></span>Evidence-Based Verification</span>
+        </div>
+      </div>
+
+      <div class="page-header">
+        <div class="breadcrumb">
+          <a href="dashboard-student.html">Dashboard</a>
+          <span class="breadcrumb-sep">&#8250;</span>
+          <span>Intervention Workflow</span>
+        </div>
+        <h1>&#128200; Student Progress &amp; Intervention Tracking</h1>
+        <p>A closed-loop workflow ensuring identified difficulties are actively addressed, completed, re-assessed, and proven with verified score gains.</p>
+      </div>
+
+      <!-- WORKFLOW STEPPER -->
+      <div class="card" style="margin-bottom:1.5rem;">
+        <div class="card-header">
+          <div class="card-title">&#128260; The 9-Stage EduFAZE Intervention Lifecycle</div>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:0.75rem; text-align:center;">
+          <div style="background:rgba(255,255,255,0.03); padding:0.75rem 0.5rem; border-radius:8px; border:1px solid rgba(16,185,129,0.3);">
+            <div style="color:#34d399; font-size:1.1rem; margin-bottom:4px;">&#10003; 1</div>
+            <div style="font-size:0.72rem; font-weight:600;">Detect Gap</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.03); padding:0.75rem 0.5rem; border-radius:8px; border:1px solid rgba(16,185,129,0.3);">
+            <div style="color:#34d399; font-size:1.1rem; margin-bottom:4px;">&#10003; 2</div>
+            <div style="font-size:0.72rem; font-weight:600;">Show Evidence</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.03); padding:0.75rem 0.5rem; border-radius:8px; border:1px solid rgba(16,185,129,0.3);">
+            <div style="color:#34d399; font-size:1.1rem; margin-bottom:4px;">&#10003; 3</div>
+            <div style="font-size:0.72rem; font-weight:600;">Recommend</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.03); padding:0.75rem 0.5rem; border-radius:8px; border:1px solid rgba(16,185,129,0.3);">
+            <div style="color:#34d399; font-size:1.1rem; margin-bottom:4px;">&#10003; 4</div>
+            <div style="font-size:0.72rem; font-weight:600;">Teacher Review</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.03); padding:0.75rem 0.5rem; border-radius:8px; border:1px solid rgba(124,58,237,0.5); background:rgba(124,58,237,0.1);">
+            <div style="color:var(--purple-light); font-size:1.1rem; margin-bottom:4px;">&bull; 5</div>
+            <div style="font-size:0.72rem; font-weight:600; color:white;">Track Practice</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.03); padding:0.75rem 0.5rem; border-radius:8px; border:1px solid rgba(255,255,255,0.08);">
+            <div style="color:var(--text-muted); font-size:1.1rem; margin-bottom:4px;">6</div>
+            <div style="font-size:0.72rem; color:var(--text-muted);">Follow-Up Test</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.03); padding:0.75rem 0.5rem; border-radius:8px; border:1px solid rgba(255,255,255,0.08);">
+            <div style="color:var(--text-muted); font-size:1.1rem; margin-bottom:4px;">7</div>
+            <div style="font-size:0.72rem; color:var(--text-muted);">Compare Score</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.03); padding:0.75rem 0.5rem; border-radius:8px; border:1px solid rgba(255,255,255,0.08);">
+            <div style="color:var(--text-muted); font-size:1.1rem; margin-bottom:4px;">8</div>
+            <div style="font-size:0.72rem; color:var(--text-muted);">Record Gain</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACTIVE INTERVENTIONS LIST -->
+      <div class="card" style="margin-bottom:1.5rem;">
+        <div class="card-header">
+          <div>
+            <div class="card-title">&#128394; Active &amp; Historical Interventions</div>
+            <div class="card-subtitle">Assigned by faculty with verified before/after score metrics</div>
+          </div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:1rem;">
+          <!-- INTERVENTION 1 -->
+          <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:1.25rem;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.75rem;">
+              <div>
+                <h4 style="font-size:0.95rem; font-weight:700;">Sorting Algorithms Partition Remediation</h4>
+                <p style="font-size:0.75rem; color:var(--text-muted);">Assigned by: <strong>Dr. Dev Kumar</strong> &bull; Course: Data Structures (CS201)</p>
+              </div>
+              <span class="tag-badge amber">In Progress (Stage 5)</span>
+            </div>
+            <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:1rem;">
+              <em>Teacher Note:</em> "Aanya struggled with boundary swaps in quicksort partition. Recommended targeted visual practice module."
+            </p>
+
+            <!-- BEFORE & AFTER SCORE COMPARISON -->
+            <div style="background:rgba(0,0,0,0.3); border-radius:8px; padding:1rem; margin-bottom:1rem; display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem; align-items:center;">
+              <div>
+                <span style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Initial Diagnostic</span>
+                <div style="font-size:1.25rem; font-weight:800; color:#f87171;">42%</div>
+                <span style="font-size:0.7rem; color:var(--text-muted);">Oct 10, 2026 (DS Diagnostic)</span>
+              </div>
+              <div>
+                <span style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Follow-Up Practice</span>
+                <div style="font-size:1.25rem; font-weight:800; color:#34d399;" id="followup-score-val">75%</div>
+                <span style="font-size:0.7rem; color:var(--text-muted);">Oct 15, 2026 (Sorting Practice)</span>
+              </div>
+              <div>
+                <span style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Verified Gain</span>
+                <div style="font-size:1.25rem; font-weight:800; color:var(--purple-light);">+33% Gain</div>
+                <span style="font-size:0.7rem; color:#34d399; font-weight:600;">Proven Improvement</span>
+              </div>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+              <span style="font-size:0.75rem; color:var(--text-muted);">Follow-up verification deadline: <strong>Oct 20, 2026</strong></span>
+              <div style="display:flex; gap:0.5rem;">
+                <button class="btn btn-ghost btn-sm" onclick="alert('Teacher feedback note saved to intervention history.')">Add Student Note</button>
+                <a href="recommendations.html" class="btn btn-purple btn-sm">Open Practice Module</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- INTERVENTION 2 -->
+          <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:1.25rem;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.75rem;">
+              <div>
+                <h4 style="font-size:0.95rem; font-weight:700;">Calculus II: Definite Integrals Prerequisite Review</h4>
+                <p style="font-size:0.75rem; color:var(--text-muted);">Assigned by: <strong>Dr. Dev Kumar</strong> &bull; Course: Calculus II (MA202)</p>
+              </div>
+              <span class="tag-badge red">Pending Review (Stage 4)</span>
+            </div>
+            <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:1rem;">
+              <em>Evidence:</em> Scored 38/100 on Quiz 1. Prerequisite differentiation concepts evaluated as weak.
+            </p>
+            <div style="display:flex; gap:0.5rem;">
+              <button class="btn btn-purple btn-sm" onclick="alert('Intervention accepted! Remediation plan active.')">Accept Intervention Plan</button>
+              <a href="assistant.html" class="btn btn-ghost btn-sm">Ask AI Assistant for Help</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+</body>
+</html>

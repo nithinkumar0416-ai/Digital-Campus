@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Personal Learning Recommendations — EduFAZE AI</title>
+  <meta name="description" content="Personalised learning recommendations based on learning gaps, exam errors, and course progress." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="nav-logo">
+        <span class="logo-edu">Edu</span><span class="logo-faze">FAZE</span><span class="logo-ai"> AI</span>
+      </a>
+      <div class="nav-links" id="nav-links">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="dashboard-student.html" class="nav-link">Dashboard</a>
+        <a href="gaps.html" class="nav-link">Gaps</a>
+        <a href="recommendations.html" class="nav-link active">Recommendations</a>
+        <a href="assistant.html" class="nav-link">AI Assistant</a>
+      </div>
+      <div class="nav-right">
+        <div class="status-indicator" id="online-status">
+          <span class="status-dot online"></span>
+          <span class="status-text">Online / Sync Queue</span>
+        </div>
+        <div class="nav-icons">
+          <button class="icon-btn" id="notifications-btn" aria-label="Notifications">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <span class="badge">2</span>
+          </button>
+          <div class="avatar-wrapper" id="user-avatar-btn" role="button" tabindex="0" aria-label="User profile">
+            <div class="avatar" id="user-avatar">AS</div>
+          </div>
+        </div>
+        <button class="hamburger" id="hamburger-btn" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- NOTIFICATIONS -->
+  <div class="notifications-panel hidden" id="notifications-panel" role="dialog" aria-label="Notifications">
+    <div class="panel-header"><h3>Notifications</h3><button class="panel-close" id="notif-close">x</button></div>
+    <div class="notif-list" id="notif-list">
+      <div class="notif-item unread">
+        <div class="notif-icon info">i</div>
+        <div class="notif-content">
+          <p class="notif-title">New Recommended Activity</p>
+          <p class="notif-sub">Integration by Substitution Practice ready</p>
+          <span class="notif-time">Just now</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- USER DROPDOWN -->
+  <div class="user-dropdown hidden" id="user-dropdown" role="menu">
+    <div class="dropdown-header">
+      <div class="avatar lg" id="user-avatar-drop">AS</div>
+      <div>
+        <p class="dropdown-name" id="dropdown-user-name">Aanya Sharma</p>
+        <p class="dropdown-role">Student</p>
+      </div>
+    </div>
+    <hr class="dropdown-divider" />
+    <a href="dashboard-student.html" class="dropdown-item">&#127891; My Dashboard</a>
+    <a href="passport.html" class="dropdown-item">&#128210; Learning Passport</a>
+    <hr class="dropdown-divider" />
+    <button class="dropdown-item danger" id="logout-btn">Sign Out</button>
+  </div>
+
+  <div class="page-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">My Learning</div>
+        <a href="dashboard-student.html" class="sidebar-link"><span class="icon">&#128202;</span> Dashboard</a>
+        <a href="gaps.html" class="sidebar-link"><span class="icon">&#128269;</span> Learning Gaps</a>
+        <a href="recommendations.html" class="sidebar-link active"><span class="icon">&#127919;</span> Recommendations</a>
+        <a href="interventions.html" class="sidebar-link"><span class="icon">&#128200;</span> Intervention Tracker</a>
+        <a href="passport.html" class="sidebar-link"><span class="icon">&#128210;</span> Learning Passport</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">AI Study Tools</div>
+        <a href="assistant.html" class="sidebar-link"><span class="icon">&#129302;</span> AI Assistant</a>
+        <a href="exam-analysis.html" class="sidebar-link"><span class="icon">&#129504;</span> Exam Mistakes</a>
+        <a href="integrity.html" class="sidebar-link"><span class="icon">&#128737;</span> Integrity Viva</a>
+        <a href="accessibility.html" class="sidebar-link"><span class="icon">&#9855;</span> Accessibility</a>
+        <a href="lab.html" class="sidebar-link"><span class="icon">&#128300;</span> Lab Troubleshooter</a>
+        <a href="resources.html" class="sidebar-link"><span class="icon">&#128218;</span> Resource Vault</a>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="page-content">
+      <!-- DEMO BANNER -->
+      <div class="alert demo" style="margin-bottom:1.5rem; border-radius:12px;">
+        <div class="alert-icon">&#127895;</div>
+        <div>
+          <strong>Demo Mode</strong> &mdash; Recommendations generated from genuine gap evidence for <em>Aanya Sharma</em>.
+          <span class="ai-status rule" style="display:inline-flex; vertical-align:middle; margin-left:0.5rem;"><span class="dot"></span>Evidence-Grounded Recommendation Engine</span>
+        </div>
+      </div>
+
+      <div class="page-header">
+        <div class="breadcrumb">
+          <a href="dashboard-student.html">Dashboard</a>
+          <span class="breadcrumb-sep">&#8250;</span>
+          <span>Personal Learning Recommendations</span>
+        </div>
+        <h1>&#127919; Personal Learning Recommendation Engine</h1>
+        <p>Targeted learning activities tailored specifically to close your identified knowledge gaps, correct past exam mistakes, and build prerequisite mastery.</p>
+      </div>
+
+      <!-- ACTIVE PLAN OVERVIEW -->
+      <div class="card" style="margin-bottom:1.5rem; background:linear-gradient(135deg, rgba(124,58,237,0.12), rgba(236,72,153,0.06));">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+          <div>
+            <h3 style="font-size:1rem; margin-bottom:4px;">Weekly Remediation Plan</h3>
+            <p style="font-size:0.8rem; color:var(--text-secondary);">2 High-priority revision units detected from Calculus &amp; Algorithms diagnostic evaluations.</p>
+          </div>
+          <div style="display:flex; gap:0.5rem;">
+            <button class="btn btn-purple btn-sm" onclick="triggerRegenerate()">&#128260; Re-evaluate Gaps</button>
+            <a href="demo.html" class="btn btn-ghost btn-sm">&#9654; View Demo Flow</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- FILTER TABS -->
+      <div class="tabs" style="margin-bottom:1.25rem;">
+        <button class="tab-btn active" id="tab-all-rec" onclick="filterRecs('all')">All Activities (<span id="count-all">3</span>)</button>
+        <button class="tab-btn" id="tab-high-rec" onclick="filterRecs('high')">High Priority</button>
+        <button class="tab-btn" id="tab-practice-rec" onclick="filterRecs('practice')">Practice Only</button>
+        <button class="tab-btn" id="tab-completed-rec" onclick="filterRecs('completed')">Completed</button>
+      </div>
+
+      <!-- RECOMMENDATION CARDS CONTAINER -->
+      <div id="recs-container">
+        <!-- Rendered via JavaScript -->
+      </div>
+
+      <!-- INTERACTIVE PRACTICE MODAL -->
+      <div class="card" id="practice-interactive-box" style="margin-top:1.5rem; display:none; border-color:var(--purple-primary);">
+        <div class="card-header">
+          <div>
+            <div class="card-title" id="practice-box-title">&#9999; Targeted Micro-Practice Exercise</div>
+            <div class="card-subtitle" id="practice-box-subtitle">Answer this question to verify concept recovery</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="closePractice()">Close</button>
+        </div>
+        <div id="practice-box-content" style="padding:1rem 0;">
+          <!-- Dynamically populated question -->
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script>
+    const recommendationsData = [
+      {
+        id: 'rec-001',
+        title: 'Sorting Algorithms: QuickSort Partition Step by Step',
+        type: 'resource',
+        priority: 'high',
+        course: 'Data Structures (CS201)',
+        gap_id: 'g-002',
+        reason: 'Failed 2 out of 3 Quicksort partition questions in Diagnostic Test (Score: 42/100).',
+        estimated_mins: 35,
+        status: 'pending',
+        action_text: 'Launch Interactive Module',
+        question: {
+          q: 'In the Lomuto partition scheme with pivot at the last index, what is the primary role of the index pointer i?',
+          options: [
+            'Tracks the boundary of elements strictly smaller than or equal to pivot',
+            'Stores the middle element of the sub-array',
+            'Determines the recursive depth limit',
+            'Swaps elements greater than pivot to the left side'
+          ],
+          correct: 0,
+          explanation: 'Pointer i keeps track of the partition boundary: elements up to index i are smaller than or equal to the pivot element.'
+        }
+      },
+      {
+        id: 'rec-002',
+        title: 'Calculus: Prerequisite Differentiation Techniques & Chain Rule',
+        type: 'practice',
+        priority: 'high',
+        course: 'Calculus II (MA202)',
+        gap_id: 'g-001',
+        reason: 'Low score in Integration (38/100) linked to prerequisite weakness in Differentiation.',
+        estimated_mins: 40,
+        status: 'pending',
+        action_text: 'Start Diagnostic Practice',
+        question: {
+          q: 'Find the derivative of f(x) = (3x^2 + 5)^4 using the Chain Rule:',
+          options: [
+            '24x * (3x^2 + 5)^3',
+            '4 * (3x^2 + 5)^3',
+            '12x^2 * (3x^2 + 5)^3',
+            '24x^2 * (3x^2 + 5)^4'
+          ],
+          correct: 0,
+          explanation: 'By the Chain Rule: d/dx[u^4] = 4*u^3 * u\'. Since u = 3x^2 + 5, u\' = 6x. Thus 4 * (3x^2 + 5)^3 * 6x = 24x(3x^2 + 5)^3.'
+        }
+      },
+      {
+        id: 'rec-003',
+        title: 'Industry Skill Project: Linked List Memory Cache Simulation',
+        type: 'project',
+        priority: 'medium',
+        course: 'Data Structures (CS201)',
+        gap_id: null,
+        reason: 'Curriculum-to-Skill alignment recommends project evidence to prove LRU Cache competency.',
+        estimated_mins: 60,
+        status: 'pending',
+        action_text: 'View Project Brief',
+        question: {
+          q: 'Which data structures combine to implement an LRU (Least Recently Used) cache with O(1) get and put operations?',
+          options: [
+            'Hash Map and Doubly Linked List',
+            'Binary Search Tree and Queue',
+            'Stack and Fixed Array',
+            'Single Linked List and Max Heap'
+          ],
+          correct: 0,
+          explanation: 'A Hash Map gives O(1) lookup to nodes, while a Doubly Linked List provides O(1) removal and insertion at the head/tail.'
+        }
+      }
+    ];
+
+    let currentFilter = 'all';
+
+    function renderRecs() {
+      const container = document.getElementById('recs-container');
+      const filtered = recommendationsData.filter(r => {
+        if (currentFilter === 'all') return true;
+        if (currentFilter === 'high') return r.priority === 'high';
+        if (currentFilter === 'practice') return r.type === 'practice';
+        if (currentFilter === 'completed') return r.status === 'completed';
+        return true;
+      });
+
+      if (!filtered.length) {
+        container.innerHTML = `
+          <div class="card" style="text-align:center; padding:3rem;">
+            <p style="color:var(--text-muted); font-size:0.875rem;">No recommendations in this filter.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(r => `
+        <div class="rec-card" id="card-${r.id}">
+          <div class="rec-priority ${r.priority}"></div>
+          <div style="flex:1;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem; margin-bottom:4px;">
+              <span class="rec-title">${r.title}</span>
+              <span class="tag-badge ${r.status === 'completed' ? 'green' : (r.priority === 'high' ? 'red' : 'amber')}">
+                ${r.status === 'completed' ? 'Completed' : (r.priority.toUpperCase() + ' PRIORITY')}
+              </span>
+            </div>
+            <p class="rec-reason">${r.reason}</p>
+            <div class="rec-meta">
+              <span>&#128218; ${r.course}</span>
+              <span>&#9201; ~${r.estimated_mins} mins</span>
+              <span>&#127919; ${r.type.toUpperCase()}</span>
+            </div>
+            <div style="margin-top:1rem; display:flex; gap:0.5rem; align-items:center;">
+              ${r.status === 'completed' 
+                ? `<span style="font-size:0.75rem; color:#34d399; font-weight:600;">&#10003; Practice Completed &bull; Follow-up Score: 85%</span>`
+                : `<button class="btn btn-purple btn-sm" onclick="startPractice('${r.id}')">${r.action_text}</button>
+                   <button class="btn btn-ghost btn-sm" onclick="markDone('${r.id}')">Mark as Reviewed</button>`
+              }
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filterRecs(tab) {
+      currentFilter = tab;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-' + tab + '-rec')?.classList.add('active');
+      renderRecs();
+    }
+
+    function startPractice(recId) {
+      const rec = recommendationsData.find(r => r.id === recId);
+      if (!rec || !rec.question) return;
+
+      const box = document.getElementById('practice-interactive-box');
+      box.style.display = 'block';
+      box.scrollIntoView({ behavior: 'smooth' });
+
+      document.getElementById('practice-box-title').textContent = 'Remediation Exercise: ' + rec.title;
+      document.getElementById('practice-box-subtitle').textContent = 'Course: ' + rec.course + ' | Estimated Time: ' + rec.estimated_mins + ' mins';
+
+      const content = document.getElementById('practice-box-content');
+      content.innerHTML = `
+        <div style="background:rgba(255,255,255,0.03); padding:1.25rem; border-radius:8px; border:1px solid rgba(255,255,255,0.08); margin-bottom:1rem;">
+          <p style="font-size:0.9rem; font-weight:600; margin-bottom:1rem;">${rec.question.q}</p>
+          <div style="display:flex; flex-direction:column; gap:0.5rem;">
+            ${rec.question.options.map((opt, idx) => `
+              <label style="display:flex; align-items:center; gap:0.75rem; padding:0.75rem 1rem; background:rgba(0,0,0,0.25); border:1px solid rgba(255,255,255,0.06); border-radius:6px; cursor:pointer; font-size:0.8rem; transition:background 0.2s;">
+                <input type="radio" name="practice_ans" value="${idx}" style="accent-color:var(--purple-primary);" />
+                <span>${opt}</span>
+              </label>
+            `).join('')}
+          </div>
+          <div id="practice-feedback" style="margin-top:1rem; display:none;"></div>
+          <button class="btn btn-purple btn-sm" style="margin-top:1.25rem;" onclick="submitPracticeAnswer('${recId}')">Submit for Real-Time Evaluation</button>
+        </div>
+      `;
+    }
+
+    function submitPracticeAnswer(recId) {
+      const rec = recommendationsData.find(r => r.id === recId);
+      const selected = document.querySelector('input[name="practice_ans"]:checked');
+      const feedback = document.getElementById('practice-feedback');
+
+      if (!selected) {
+        feedback.style.display = 'block';
+        feedback.innerHTML = `<span style="color:#f87171; font-size:0.8rem;">Please select an answer first.</span>`;
+        return;
+      }
+
+      const val = parseInt(selected.value);
+      const isCorrect = val === rec.question.correct;
+
+      feedback.style.display = 'block';
+      if (isCorrect) {
+        feedback.innerHTML = `
+          <div style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.25); padding:0.75rem; border-radius:6px; color:#34d399; font-size:0.8rem;">
+            <strong>&#10003; Correct!</strong> ${rec.question.explanation}
+            <div style="margin-top:0.5rem; color:var(--text-secondary);">
+              Gap status updated to <em>In Progress</em>. Follow-up diagnostic registered in your Progress History!
+            </div>
+          </div>
+        `;
+        rec.status = 'completed';
+        renderRecs();
+      } else {
+        feedback.innerHTML = `
+          <div style="background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.25); padding:0.75rem; border-radius:6px; color:#f87171; font-size:0.8rem;">
+            <strong>&times; Incorrect.</strong> Review the explanation: ${rec.question.explanation}
+          </div>
+        `;
+      }
+    }
+
+    function markDone(recId) {
+      const rec = recommendationsData.find(r => r.id === recId);
+      if (rec) {
+        rec.status = 'completed';
+        renderRecs();
+      }
+    }
+
+    function closePractice() {
+      document.getElementById('practice-interactive-box').style.display = 'none';
+    }
+
+    function triggerRegenerate() {
+      alert('AI Recommendation Engine evaluated 4 recent diagnostic scores: Gaps reaffirmed and refreshed.');
+      renderRecs();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderRecs();
+    });
+  </script>
+</body>
+</html>
