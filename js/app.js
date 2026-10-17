@@ -508,6 +508,56 @@ const IntelligenceEngine = {
 };
 
 // ============================================================
+// TOAST NOTIFICATION SYSTEM (Replaces blocking browser alerts)
+// ============================================================
+function showToast(message, type = 'success', duration = 4000) {
+  let container = document.getElementById('edufaze-toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'edufaze-toast-container';
+    container.className = 'toast-container';
+    document.body.appendChild(container);
+  }
+
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  
+  const icon = type === 'error' ? '✕' : (type === 'warning' ? '⚠' : (type === 'info' ? 'ℹ' : '✓'));
+  const title = type === 'error' ? 'Notice' : (type === 'warning' ? 'Warning' : (type === 'info' ? 'Update' : 'Success'));
+
+  toast.innerHTML = `
+    <div class="toast-accent-bar"></div>
+    <div class="toast-icon">${icon}</div>
+    <div class="toast-body">
+      <div class="toast-title">${title}</div>
+      <div class="toast-message">${message}</div>
+    </div>
+    <button class="toast-close" aria-label="Dismiss">&times;</button>
+  `;
+
+  const closeBtn = toast.querySelector('.toast-close');
+  function dismiss() {
+    toast.classList.add('toast-hiding');
+    setTimeout(() => {
+      if (toast.parentNode) toast.parentNode.removeChild(toast);
+    }, 300);
+  }
+
+  closeBtn.addEventListener('click', dismiss);
+  container.appendChild(toast);
+
+  if (duration > 0) {
+    setTimeout(dismiss, duration);
+  }
+}
+
+// Expose globally and modern non-blocking polyfill for window.alert
+window.showToast = showToast;
+window.alert = function(msg) {
+  showToast(msg, 'success');
+};
+
+// ============================================================
 // EXPOSE globals for inner pages
 // ============================================================
 window.EduFAZE = {
@@ -519,7 +569,8 @@ window.EduFAZE = {
   formatDate,
   getScoreClass,
   getRelativeRoot,
-  countUp
+  countUp,
+  showToast
 };
 
 // ============================================================

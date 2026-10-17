@@ -267,7 +267,7 @@
       if (card) {
         card.style.borderColor = 'rgba(16, 185, 129, 0.4)';
       }
-      alert('Step ' + n + ' successfully executed and verified against EduFAZE Intelligence Engine!');
+      showToast('Step ' + n + ' successfully executed and verified against EduFAZE Intelligence Engine!', 'success', 3500);
     }
 
     function runAllSteps() {
@@ -282,7 +282,7 @@
           card.style.borderColor = 'rgba(16, 185, 129, 0.4)';
         }
       });
-      alert('All 10 Demonstration Steps successfully executed! The complete intelligence lifecycle has been validated.');
+      showToast('All 10 Demonstration Steps successfully executed! The complete intelligence lifecycle has been validated.', 'success', 6000);
     }
   </script>
 </body>
