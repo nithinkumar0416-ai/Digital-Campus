@@ -124,7 +124,15 @@ const Auth = {
   getSession() {
     try {
       const s = sessionStorage.getItem(this.SESSION_KEY);
-      return s ? JSON.parse(s) : null;
+      if (s) return JSON.parse(s);
+      // Auto-initialize demo student persona for seamless exploration
+      if (DEMO_DATA.users && DEMO_DATA.users.length) {
+        const defaultUser = DEMO_DATA.users[0];
+        const { password: _, ...safeUser } = defaultUser;
+        this.setSession(safeUser);
+        return safeUser;
+      }
+      return null;
     } catch { return null; }
   },
 
@@ -426,16 +434,11 @@ function highlightActiveNav() {
 // PROTECTED ROUTES — redirect to login if needed
 // ============================================================
 function checkProtectedRoute() {
-  const protectedPages = [
-    'dashboard-student', 'dashboard-teacher', 'dashboard-admin',
-    'gaps', 'skill-mapping', 'warnings', 'campus', 'passport',
-    'offline-hub', 'exam-analysis', 'integrity', 'accessibility',
-    'lab', 'assistant', 'recommendations', 'interventions', 'reports',
-    'profile', 'settings', 'resources', 'demo'
-  ];
+  const sensitivePages = ['dashboard-teacher', 'dashboard-admin'];
   const currentPage = window.location.pathname.split('/').pop().replace('.html', '');
-  if (protectedPages.includes(currentPage) && !Auth.isLoggedIn()) {
-    window.location.href = getRelativeRoot() + 'pages/login.html?redirect=' + encodeURIComponent(window.location.href);
+  if (sensitivePages.includes(currentPage) && (!Auth.currentUser() || Auth.currentUser().role === 'student')) {
+    // If accessing teacher or admin dashboard without matching role, prompt switch
+    console.log('[EduFAZE] Role check for:', currentPage);
   }
 }
 

@@ -1,28 +1,49 @@
 {
   "version": 2,
-  "cleanUrls": true,
+  "cleanUrls": false,
   "trailingSlash": false,
+  "rewrites": [
+    { "source": "/lab", "destination": "/pages/lab.html" },
+    { "source": "/pages/lab", "destination": "/pages/lab.html" },
+    { "source": "/gaps", "destination": "/pages/gaps.html" },
+    { "source": "/pages/gaps", "destination": "/pages/gaps.html" },
+    { "source": "/assistant", "destination": "/pages/assistant.html" },
+    { "source": "/pages/assistant", "destination": "/pages/assistant.html" },
+    { "source": "/recommendations", "destination": "/pages/recommendations.html" },
+    { "source": "/pages/recommendations", "destination": "/pages/recommendations.html" },
+    { "source": "/interventions", "destination": "/pages/interventions.html" },
+    { "source": "/pages/interventions", "destination": "/pages/interventions.html" },
+    { "source": "/campus", "destination": "/pages/campus.html" },
+    { "source": "/pages/campus", "destination": "/pages/campus.html" },
+    { "source": "/passport", "destination": "/pages/passport.html" },
+    { "source": "/pages/passport", "destination": "/pages/passport.html" },
+    { "source": "/offline-hub", "destination": "/pages/offline-hub.html" },
+    { "source": "/pages/offline-hub", "destination": "/pages/offline-hub.html" },
+    { "source": "/exam-analysis", "destination": "/pages/exam-analysis.html" },
+    { "source": "/pages/exam-analysis", "destination": "/pages/exam-analysis.html" },
+    { "source": "/integrity", "destination": "/pages/integrity.html" },
+    { "source": "/pages/integrity", "destination": "/pages/integrity.html" },
+    { "source": "/accessibility", "destination": "/pages/accessibility.html" },
+    { "source": "/pages/accessibility", "destination": "/pages/accessibility.html" },
+    { "source": "/resources", "destination": "/pages/resources.html" },
+    { "source": "/pages/resources", "destination": "/pages/resources.html" },
+    { "source": "/reports", "destination": "/pages/reports.html" },
+    { "source": "/pages/reports", "destination": "/pages/reports.html" },
+    { "source": "/demo", "destination": "/pages/demo.html" },
+    { "source": "/pages/demo", "destination": "/pages/demo.html" }
+  ],
   "headers": [
     {
       "source": "/sw.js",
       "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-cache, no-store, must-revalidate"
-        },
-        {
-          "key": "Service-Worker-Allowed",
-          "value": "/"
-        }
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" },
+        { "key": "Service-Worker-Allowed", "value": "/" }
       ]
     },
     {
       "source": "/assets/(.*)",
       "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
       ]
     }
   ]
