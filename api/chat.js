@@ -9,7 +9,13 @@ const path = require('path');
 
 function sanitizeApiKey(key) {
   if (!key || typeof key !== 'string') return '';
-  return key.trim().replace(/^["']|["']$/g, '').replace(/[\r\n\t]/g, '').trim();
+  let clean = key.trim();
+  clean = clean.replace(/^(?:export\s+)?(?:GEMINI_API_KEY|GOOGLE_API_KEY|API_KEY)\s*[:=]\s*/i, '');
+  clean = clean.replace(/^Bearer\s+/i, '');
+  clean = clean.replace(/^&(?:quot|apos);|&(?:quot|apos);$/g, '');
+  clean = clean.replace(/^["'`]|["'`]$/g, '');
+  clean = clean.replace(/[\r\n\t\s]/g, '').trim();
+  return clean;
 }
 
 // Auto-load .env file if present in project root
@@ -155,7 +161,7 @@ Grounding Rules:
 const modelCache = new Map();
 
 function normalizeModel(name) {
-  if (!name) return 'gemini-2.5-flash';
+  if (!name) return 'gemini-1.5-flash-latest';
   return name.trim().replace(/^models\//, '');
 }
 
@@ -194,7 +200,7 @@ async function getSupportedModelsForApiKey(apiKey) {
  * Build prioritized model candidate list
  */
 async function getModelCandidates(apiKey, preferredModel) {
-  const cleanPreferred = normalizeModel(preferredModel || 'gemini-2.5-flash');
+  const cleanPreferred = normalizeModel(preferredModel || 'gemini-1.5-flash-latest');
   const availableList = await getSupportedModelsForApiKey(apiKey);
 
   if (availableList && availableList.length > 0) {
@@ -203,11 +209,10 @@ async function getModelCandidates(apiKey, preferredModel) {
       candidates.push(cleanPreferred);
     }
     const priority = [
-      'gemini-2.5-flash',
-      'gemini-2.0-flash',
       'gemini-1.5-flash-latest',
       'gemini-1.5-flash',
-      'gemini-2.0-flash-exp',
+      'gemini-2.0-flash',
+      'gemini-1.5-flash-001',
       'gemini-1.5-pro-latest',
       'gemini-1.5-pro',
       'gemini-pro'
@@ -228,10 +233,9 @@ async function getModelCandidates(apiKey, preferredModel) {
   // Fallback defaults with currently active models first
   const defaults = [
     cleanPreferred,
-    'gemini-2.5-flash',
-    'gemini-2.0-flash',
     'gemini-1.5-flash-latest',
     'gemini-1.5-flash',
+    'gemini-2.0-flash',
     'gemini-1.5-pro-latest',
     'gemini-pro'
   ];
@@ -313,7 +317,7 @@ async function executeInferenceWithModel(modelName, apiKey, contents, systemInst
       } else {
         const errJson = await restRes.json().catch(() => ({}));
         const errMessage = errJson.error?.message || `HTTP ${restRes.status}`;
-        if (restRes.status === 400 && errMessage.includes('API_KEY_INVALID')) {
+        if (restRes.status === 400 && (errMessage.includes('API_KEY_INVALID') || errMessage.toLowerCase().includes('api key not valid'))) {
           const err = new Error('INVALID_API_KEY: ' + errMessage);
           err.status = 403;
           throw err;
@@ -353,7 +357,7 @@ async function handleChat(req, res) {
     const headerKey = sanitizeApiKey(req.headers['x-gemini-key']);
     const apiKey = serverKey || headerKey;
     const isConfigured = Boolean(apiKey && apiKey !== 'your_gemini_api_key_here');
-    const rawModel = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+    const rawModel = process.env.GEMINI_MODEL || 'gemini-1.5-flash-latest';
     const model = normalizeModel(rawModel);
 
     res.statusCode = 200;
@@ -443,6 +447,8 @@ async function handleChat(req, res) {
   const serverKey = sanitizeApiKey(process.env.GEMINI_API_KEY);
   const headerKey = sanitizeApiKey(req.headers['x-gemini-key']);
   const apiKey = serverKey || headerKey;
+
+  console.log(`[EduFAZE Chat] Request received. Source: ${serverKey ? 'server' : (headerKey ? 'header' : 'none')}, Length: ${apiKey.length}, Prefix: ${apiKey.substring(0, 6)}...`);
 
   if (!apiKey || apiKey === 'your_gemini_api_key_here') {
     res.statusCode = 401;
@@ -538,7 +544,13 @@ async function handleChat(req, res) {
       res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify({
         error: 'INVALID_API_KEY',
-        message: 'The configured Google Gemini API key is invalid or unauthorized. Please verify your key at https://aistudio.google.com/app/apikey',
+        message: 'Google Gemini returned: "API key not valid". Please verify your key at https://aistudio.google.com/app/apikey (it should begin with "AIzaSy" and have 39 characters).',
+        setupInstructions: [
+          '1. Visit https://aistudio.google.com/app/apikey in your browser',
+          '2. Sign in with your Google account and click "Create API key"',
+          '3. Copy the generated key (starts with "AIzaSy")',
+          '4. Paste the key into EduFAZE AI and click Save Key'
+        ],
         retryable: false
       }));
       return;

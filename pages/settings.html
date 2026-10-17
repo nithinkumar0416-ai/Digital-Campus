@@ -196,7 +196,13 @@
   <script>
     function sanitizeKey(k) {
       if (!k || typeof k !== 'string') return '';
-      return k.trim().replace(/^["']|["']$/g, '').replace(/[\r\n\t]/g, '').trim();
+      let clean = k.trim();
+      clean = clean.replace(/^(?:export\s+)?(?:GEMINI_API_KEY|GOOGLE_API_KEY|API_KEY)\s*[:=]\s*/i, '');
+      clean = clean.replace(/^Bearer\s+/i, '');
+      clean = clean.replace(/^&(?:quot|apos);|&(?:quot|apos);$/g, '');
+      clean = clean.replace(/^["'`]|["'`]$/g, '');
+      clean = clean.replace(/[\r\n\t\s]/g, '').trim();
+      return clean;
     }
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -224,7 +230,7 @@
         
         if (data.connected) {
           statusPill.className = 'ai-status live';
-          statusPill.innerHTML = `<span class="dot"></span> Live Gemini Active (${data.model})`;
+          statusPill.innerHTML = `<span class="dot"></span> Live Gemini Active (${data.model || 'gemini-1.5-flash-latest'})`;
         } else {
           statusPill.className = 'ai-status mock';
           statusPill.innerHTML = `<span class="dot"></span> No Key Configured`;
@@ -252,14 +258,28 @@
         sessionStorage.removeItem('edufaze_ai_key');
       }
 
-      feedback.style.color = '#34d399';
+      feedback.style.color = 'var(--purple-light)';
       feedback.textContent = 'Configuration saved! Checking connection...';
       
+      // Live validation probe
+      if (key) {
+        try {
+          const probe = await fetch('/api/status?validate=true', {
+            headers: { 'x-gemini-key': key }
+          });
+          const probeData = await probe.json();
+          if (probeData.status === 'error' || probeData.connected === false) {
+            feedback.style.color = '#f87171';
+            feedback.textContent = probeData.message || 'Key was rejected by Google Gemini.';
+            await checkActiveStatus();
+            return;
+          }
+        } catch (e) {}
+      }
+
+      feedback.style.color = '#34d399';
+      feedback.textContent = 'Settings saved! Google Gemini is connected.';
       await checkActiveStatus();
-      
-      setTimeout(() => {
-        feedback.textContent = 'Settings saved to browser session!';
-      }, 1500);
     }
 
     async function testAiConnection() {
@@ -273,37 +293,29 @@
         return;
       }
 
+      // Update input field to sanitized key so user sees clean value
+      document.getElementById('ai-api-key').value = key;
+
       feedback.style.color = 'var(--purple-light)';
       feedback.textContent = 'Testing connection with Google Gemini...';
 
       try {
-        // Send a minimal probe to /api/chat to verify key authorization
-        const chatRes = await fetch('/api/chat', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-gemini-key': key
-          },
-          body: JSON.stringify({ message: 'Hello' })
+        const probeRes = await fetch('/api/status?validate=true', {
+          headers: { 'x-gemini-key': key }
         });
-        const chatData = await chatRes.json().catch(() => ({}));
+        const probeData = await probeRes.json().catch(() => ({}));
 
-        if (chatRes.ok) {
+        if (probeRes.ok && probeData.connected !== false && probeData.status !== 'error') {
           localStorage.setItem('edufaze_ai_key', key);
           sessionStorage.setItem('edufaze_ai_key', key);
           feedback.style.color = '#34d399';
-          feedback.textContent = `Connected! Google Gemini (${chatData.model || 'gemini-2.5-flash'}) is live.`;
-          await checkActiveStatus();
-        } else if (chatRes.status === 403 || chatData.error === 'INVALID_API_KEY') {
-          // Clear invalid key
-          localStorage.removeItem('edufaze_ai_key');
-          sessionStorage.removeItem('edufaze_ai_key');
-          feedback.style.color = '#f87171';
-          feedback.textContent = 'API Key rejected: Invalid key. Key has been cleared. Please verify your key at Google AI Studio.';
+          feedback.textContent = `Connected! Google Gemini (${probeData.model || 'gemini-1.5-flash-latest'}) is live.`;
           await checkActiveStatus();
         } else {
-          feedback.style.color = '#fbbf24';
-          feedback.textContent = `Key status: ${chatData.message || 'Error ' + chatRes.status}`;
+          // Do not wipe key; keep it so user can edit or inspect typos
+          feedback.style.color = '#f87171';
+          feedback.textContent = probeData.message || 'Google Gemini rejected this key. Please verify at https://aistudio.google.com/app/apikey';
+          await checkActiveStatus();
         }
       } catch (err) {
         feedback.style.color = '#f87171';

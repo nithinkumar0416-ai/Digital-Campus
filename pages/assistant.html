@@ -124,8 +124,11 @@
           </p>
           <div style="margin-bottom:1rem;">
             <label style="display:block; font-size:0.75rem; color:var(--text-muted); margin-bottom:4px; font-weight:600;">Gemini API Key</label>
-            <input type="password" id="modal-key-input" placeholder="AIzaSy... (Paste key here)" style="width:100%; padding:0.65rem 0.85rem; background:rgba(15,12,27,0.9); border:1px solid rgba(255,255,255,0.18); border-radius:8px; color:white; font-size:0.85rem;" />
-            <span style="font-size:0.7rem; color:var(--text-muted); display:block; margin-top:4px;">Leading/trailing spaces or quotes are automatically removed.</span>
+            <div style="position:relative; display:flex; align-items:center;">
+              <input type="password" id="modal-key-input" placeholder="AIzaSy... (Paste key here)" style="width:100%; padding:0.65rem 2.5rem 0.65rem 0.85rem; background:rgba(15,12,27,0.9); border:1px solid rgba(255,255,255,0.18); border-radius:8px; color:white; font-size:0.85rem; font-family:monospace;" />
+              <button type="button" id="toggle-key-visibility" style="position:absolute; right:10px; background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:0.95rem; line-height:1;" title="Show/Hide Key">&#128065;</button>
+            </div>
+            <span style="font-size:0.7rem; color:var(--text-muted); display:block; margin-top:4px;">Prefixes like "GEMINI_API_KEY=", quotes, and whitespaces are automatically stripped.</span>
           </div>
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-top:1.25rem;">
             <a href="https://aistudio.google.com/app/apikey" target="_blank" style="font-size:0.75rem; color:var(--purple-light); text-decoration:underline;">Get a free API key &rarr;</a>
@@ -241,10 +244,16 @@
       let isProcessing = false;
       let lastFailedQuery = null;
 
-      // Key sanitization function
+      // Key sanitization function (removes quotes, prefixes, whitespaces)
       function sanitizeKey(k) {
         if (!k || typeof k !== 'string') return '';
-        return k.trim().replace(/^["']|["']$/g, '').replace(/[\r\n\t]/g, '').trim();
+        let clean = k.trim();
+        clean = clean.replace(/^(?:export\s+)?(?:GEMINI_API_KEY|GOOGLE_API_KEY|API_KEY)\s*[:=]\s*/i, '');
+        clean = clean.replace(/^Bearer\s+/i, '');
+        clean = clean.replace(/^&(?:quot|apos);|&(?:quot|apos);$/g, '');
+        clean = clean.replace(/^["'`]|["'`]$/g, '');
+        clean = clean.replace(/[\r\n\t\s]/g, '').trim();
+        return clean;
       }
 
       // Read active key from localStorage or sessionStorage
@@ -265,7 +274,7 @@
         return clean;
       }
 
-      // Clear invalid key
+      // Clear stored key
       function clearActiveKey() {
         localStorage.removeItem('edufaze_ai_key');
         sessionStorage.removeItem('edufaze_ai_key');
@@ -290,6 +299,12 @@
       $('banner-key-btn')?.addEventListener('click', openKeyModal);
       $('close-key-modal')?.addEventListener('click', closeKeyModal);
 
+      // Toggle key visibility in modal
+      $('toggle-key-visibility')?.addEventListener('click', () => {
+        if (!modalInput) return;
+        modalInput.type = modalInput.type === 'password' ? 'text' : 'password';
+      });
+
       $('modal-save-key-btn')?.addEventListener('click', async () => {
         const val = modalInput?.value || '';
         const clean = setActiveKey(val);
@@ -303,19 +318,37 @@
 
         if (modalFeedback) {
           modalFeedback.style.color = 'var(--purple-light)';
-          modalFeedback.textContent = 'Testing key connection...';
+          modalFeedback.textContent = 'Testing connection with Google Gemini...';
+        }
+
+        // Live validation against Google API
+        try {
+          const res = await fetch('/api/status?validate=true', {
+            headers: { 'x-gemini-key': clean }
+          });
+          const data = await res.json();
+          if (data.status === 'error' || data.connected === false) {
+            if (modalFeedback) {
+              modalFeedback.style.color = '#f87171';
+              modalFeedback.textContent = data.message || 'Key rejected by Google Gemini. Please check Google AI Studio.';
+            }
+            await checkAiStatus();
+            return;
+          }
+        } catch (e) {
+          // If network probe fails, continue with local save
         }
 
         await checkAiStatus();
 
         if (modalFeedback) {
           modalFeedback.style.color = '#34d399';
-          modalFeedback.textContent = 'Key saved! AI is connected.';
+          modalFeedback.textContent = 'Key verified! AI Assistant is connected.';
         }
 
         setTimeout(() => {
           closeKeyModal();
-        }, 1000);
+        }, 1200);
       });
 
       $('modal-clear-key-btn')?.addEventListener('click', () => {
@@ -345,9 +378,9 @@
             bannerEl.style.background = 'rgba(16, 185, 129, 0.08)';
             bannerEl.style.border = '1px solid rgba(16, 185, 129, 0.3)';
             bannerIcon.innerHTML = '&#9889;';
-            bannerText.innerHTML = `<strong>AI Assistant Connected</strong> &mdash; Powered by live Google Gemini (<code>${data.model || 'gemini-2.5-flash'}</code>). Dynamic reasoning &amp; multi-turn context enabled. <span class="ai-status live" style="display:inline-flex; vertical-align:middle; margin-left:0.5rem;"><span class="dot"></span>Live AI Active</span>`;
+            bannerText.innerHTML = `<strong>AI Assistant Connected</strong> &mdash; Powered by live Google Gemini (<code>${data.model || 'gemini-1.5-flash-latest'}</code>). Dynamic reasoning &amp; multi-turn context enabled. <span class="ai-status live" style="display:inline-flex; vertical-align:middle; margin-left:0.5rem;"><span class="dot"></span>Live AI Active</span>`;
             
-            footerStatusText.innerHTML = `EduFAZE AI Assistant &middot; <span class="ai-status live" style="display:inline-flex;"><span class="dot"></span>Live Gemini Connected (${data.model || 'gemini-2.5-flash'})</span>`;
+            footerStatusText.innerHTML = `EduFAZE AI Assistant &middot; <span class="ai-status live" style="display:inline-flex;"><span class="dot"></span>Live Gemini Connected (${data.model || 'gemini-1.5-flash-latest'})</span>`;
             if (welcomeStatusHint) {
               welcomeStatusHint.innerHTML = `&#9989; <strong>Live AI Connected:</strong> Ready for questions on mathematics, physics, programming, and course syllabi.`;
               welcomeStatusHint.style.color = '#34d399';
@@ -492,17 +525,18 @@
 
         let keyEntryBox = '';
         if (isKeyIssue) {
+          const currentKey = getActiveKey();
           keyEntryBox = `
             <div style="margin-top:0.75rem; background:rgba(0,0,0,0.45); padding:0.85rem; border-radius:8px; border:1px solid rgba(255,255,255,0.14);">
               <label style="display:block; font-size:0.75rem; color:#fde047; font-weight:600; margin-bottom:6px;">
-                🔑 ${errorTitle === 'INVALID_API_KEY' ? 'API Key was rejected (Invalid Key). Paste a valid key:' : 'Enter your Google Gemini API Key:'}
+                🔑 ${errorTitle === 'INVALID_API_KEY' ? 'Google rejected this key. Verify or update below:' : 'Enter your Google Gemini API Key:'}
               </label>
               <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
-                <input type="password" class="chat-key-reentry-input" placeholder="AIzaSy... (Paste key here)" style="flex:1; min-width:200px; padding:0.45rem 0.65rem; background:rgba(15,12,27,0.9); border:1px solid rgba(255,255,255,0.25); border-radius:6px; color:white; font-size:0.8rem; outline:none;" />
+                <input type="text" class="chat-key-reentry-input" value="${escapeHtml(currentKey)}" placeholder="AIzaSy... (Paste key here)" style="flex:1; min-width:220px; padding:0.45rem 0.65rem; background:rgba(15,12,27,0.9); border:1px solid rgba(255,255,255,0.25); border-radius:6px; color:white; font-size:0.8rem; outline:none; font-family:monospace;" />
                 <button type="button" class="btn btn-purple btn-sm chat-key-reentry-btn" style="padding:0.45rem 0.85rem; font-size:0.78rem; white-space:nowrap;">Save Key &amp; Retry</button>
               </div>
               <p style="margin:6px 0 0; font-size:0.7rem; color:var(--text-muted);">
-                Get a key from <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--purple-light); text-decoration:underline;">Google AI Studio</a>. Whitespace/newlines are automatically trimmed.
+                Get a free key from <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--purple-light); text-decoration:underline;">Google AI Studio</a>. Keys start with <code>AIzaSy</code>. Prefixes/quotes are automatically trimmed.
               </p>
             </div>
           `;
@@ -568,7 +602,23 @@
               return;
             }
             inlineKeyBtn.disabled = true;
-            inlineKeyBtn.textContent = 'Saving...';
+            inlineKeyBtn.textContent = 'Verifying key...';
+
+            try {
+              const probeRes = await fetch('/api/status?validate=true', {
+                headers: { 'x-gemini-key': cleanKey }
+              });
+              const probeData = await probeRes.json();
+              if (probeData.status === 'error' || probeData.connected === false) {
+                inlineKeyBtn.disabled = false;
+                inlineKeyBtn.textContent = 'Save Key & Retry';
+                alert(probeData.message || 'Google rejected this API key. Please check the key in Google AI Studio.');
+                return;
+              }
+            } catch (e) {
+              // Network probe failed, proceed to try chat
+            }
+
             await checkAiStatus();
             div.remove();
             if (lastFailedQuery) {
@@ -659,18 +709,13 @@
             const errTitle = data.error || `HTTP ${res.status} Error`;
             const errMsg = data.message || 'The server encountered an error while contacting Google Gemini.';
 
-            // If key failed authorization, clear the invalid cached key so user isn't stuck
-            if (errTitle === 'INVALID_API_KEY' || res.status === 403 || errTitle === 'GEMINI_API_KEY_NOT_CONFIGURED') {
-              clearActiveKey();
-              checkAiStatus();
-            }
-
+            // Preserve the key so the user can inspect, fix, or replace it without retyping
             addErrorMessage(errTitle, errMsg, data.setupInstructions);
             return;
           }
 
           // Build source label
-          let sourceLabel = `EduFAZE AI Assistant &middot; ${escapeHtml(data.provider || 'Google Gemini')} (${escapeHtml(data.model || 'gemini-2.5-flash')})`;
+          let sourceLabel = `EduFAZE AI Assistant &middot; ${escapeHtml(data.provider || 'Google Gemini')} (${escapeHtml(data.model || 'gemini-1.5-flash-latest')})`;
           if (data.isCourseMaterial && data.courseContext) {
             sourceLabel += ` &middot; &#128218; Grounded in ${escapeHtml(data.courseContext)} syllabus`;
           } else if (data.courseContext) {
