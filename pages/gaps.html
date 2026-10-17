@@ -207,8 +207,10 @@
                 </div>
               </div>
               ${prereqs.length ? `
-                <div style="margin:0.5rem 0; font-size:0.78rem; color:var(--text-muted);">
-                  <strong>Prerequisite concepts:</strong> ${prereqs.join(' &#8594; ')} &#8594; ${g.topic_name}
+                <div style="margin:0.75rem 0; font-size:0.8rem; display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+                  <span style="color:var(--text-muted); font-weight:600;">Prerequisites:</span>
+                  ${prereqs.map(p => `<span class="prereq-node" style="padding:0.25rem 0.65rem; font-size:0.75rem;">${p}</span><span class="prereq-connector" style="font-size:0.9rem;">&#8594;</span>`).join('')}
+                  <span class="prereq-node gap-node" style="padding:0.25rem 0.65rem; font-size:0.75rem;">${g.topic_name} <span class="gap-pill">Gap</span></span>
                 </div>
               ` : ''}
               <div class="gap-actions" style="margin-top:0.875rem;">
@@ -233,18 +235,18 @@
             return pt ? pt.name : pid;
           }) : [];
           return `
-            <div style="padding:1rem 0; border-bottom:1px solid rgba(255,255,255,0.05);">
-              <div style="font-size:0.8rem; font-weight:600; color:var(--text-secondary); margin-bottom:0.5rem;">Gap: <span style="color:var(--text-primary);">${g.topic_name}</span></div>
-              <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
-                ${prereqs.map(p => `<span class="tag-badge amber">${p}</span><span style="color:var(--text-muted);">&#8594;</span>`).join('')}
-                <span class="tag-badge red">${g.topic_name} (Gap)</span>
+            <div class="prereq-map-item">
+              <div class="prereq-header">Gap: <span class="prereq-topic-name">${g.topic_name}</span></div>
+              <div class="prereq-flow">
+                ${prereqs.map(p => `<span class="prereq-node">${p}</span><span class="prereq-connector">&#8594;</span>`).join('')}
+                <span class="prereq-node gap-node">${g.topic_name} <span class="gap-pill">Gap</span></span>
               </div>
-              <div style="font-size:0.73rem; color:var(--text-muted); margin-top:0.5rem;">Weak prerequisite understanding may contribute to this gap.</div>
+              <div class="prereq-note">Weak prerequisite understanding may contribute to this gap.</div>
             </div>
           `;
         }).join('');
       } else {
-        prereqMap.innerHTML = '<div class="empty-state"><p>No prerequisite maps to show — no gaps detected yet.</p></div>';
+        prereqMap.innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#127775;</div><h3>No prerequisite maps to show</h3><p>No open gaps detected yet.</p></div>';
       }
     });
   </script>

@@ -61,19 +61,19 @@
 
       <!-- STATUS LEGEND -->
       <div class="card" style="margin-bottom:1.5rem;">
-        <div class="card-header"><div class="card-title">Status Guide</div></div>
-        <div style="display:flex; gap:1rem; flex-wrap:wrap;">
-          <div style="display:flex; align-items:center; gap:0.5rem; font-size:0.8rem;"><span class="skill-status demonstrated">Demonstrated</span> Assessed and evidenced</div>
-          <div style="display:flex; align-items:center; gap:0.5rem; font-size:0.8rem;"><span class="skill-status needs-assessment">Needs Assessment</span> In syllabus, not yet assessed</div>
-          <div style="display:flex; align-items:center; gap:0.5rem; font-size:0.8rem;"><span class="skill-status needs-improvement">Needs Improvement</span> Assessed, score low</div>
-          <div style="display:flex; align-items:center; gap:0.5rem; font-size:0.8rem;"><span class="skill-status evidence-pending">Evidence Pending</span> Project/coursework in progress</div>
+        <div class="card-header"><div class="card-title">&#128218; Status Guide</div></div>
+        <div class="status-guide-grid">
+          <div class="status-guide-item"><span class="skill-status demonstrated">Demonstrated</span> <span class="status-guide-text">Assessed and evidenced</span></div>
+          <div class="status-guide-item"><span class="skill-status needs-assessment">Needs Assessment</span> <span class="status-guide-text">In syllabus, not yet assessed</span></div>
+          <div class="status-guide-item"><span class="skill-status needs-improvement">Needs Improvement</span> <span class="status-guide-text">Assessed, score low</span></div>
+          <div class="status-guide-item"><span class="skill-status evidence-pending">Evidence Pending</span> <span class="status-guide-text">Project/coursework in progress</span></div>
         </div>
       </div>
 
       <!-- JOB ROLE FILTER -->
       <div style="display:flex; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap; align-items:center;">
-        <label class="form-label" style="margin:0;">Target Role:</label>
-        <select class="form-select" id="role-filter" style="width:auto; padding:0.5rem 1rem;">
+        <label class="form-label" style="margin:0; font-weight:600;">Target Role:</label>
+        <select class="form-select" id="role-filter" style="width:auto; min-width:240px;">
           <option value="all">All Industry Roles</option>
           <option value="software">Software Engineering</option>
           <option value="data">Data Science / ML</option>
